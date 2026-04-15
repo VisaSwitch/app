@@ -263,7 +263,7 @@ export default async function CountryPage({ params }: Props) {
                 <div className="mt-1">
                   <h4 className="text-xs font-semibold text-slate-700 mb-2">Key benefits</h4>
                   <ul className="space-y-1">
-                    {pathway.keyBenefits.slice(0, 2).map((b, i) => (
+                    {pathway.pros.slice(0, 2).map((b, i) => (
                       <li key={i} className="flex items-start gap-1.5">
                         <div className="w-3.5 h-3.5 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5">
                           <div className="w-1 h-1 rounded-full bg-emerald-500" />

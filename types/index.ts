@@ -1,19 +1,44 @@
 export type CountryCode = "au" | "uk" | "ca" | "jp";
 
+// Visa selector values per country — used by the PathwaysChecker filter panel
+export type AuCurrentVisa = "whv" | "student" | "graduate" | "skilled" | "visitor" | "other";
+export type UkCurrentVisa = "student" | "graduate" | "skilled" | "visitor" | "other";
+export type CaCurrentVisa = "study" | "pgwp" | "skilled" | "visitor" | "other";
+export type JpCurrentVisa = "student" | "work" | "whv" | "visitor" | "other";
+export type AnyCurrentVisa = AuCurrentVisa | UkCurrentVisa | CaCurrentVisa | JpCurrentVisa;
+
+export type VisaGoal = "stay" | "pr" | "sponsored" | "study" | "family" | "business" | "all";
+
 export interface VisaPathway {
   id: string;
   name: string;
   subclass?: string;
   category: string;
+  categoryLabel: string;
+  // Card visual identity
+  iconBg: string;
+  iconColor: string;
+  accentColor: string;
+  // Summary info
+  tagline: string;
   processingTime: string;
   validity: string;
   cost: string;
-  eligibility: EligibilityRequirement[];
-  keyBenefits: string[];
-  restrictions: string[];
-  pathwayTo?: string[];
   difficulty: "straightforward" | "moderate" | "complex";
   popularity: "high" | "medium" | "low";
+  // Content
+  summary: string;
+  eligibility: EligibilityRequirement[];
+  pros: string[];
+  cons: string[];
+  nextSteps: string[];
+  urgentNote?: string;
+  // Connections
+  pathwayTo: string[];
+  relatedOccupations?: string[];
+  // Filter metadata
+  fromVisas: string[];
+  forGoals: VisaGoal[];
 }
 
 export interface EligibilityRequirement {
@@ -22,6 +47,41 @@ export interface EligibilityRequirement {
   description: string;
   type: "age" | "financial" | "occupation" | "english" | "health" | "character" | "sponsor" | "other";
   required: boolean;
+}
+
+export interface PathwayRelevanceMatrix {
+  [currentVisa: string]: {
+    [goal: string]: string[]; // pathway IDs in priority order
+  };
+}
+
+export interface VisaCurrentOption {
+  value: string;
+  label: string;
+  sublabel: string;
+  iconName: string; // Lucide icon name as string
+}
+
+export interface VisaGoalOption {
+  value: VisaGoal;
+  label: string;
+  sublabel: string;
+  iconName: string;
+}
+
+export interface MigrationService {
+  id: string;
+  name: string;
+  type: "migration-agent" | "education" | "skills-assessment" | "english" | "recruitment";
+  typeLabel: string;
+  tagline: string;
+  description: string;
+  specialties: string[];
+  languages?: string[];
+  priceFrom?: string;
+  contact?: string;
+  website?: string;
+  badge?: string;
 }
 
 export interface ChecklistItem {
@@ -49,9 +109,13 @@ export interface CountryData {
   visaBodyName: string;
   visaBodyUrl: string;
   pathways: VisaPathway[];
+  pathwayRelevance: PathwayRelevanceMatrix;
+  currentVisaOptions: VisaCurrentOption[];
+  goalOptions: VisaGoalOption[];
   refusalReasons: RefusalReason[];
   checklist: ChecklistItem[];
   riskFactors: RiskFactor[];
+  services: MigrationService[];
   processingCenters: string[];
 }
 

@@ -1,726 +1,727 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import {
   Globe,
   ChevronRight,
-  ChevronLeft,
   CheckCircle,
   XCircle,
-  AlertCircle,
+  AlertTriangle,
   Clock,
   DollarSign,
+  Calendar,
   ArrowRight,
   BarChart3,
   ListChecks,
-  Info,
   Star,
-  ThumbsUp,
-  Minus,
+  ChevronDown,
+  ChevronUp,
+  ExternalLink,
+  Briefcase,
+  Languages,
+  Shield,
+  Award,
+  BookOpen,
+  Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { CountryData, UserProfile, PathwayResult, VisaPathway } from "@/types";
+import type { CountryData, VisaPathway, MigrationService, VisaCurrentOption, VisaGoalOption } from "@/types";
 
 interface Props {
   countryData: CountryData;
   countryCode: string;
 }
 
-type Step = "intro" | "location" | "profile" | "occupation" | "results";
-
-const steps: Step[] = ["intro", "location", "profile", "occupation", "results"];
-
-function computeResults(profile: UserProfile, data: CountryData): PathwayResult[] {
-  return data.pathways.map((pathway) => {
-    const blockers: string[] = [];
-    const conditionals: string[] = [];
-    let score = 100;
-
-    // Age check
-    const ageReq = pathway.eligibility.find((e) => e.type === "age");
-    if (ageReq && profile.age) {
-      if (pathway.id === "subclass-417" && profile.age > 30) {
-        blockers.push("Age limit exceeded — must be under 30 (or 35 for some nationalities)");
-        score -= 40;
-      }
-      if (["subclass-189", "subclass-190", "subclass-491", "subclass-482"].includes(pathway.id) && profile.age > 45) {
-        blockers.push("Age limit exceeded — must be under 45 at time of invitation");
-        score -= 40;
-      }
-    }
-
-    // English check
-    const engReq = pathway.eligibility.find((e) => e.type === "english" && e.required);
-    if (engReq) {
-      if (profile.englishLevel === "none" || profile.englishLevel === "ielts-below6") {
-        const isLenient = ["subclass-417", "subclass-600", "visitor-jp", "visitor-visa"].includes(pathway.id);
-        if (!isLenient) {
-          blockers.push("English language requirements not met — retesting may be needed");
-          score -= 30;
-        }
-      } else if (profile.englishLevel === "ielts-6") {
-        if (["subclass-189", "subclass-190", "subclass-491"].includes(pathway.id)) {
-          conditionals.push("English meets minimum but higher scores improve your points total");
-          score -= 5;
-        }
-      }
-    }
-
-    // Financial check
-    const finReq = pathway.eligibility.find((e) => e.type === "financial" && e.required);
-    if (finReq) {
-      if (profile.financialProof === "weak") {
-        blockers.push("Financial evidence appears insufficient — strengthen bank statements before applying");
-        score -= 25;
-      } else if (profile.financialProof === "moderate") {
-        conditionals.push("Financial evidence may need strengthening — review requirements carefully");
-        score -= 10;
-      }
-    }
-
-    // Previous refusal
-    if (profile.previousRefusal) {
-      conditionals.push("Prior refusal detected — must address all previous refusal reasons in new application");
-      score -= 15;
-    }
-
-    // Location check — some visas require being in Australia
-    if (pathway.id === "subclass-485" && profile.currentLocation === "outside") {
-      conditionals.push("485 visa can be applied for offshore — ensure all study requirements are met");
-    }
-
-    // Health
-    if (profile.healthIssues) {
-      const hasHealthReq = pathway.eligibility.some((e) => e.type === "health");
-      if (hasHealthReq) {
-        conditionals.push("Health condition may require additional medical assessment or waiver application");
-        score -= 10;
-      }
-    }
-
-    // Visitor visas — working holiday check
-    if (pathway.id === "subclass-417" && profile.currentLocation === "inside") {
-      conditionals.push("Working Holiday visa can be applied for offshore — check if you can still apply from within Australia");
-    }
-
-    const eligible = blockers.length === 0;
-    const recommendation = eligible
-      ? score >= 80
-        ? "recommended"
-        : score >= 60
-        ? "possible"
-        : "unlikely"
-      : "ineligible";
-
-    return { pathway, eligibilityScore: Math.max(0, score), eligible, blockers, conditionals, recommendation };
-  });
+function getDifficultyConfig(difficulty: VisaPathway["difficulty"]) {
+  return {
+    straightforward: { label: "Straightforward", color: "text-emerald-700 bg-emerald-50 border-emerald-200" },
+    moderate: { label: "Moderate", color: "text-amber-700 bg-amber-50 border-amber-200" },
+    complex: { label: "Complex", color: "text-red-700 bg-red-50 border-red-200" },
+  }[difficulty];
 }
 
-const recommendationConfig = {
-  recommended: {
-    label: "Recommended",
-    color: "text-emerald-700 bg-emerald-50 border-emerald-200",
-    icon: ThumbsUp,
-    bar: "bg-emerald-500",
-  },
-  possible: {
-    label: "Possible",
-    color: "text-amber-700 bg-amber-50 border-amber-200",
-    icon: Minus,
-    bar: "bg-amber-400",
-  },
-  unlikely: {
-    label: "Unlikely",
-    color: "text-orange-700 bg-orange-50 border-orange-200",
-    icon: AlertCircle,
-    bar: "bg-orange-400",
-  },
-  ineligible: {
-    label: "Ineligible",
-    color: "text-red-700 bg-red-50 border-red-200",
-    icon: XCircle,
-    bar: "bg-red-400",
-  },
+function getPopularityStars(popularity: VisaPathway["popularity"]) {
+  return { high: 3, medium: 2, low: 1 }[popularity];
+}
+
+const serviceTypeIcons: Record<string, typeof Globe> = {
+  "migration-agent": Shield,
+  education: BookOpen,
+  "skills-assessment": Award,
+  english: Languages,
+  recruitment: Briefcase,
 };
 
+const serviceTypeColors: Record<string, string> = {
+  "migration-agent": "bg-violet-100 text-violet-700",
+  education: "bg-blue-100 text-blue-700",
+  "skills-assessment": "bg-amber-100 text-amber-700",
+  english: "bg-cyan-100 text-cyan-700",
+  recruitment: "bg-emerald-100 text-emerald-700",
+};
+
+function ServiceCard({ service }: { service: MigrationService }) {
+  const Icon = serviceTypeIcons[service.type] ?? Shield;
+  const colorClass = serviceTypeColors[service.type] ?? "bg-slate-100 text-slate-700";
+
+  return (
+    <div className="bg-white rounded-xl border border-slate-200 p-5 flex flex-col gap-3">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0", colorClass)}>
+            <Icon className="w-4 h-4" />
+          </div>
+          <div>
+            <h4 className="text-sm font-bold text-slate-900">{service.name}</h4>
+            <span className={cn("inline-block text-xs font-medium px-2 py-0.5 rounded-full mt-0.5", colorClass)}>
+              {service.typeLabel}
+            </span>
+          </div>
+        </div>
+        {service.badge && (
+          <span className="text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full whitespace-nowrap flex-shrink-0">
+            {service.badge}
+          </span>
+        )}
+      </div>
+
+      <p className="text-xs text-slate-600 leading-relaxed">{service.tagline}</p>
+
+      <div className="flex flex-wrap gap-1.5">
+        {service.specialties.slice(0, 4).map((s) => (
+          <span key={s} className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">
+            {s}
+          </span>
+        ))}
+        {service.specialties.length > 4 && (
+          <span className="text-xs text-slate-400 px-1 py-0.5">+{service.specialties.length - 4} more</span>
+        )}
+      </div>
+
+      <div className="flex items-center justify-between mt-auto pt-1 border-t border-slate-100">
+        <div className="text-xs text-slate-500">
+          {service.priceFrom ? (
+            <span>
+              From <span className="font-semibold text-slate-700">{service.priceFrom}</span>
+            </span>
+          ) : (
+            <span className="text-slate-400">Contact for pricing</span>
+          )}
+        </div>
+        {service.website && (
+          <a
+            href={service.website}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors"
+          >
+            Visit site <ExternalLink className="w-3 h-3" />
+          </a>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function PathwayCard({
+  pathway,
+  isBestMatch,
+  expanded,
+  onToggle,
+  countryCode,
+}: {
+  pathway: VisaPathway;
+  isBestMatch: boolean;
+  expanded: boolean;
+  onToggle: () => void;
+  countryCode: string;
+}) {
+  const difficulty = getDifficultyConfig(pathway.difficulty);
+  const stars = getPopularityStars(pathway.popularity);
+
+  return (
+    <div
+      className={cn(
+        "bg-white rounded-2xl border shadow-sm overflow-hidden transition-shadow hover:shadow-md",
+        isBestMatch ? "border-blue-300 ring-1 ring-blue-200" : "border-slate-200"
+      )}
+    >
+      {/* Card header */}
+      <div className={cn("h-1 w-full", pathway.accentColor.replace("border-", "bg-"))} />
+
+      <div className="p-5">
+        {/* Top row */}
+        <div className="flex items-start gap-3 mb-3">
+          <div
+            className={cn(
+              "w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0",
+              pathway.iconBg
+            )}
+          >
+            <Globe className={cn("w-5 h-5", pathway.iconColor)} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-wrap items-center gap-1.5 mb-1">
+              {isBestMatch && (
+                <span className="inline-flex items-center gap-1 text-xs font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full">
+                  <Star className="w-3 h-3 fill-blue-600" /> Best match
+                </span>
+              )}
+              {pathway.subclass && (
+                <span className="text-xs font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
+                  Subclass {pathway.subclass}
+                </span>
+              )}
+              <span
+                className={cn(
+                  "text-xs font-medium px-2 py-0.5 rounded-full border",
+                  difficulty.color
+                )}
+              >
+                {difficulty.label}
+              </span>
+            </div>
+            <h3 className="text-sm font-bold text-slate-900">{pathway.name}</h3>
+            <p className="text-xs text-slate-500 mt-0.5">{pathway.tagline}</p>
+          </div>
+          {/* Popularity stars */}
+          <div className="flex gap-0.5 flex-shrink-0 mt-1">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Star
+                key={i}
+                className={cn("w-3 h-3", i < stars ? "fill-amber-400 text-amber-400" : "text-slate-200")}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Stat pills */}
+        <div className="grid grid-cols-3 gap-2 mb-4">
+          {[
+            { icon: Clock, label: pathway.processingTime },
+            { icon: Calendar, label: pathway.validity },
+            { icon: DollarSign, label: pathway.cost },
+          ].map((stat, i) => {
+            const Icon = stat.icon;
+            return (
+              <div key={i} className="bg-slate-50 rounded-lg px-2.5 py-2 flex items-center gap-1.5 min-w-0">
+                <Icon className="w-3 h-3 text-slate-400 flex-shrink-0" />
+                <span className="text-xs text-slate-600 truncate">{stat.label}</span>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Urgent note */}
+        {pathway.urgentNote && (
+          <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2.5 mb-3">
+            <AlertTriangle className="w-3.5 h-3.5 text-amber-600 flex-shrink-0 mt-0.5" />
+            <p className="text-xs text-amber-800 leading-relaxed">{pathway.urgentNote}</p>
+          </div>
+        )}
+
+        {/* Expandable section */}
+        <button
+          onClick={onToggle}
+          className="w-full flex items-center justify-between text-xs font-semibold text-slate-500 hover:text-slate-700 transition-colors mt-1"
+        >
+          <span>{expanded ? "Hide details" : "View details, pros & cons"}</span>
+          {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+        </button>
+      </div>
+
+      {/* Expandable content */}
+      {expanded && (
+        <div className="px-5 pb-5 space-y-4 border-t border-slate-100 pt-4">
+          {/* Summary */}
+          <p className="text-xs text-slate-600 leading-relaxed">{pathway.summary}</p>
+
+          {/* Pros / Cons grid */}
+          <div className="grid sm:grid-cols-2 gap-3">
+            <div className="bg-emerald-50 rounded-xl p-3.5">
+              <h4 className="text-xs font-bold text-emerald-800 mb-2 flex items-center gap-1.5">
+                <CheckCircle className="w-3.5 h-3.5" /> Pros
+              </h4>
+              <ul className="space-y-1.5">
+                {pathway.pros.map((pro, i) => (
+                  <li key={i} className="flex items-start gap-1.5">
+                    <div className="w-1 h-1 rounded-full bg-emerald-500 mt-1.5 flex-shrink-0" />
+                    <span className="text-xs text-emerald-800 leading-relaxed">{pro}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="bg-red-50 rounded-xl p-3.5">
+              <h4 className="text-xs font-bold text-red-800 mb-2 flex items-center gap-1.5">
+                <XCircle className="w-3.5 h-3.5" /> Cons
+              </h4>
+              <ul className="space-y-1.5">
+                {pathway.cons.map((con, i) => (
+                  <li key={i} className="flex items-start gap-1.5">
+                    <div className="w-1 h-1 rounded-full bg-red-400 mt-1.5 flex-shrink-0" />
+                    <span className="text-xs text-red-800 leading-relaxed">{con}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Next steps */}
+          {pathway.nextSteps && pathway.nextSteps.length > 0 && (
+            <div>
+              <h4 className="text-xs font-bold text-slate-700 mb-2">Next steps</h4>
+              <ol className="space-y-1.5">
+                {pathway.nextSteps.map((step, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <span className="w-4 h-4 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
+                      {i + 1}
+                    </span>
+                    <span className="text-xs text-slate-700 leading-relaxed">{step}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+
+          {/* Leads to */}
+          {pathway.pathwayTo.length > 0 && (
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs font-semibold text-slate-500">Leads to:</span>
+              {pathway.pathwayTo.map((p) => (
+                <span
+                  key={p}
+                  className="text-xs bg-indigo-50 text-indigo-700 border border-indigo-100 px-2.5 py-1 rounded-full font-medium"
+                >
+                  {p}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* Related occupations */}
+          {pathway.relatedOccupations && pathway.relatedOccupations.length > 0 && (
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs font-semibold text-slate-500">Common for:</span>
+              {pathway.relatedOccupations.map((occ) => (
+                <span
+                  key={occ}
+                  className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full"
+                >
+                  {occ}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* CTA buttons */}
+          <div className="flex gap-2.5 pt-1">
+            <Link
+              href={`/${countryCode}/planner`}
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-white bg-gradient-to-r from-blue-500 to-indigo-600 px-4 py-2.5 rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all"
+            >
+              <ListChecks className="w-3.5 h-3.5" /> Plan this visa
+            </Link>
+            <Link
+              href={`/${countryCode}/audit`}
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 bg-slate-100 px-4 py-2.5 rounded-lg hover:bg-slate-200 transition-all"
+            >
+              <BarChart3 className="w-3.5 h-3.5" /> Risk audit
+            </Link>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function PathwaysChecker({ countryData, countryCode }: Props) {
-  const [step, setStep] = useState<Step>("intro");
-  const [profile, setProfile] = useState<Partial<UserProfile>>({});
-  const [results, setResults] = useState<PathwayResult[]>([]);
-  const [expanded, setExpanded] = useState<string | null>(null);
+  const [currentVisa, setCurrentVisa] = useState<string>("");
+  const [goal, setGoal] = useState<string>("all");
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+  const [serviceFilter, setServiceFilter] = useState<string>("all");
 
-  const stepIndex = steps.indexOf(step);
-  const totalSteps = 4; // excluding intro and results
+  function toggleExpanded(id: string) {
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }
 
-  const progress = step === "intro" ? 0 : step === "results" ? 100 : (stepIndex / totalSteps) * 100;
+  // Determine ranked pathway IDs from the relevance matrix
+  const rankedPathwayIds = useMemo<string[]>(() => {
+    if (!currentVisa) return [];
+    const matrix = countryData.pathwayRelevance;
+    const byVisa = matrix[currentVisa];
+    if (!byVisa) return [];
+    return byVisa[goal] ?? byVisa["all"] ?? [];
+  }, [currentVisa, goal, countryData]);
 
-  function handleNext() {
-    const nextStep = steps[stepIndex + 1];
-    if (nextStep === "results") {
-      const r = computeResults(profile as UserProfile, countryData);
-      r.sort((a, b) => {
-        const order = { recommended: 0, possible: 1, unlikely: 2, ineligible: 3 };
-        return order[a.recommendation] - order[b.recommendation];
-      });
-      setResults(r);
+  // Build sorted pathway list
+  const displayedPathways = useMemo<VisaPathway[]>(() => {
+    if (!currentVisa) {
+      // No filter — show all, sorted by popularity
+      const order = { high: 0, medium: 1, low: 2 };
+      return [...countryData.pathways].sort((a, b) => order[a.popularity] - order[b.popularity]);
     }
-    setStep(nextStep);
-  }
 
-  function handleBack() {
-    setStep(steps[stepIndex - 1]);
-  }
+    // Map by ID for O(1) lookup
+    const byId = new Map(countryData.pathways.map((p) => [p.id, p]));
+    const ranked: VisaPathway[] = [];
 
-  function reset() {
-    setStep("intro");
-    setProfile({});
-    setResults([]);
-    setExpanded(null);
-  }
+    // First: pathways in the recommended order
+    for (const id of rankedPathwayIds) {
+      const p = byId.get(id);
+      if (p) ranked.push(p);
+    }
 
-  const eligibleCount = results.filter((r) => r.eligible).length;
-  const recommendedCount = results.filter((r) => r.recommendation === "recommended").length;
+    // Then: remaining pathways not in the ranked list (filtered by fromVisas + forGoals)
+    for (const p of countryData.pathways) {
+      if (rankedPathwayIds.includes(p.id)) continue;
+      const visaMatch = p.fromVisas.includes(currentVisa) || p.fromVisas.length === 0;
+      const goalMatch = goal === "all" || p.forGoals.includes(goal as VisaPathway["forGoals"][number]);
+      if (visaMatch && goalMatch) ranked.push(p);
+    }
+
+    return ranked;
+  }, [currentVisa, goal, rankedPathwayIds, countryData]);
+
+  // Services filter
+  const serviceTypes = useMemo(() => {
+    const types = new Set(countryData.services.map((s) => s.type));
+    return Array.from(types);
+  }, [countryData]);
+
+  const filteredServices = useMemo(() => {
+    if (serviceFilter === "all") return countryData.services;
+    return countryData.services.filter((s) => s.type === serviceFilter);
+  }, [serviceFilter, countryData.services]);
+
+  const serviceTypeLabels: Record<string, string> = {
+    "migration-agent": "Migration Agents",
+    education: "Education",
+    "skills-assessment": "Skills Assessment",
+    english: "English Test Prep",
+    recruitment: "Recruitment",
+  };
+
+  const bestMatchId = displayedPathways[0]?.id ?? null;
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <div className="hero-gradient text-white">
+      {/* Boxed gradient hero */}
+      <div className="hero-gradient">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <div className="flex items-center gap-1.5 text-sm text-slate-400 mb-4">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
             <ChevronRight className="w-4 h-4" />
-            <Link href={`/${countryCode}`} className="hover:text-white transition-colors">{countryData.name}</Link>
+            <Link href={`/${countryCode}`} className="hover:text-white transition-colors capitalize">{countryData.name}</Link>
             <ChevronRight className="w-4 h-4" />
             <span className="text-white">Pathway Checker</span>
           </div>
-          <div className="flex items-center gap-4 mb-6">
-            <div className="w-12 h-12 rounded-xl bg-blue-500/20 border border-blue-400/30 flex items-center justify-center">
-              <Globe className="w-6 h-6 text-blue-300" />
+
+          <div className="max-w-2xl">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-400/30 flex items-center justify-center">
+                <Globe className="w-5 h-5 text-blue-300" />
+              </div>
+              <h1 className="text-2xl font-bold text-white">Visa Pathway Checker</h1>
             </div>
-            <div>
-              <h1 className="text-2xl font-bold">Visa Pathway Checker</h1>
-              <p className="text-slate-400 text-sm">{countryData.name} — Full eligibility breakdown</p>
-            </div>
+            <p className="text-slate-300 text-sm leading-relaxed">
+              Select your current visa status and your goal — we'll surface the most relevant {countryData.name} pathways instantly.
+            </p>
           </div>
-          {step !== "intro" && step !== "results" && (
-            <div className="max-w-lg">
-              <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
-                <span>Step {stepIndex} of {totalSteps}</span>
-                <span>{Math.round(progress)}% complete</span>
+
+          {/* Filter panel */}
+          <div className="mt-8 bg-white/10 border border-white/15 rounded-2xl p-5 backdrop-blur-sm">
+            <div className="grid sm:grid-cols-2 gap-6">
+              {/* Current visa */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-3">
+                  I currently have
+                </label>
+                <div className="flex flex-col gap-2">
+                  {countryData.currentVisaOptions.map((opt: VisaCurrentOption) => (
+                    <button
+                      key={opt.value}
+                      onClick={() => setCurrentVisa(opt.value)}
+                      className={cn(
+                        "flex items-center gap-3 px-3.5 py-2.5 rounded-xl border text-left transition-all",
+                        currentVisa === opt.value
+                          ? "bg-white text-slate-900 border-white shadow-sm"
+                          : "bg-white/5 text-slate-200 border-white/10 hover:bg-white/10 hover:border-white/20"
+                      )}
+                    >
+                      <div className={cn(
+                        "w-2 h-2 rounded-full flex-shrink-0 transition-all",
+                        currentVisa === opt.value ? "bg-blue-500" : "bg-white/20"
+                      )} />
+                      <div className="min-w-0">
+                        <div className={cn("text-sm font-semibold truncate", currentVisa === opt.value ? "text-slate-900" : "text-white")}>
+                          {opt.label}
+                        </div>
+                        <div className={cn("text-xs truncate", currentVisa === opt.value ? "text-slate-500" : "text-slate-400")}>
+                          {opt.sublabel}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
               </div>
-              <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full transition-all duration-500"
-                  style={{ width: `${progress}%` }}
-                />
+
+              {/* Goal */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-3">
+                  My goal
+                </label>
+                <div className="flex flex-col gap-2">
+                  {countryData.goalOptions.map((opt: VisaGoalOption) => (
+                    <button
+                      key={opt.value}
+                      onClick={() => setGoal(opt.value)}
+                      className={cn(
+                        "flex items-center gap-3 px-3.5 py-2.5 rounded-xl border text-left transition-all",
+                        goal === opt.value
+                          ? "bg-white text-slate-900 border-white shadow-sm"
+                          : "bg-white/5 text-slate-200 border-white/10 hover:bg-white/10 hover:border-white/20"
+                      )}
+                    >
+                      <div className={cn(
+                        "w-2 h-2 rounded-full flex-shrink-0 transition-all",
+                        goal === opt.value ? "bg-indigo-500" : "bg-white/20"
+                      )} />
+                      <div className="min-w-0">
+                        <div className={cn("text-sm font-semibold truncate", goal === opt.value ? "text-slate-900" : "text-white")}>
+                          {opt.label}
+                        </div>
+                        <div className={cn("text-xs truncate", goal === opt.value ? "text-slate-500" : "text-slate-400")}>
+                          {opt.sublabel}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => setGoal("all")}
+                    className={cn(
+                      "flex items-center gap-3 px-3.5 py-2.5 rounded-xl border text-left transition-all",
+                      goal === "all"
+                        ? "bg-white text-slate-900 border-white shadow-sm"
+                        : "bg-white/5 text-slate-200 border-white/10 hover:bg-white/10 hover:border-white/20"
+                    )}
+                  >
+                    <div className={cn(
+                      "w-2 h-2 rounded-full flex-shrink-0 transition-all",
+                      goal === "all" ? "bg-indigo-500" : "bg-white/20"
+                    )} />
+                    <div className="min-w-0">
+                      <div className={cn("text-sm font-semibold", goal === "all" ? "text-slate-900" : "text-white")}>
+                        Show all options
+                      </div>
+                      <div className={cn("text-xs", goal === "all" ? "text-slate-500" : "text-slate-400")}>
+                        All pathways for my visa status
+                      </div>
+                    </div>
+                  </button>
+                </div>
               </div>
             </div>
-          )}
+
+            {currentVisa && (
+              <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
+                <p className="text-sm text-slate-300">
+                  Showing <span className="font-bold text-white">{displayedPathways.length}</span> pathways — ranked by relevance
+                </p>
+                <button
+                  onClick={() => { setCurrentVisa(""); setGoal("all"); }}
+                  className="text-xs text-slate-400 hover:text-slate-200 transition-colors underline"
+                >
+                  Clear filter
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        {/* INTRO */}
-        {step === "intro" && (
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
-            <h2 className="text-xl font-bold text-slate-900 mb-3">Find your visa pathways</h2>
-            <p className="text-slate-600 text-sm leading-relaxed mb-6">
-              Answer 3 quick sections and we will show you every {countryData.name} visa you may be eligible for — with a full eligibility breakdown, key requirements, and what to do next.
-            </p>
-            <div className="space-y-3 mb-8">
-              {[
-                { label: "Takes about 3 minutes", icon: Clock },
-                { label: "No account required", icon: CheckCircle },
-                { label: `Covers all ${countryData.pathways.length} ${countryData.name} visa pathways`, icon: Globe },
-              ].map((item) => {
-                const Icon = item.icon;
-                return (
-                  <div key={item.label} className="flex items-center gap-3">
-                    <Icon className="w-4 h-4 text-blue-500" />
-                    <span className="text-sm text-slate-700">{item.label}</span>
-                  </div>
-                );
-              })}
-            </div>
-            <button
-              onClick={handleNext}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 text-sm font-semibold text-white bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl hover:from-blue-600 hover:to-indigo-700 transition-all shadow-sm"
-            >
-              Start pathway check
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-        )}
+      {/* Main content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="grid lg:grid-cols-3 gap-8">
 
-        {/* LOCATION */}
-        {step === "location" && (
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
-            <h2 className="text-xl font-bold text-slate-900 mb-1">Your current situation</h2>
-            <p className="text-slate-500 text-sm mb-6">This helps us filter pathways relevant to your location and current status.</p>
-
-            <div className="space-y-5">
-              <div>
-                <label className="block text-sm font-semibold text-slate-800 mb-3">Are you currently in {countryData.name}?</label>
-                <div className="grid grid-cols-2 gap-3">
-                  {["inside", "outside"].map((loc) => (
-                    <button
-                      key={loc}
-                      onClick={() => setProfile((p) => ({ ...p, currentLocation: loc as "inside" | "outside" }))}
-                      className={cn(
-                        "px-4 py-3 rounded-xl border text-sm font-medium transition-all",
-                        profile.currentLocation === loc
-                          ? "border-blue-500 bg-blue-50 text-blue-700"
-                          : "border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50"
-                      )}
-                    >
-                      {loc === "inside" ? `Yes, I am in ${countryData.name}` : `No, I am outside ${countryData.name}`}
-                    </button>
-                  ))}
-                </div>
+          {/* Pathway results — 2/3 width */}
+          <div className="lg:col-span-2">
+            {!currentVisa && (
+              <div className="mb-5 flex items-center justify-between">
+                <h2 className="text-lg font-bold text-slate-900">
+                  All {countryData.name} pathways
+                </h2>
+                <span className="text-sm text-slate-500">{displayedPathways.length} pathways</span>
               </div>
+            )}
 
-              {profile.currentLocation === "inside" && (
-                <div>
-                  <label className="block text-sm font-semibold text-slate-800 mb-2">Current visa type (if any)</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Student visa, Working Holiday..."
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    value={profile.currentVisa ?? ""}
-                    onChange={(e) => setProfile((p) => ({ ...p, currentVisa: e.target.value }))}
-                  />
+            {currentVisa && displayedPathways.length === 0 && (
+              <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center">
+                <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                  <Globe className="w-6 h-6 text-slate-400" />
                 </div>
-              )}
-
-              <div>
-                <label className="block text-sm font-semibold text-slate-800 mb-2">Nationality / passport country</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Vietnamese, Brazilian, Indian..."
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={profile.nationality ?? ""}
-                  onChange={(e) => setProfile((p) => ({ ...p, nationality: e.target.value }))}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-slate-800 mb-2">Previous visa refusal for {countryData.name}?</label>
-                <div className="grid grid-cols-2 gap-3">
-                  {[
-                    { value: false, label: "No previous refusal" },
-                    { value: true, label: "Yes, had a refusal" },
-                  ].map((opt) => (
-                    <button
-                      key={String(opt.value)}
-                      onClick={() => setProfile((p) => ({ ...p, previousRefusal: opt.value }))}
-                      className={cn(
-                        "px-4 py-3 rounded-xl border text-sm font-medium transition-all",
-                        profile.previousRefusal === opt.value
-                          ? "border-blue-500 bg-blue-50 text-blue-700"
-                          : "border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50"
-                      )}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="flex gap-3 mt-8">
-              <button onClick={handleBack} className="inline-flex items-center gap-2 px-5 py-3 text-sm font-medium text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all">
-                <ChevronLeft className="w-4 h-4" /> Back
-              </button>
-              <button
-                onClick={handleNext}
-                disabled={!profile.currentLocation}
-                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-8 py-3 text-sm font-semibold text-white bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl hover:from-blue-600 hover:to-indigo-700 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                Continue <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* PROFILE */}
-        {step === "profile" && (
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
-            <h2 className="text-xl font-bold text-slate-900 mb-1">Your personal profile</h2>
-            <p className="text-slate-500 text-sm mb-6">Used to assess age-based eligibility and English requirements.</p>
-
-            <div className="space-y-5">
-              <div>
-                <label className="block text-sm font-semibold text-slate-800 mb-2">Your age</label>
-                <input
-                  type="number"
-                  min={18}
-                  max={75}
-                  placeholder="Enter your age"
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={profile.age ?? ""}
-                  onChange={(e) => setProfile((p) => ({ ...p, age: parseInt(e.target.value) || undefined }))}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-slate-800 mb-3">English language level</label>
-                <div className="space-y-2">
-                  {[
-                    { value: "native", label: "Native / fluent English speaker" },
-                    { value: "ielts-7plus", label: "IELTS 7.0+ (or equivalent)" },
-                    { value: "ielts-6", label: "IELTS 6.0–6.5 (or equivalent)" },
-                    { value: "ielts-below6", label: "IELTS below 6.0 (or equivalent)" },
-                    { value: "none", label: "No formal English test" },
-                  ].map((opt) => (
-                    <button
-                      key={opt.value}
-                      onClick={() => setProfile((p) => ({ ...p, englishLevel: opt.value as UserProfile["englishLevel"] }))}
-                      className={cn(
-                        "w-full px-4 py-3 rounded-xl border text-sm font-medium text-left transition-all",
-                        profile.englishLevel === opt.value
-                          ? "border-blue-500 bg-blue-50 text-blue-700"
-                          : "border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50"
-                      )}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-slate-800 mb-3">Financial situation</label>
-                <div className="space-y-2">
-                  {[
-                    { value: "strong", label: "Strong — 6+ months of clear bank statements, consistent income" },
-                    { value: "moderate", label: "Moderate — some savings, may have gaps or inconsistencies" },
-                    { value: "weak", label: "Limited — minimal savings, irregular income" },
-                  ].map((opt) => (
-                    <button
-                      key={opt.value}
-                      onClick={() => setProfile((p) => ({ ...p, financialProof: opt.value as UserProfile["financialProof"] }))}
-                      className={cn(
-                        "w-full px-4 py-3 rounded-xl border text-sm font-medium text-left transition-all",
-                        profile.financialProof === opt.value
-                          ? "border-blue-500 bg-blue-50 text-blue-700"
-                          : "border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50"
-                      )}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-slate-800 mb-3">Any known health conditions?</label>
-                <div className="grid grid-cols-2 gap-3">
-                  {[
-                    { value: false, label: "No known conditions" },
-                    { value: true, label: "Yes, I have a health condition" },
-                  ].map((opt) => (
-                    <button
-                      key={String(opt.value)}
-                      onClick={() => setProfile((p) => ({ ...p, healthIssues: opt.value }))}
-                      className={cn(
-                        "px-4 py-3 rounded-xl border text-sm font-medium transition-all",
-                        profile.healthIssues === opt.value
-                          ? "border-blue-500 bg-blue-50 text-blue-700"
-                          : "border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50"
-                      )}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="flex gap-3 mt-8">
-              <button onClick={handleBack} className="inline-flex items-center gap-2 px-5 py-3 text-sm font-medium text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all">
-                <ChevronLeft className="w-4 h-4" /> Back
-              </button>
-              <button
-                onClick={handleNext}
-                disabled={!profile.age || !profile.englishLevel || !profile.financialProof}
-                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-8 py-3 text-sm font-semibold text-white bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl hover:from-blue-600 hover:to-indigo-700 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                Continue <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* OCCUPATION */}
-        {step === "occupation" && (
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
-            <h2 className="text-xl font-bold text-slate-900 mb-1">Your work background</h2>
-            <p className="text-slate-500 text-sm mb-6">Helps assess skilled migration and employer-sponsored pathways.</p>
-
-            <div className="space-y-5">
-              <div>
-                <label className="block text-sm font-semibold text-slate-800 mb-2">Occupation or field of work</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Software Engineer, Nurse, Accountant, Chef..."
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={profile.occupation ?? ""}
-                  onChange={(e) => setProfile((p) => ({ ...p, occupation: e.target.value }))}
-                />
-                <p className="text-xs text-slate-400 mt-1.5">Enter your primary occupation — this guides pathway recommendations</p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-slate-800 mb-3">Do you have dependants (spouse or children) coming with you?</label>
-                <div className="grid grid-cols-2 gap-3">
-                  {[
-                    { value: false, label: "Just me" },
-                    { value: true, label: "With dependants" },
-                  ].map((opt) => (
-                    <button
-                      key={String(opt.value)}
-                      onClick={() => setProfile((p) => ({ ...p, hasDependents: opt.value }))}
-                      className={cn(
-                        "px-4 py-3 rounded-xl border text-sm font-medium transition-all",
-                        profile.hasDependents === opt.value
-                          ? "border-blue-500 bg-blue-50 text-blue-700"
-                          : "border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50"
-                      )}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="flex gap-3 mt-8">
-              <button onClick={handleBack} className="inline-flex items-center gap-2 px-5 py-3 text-sm font-medium text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all">
-                <ChevronLeft className="w-4 h-4" /> Back
-              </button>
-              <button
-                onClick={handleNext}
-                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-8 py-3 text-sm font-semibold text-white bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl hover:from-blue-600 hover:to-indigo-700 transition-all"
-              >
-                See my results <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* RESULTS */}
-        {step === "results" && (
-          <div className="space-y-6">
-            {/* Summary card */}
-            <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-7 text-white">
-              <h2 className="text-xl font-bold mb-1">Your Pathway Results</h2>
-              <p className="text-slate-400 text-sm mb-5">{countryData.name} — based on your profile</p>
-              <div className="grid grid-cols-3 gap-4">
-                <div className="bg-white/10 rounded-xl p-4 text-center">
-                  <div className="text-2xl font-bold mb-1">{eligibleCount}</div>
-                  <div className="text-xs text-slate-400">Eligible pathways</div>
-                </div>
-                <div className="bg-white/10 rounded-xl p-4 text-center">
-                  <div className="text-2xl font-bold mb-1 text-emerald-400">{recommendedCount}</div>
-                  <div className="text-xs text-slate-400">Recommended</div>
-                </div>
-                <div className="bg-white/10 rounded-xl p-4 text-center">
-                  <div className="text-2xl font-bold mb-1">{results.length}</div>
-                  <div className="text-xs text-slate-400">Total assessed</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Next steps bar */}
-            <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-              <div className="flex items-start gap-3">
-                <Info className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
-                <p className="text-sm text-blue-800">
-                  <span className="font-semibold">Next step:</span> Build your personalised checklist and timeline for your chosen pathway.
+                <h3 className="text-sm font-bold text-slate-900 mb-1">No direct pathways found</h3>
+                <p className="text-xs text-slate-500 mb-4">
+                  Try selecting &quot;Show all options&quot; or a different goal to see more pathways.
                 </p>
+                <button
+                  onClick={() => setGoal("all")}
+                  className="text-xs font-semibold text-blue-600 hover:text-blue-700 underline"
+                >
+                  Show all pathways
+                </button>
               </div>
-              <Link
-                href={`/${countryCode}/planner`}
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 bg-white border border-blue-200 px-4 py-2 rounded-lg hover:bg-blue-600 hover:text-white transition-all whitespace-nowrap"
-              >
-                <ListChecks className="w-3.5 h-3.5" /> Build plan
-              </Link>
-            </div>
+            )}
 
-            {/* Results list */}
             <div className="space-y-4">
-              {results.map((result) => {
-                const config = recommendationConfig[result.recommendation];
-                const RIcon = config.icon;
-                const isExpanded = expanded === result.pathway.id;
-                return (
-                  <div
-                    key={result.pathway.id}
-                    className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden"
-                  >
-                    <button
-                      onClick={() => setExpanded(isExpanded ? null : result.pathway.id)}
-                      className="w-full px-6 py-5 flex items-start gap-4 text-left hover:bg-slate-50/50 transition-colors"
+              {displayedPathways.map((pathway, index) => (
+                <PathwayCard
+                  key={pathway.id}
+                  pathway={pathway}
+                  isBestMatch={index === 0 && !!currentVisa && rankedPathwayIds.includes(pathway.id)}
+                  expanded={expandedIds.has(pathway.id)}
+                  onToggle={() => toggleExpanded(pathway.id)}
+                  countryCode={countryCode}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Sidebar — 1/3 width */}
+          <div className="space-y-6">
+            {/* Other tools */}
+            <div className="bg-white rounded-2xl border border-slate-200 p-5">
+              <h3 className="text-sm font-bold text-slate-900 mb-4">Related tools</h3>
+              <div className="space-y-3">
+                {[
+                  {
+                    icon: ListChecks,
+                    title: "Checklist & Timeline",
+                    desc: "Build your step-by-step application plan",
+                    href: `/${countryCode}/planner`,
+                    color: "bg-indigo-50 text-indigo-600",
+                  },
+                  {
+                    icon: BarChart3,
+                    title: "Risk Audit",
+                    desc: "Identify weak spots before you apply",
+                    href: `/${countryCode}/audit`,
+                    color: "bg-violet-50 text-violet-600",
+                  },
+                  {
+                    icon: ArrowRight,
+                    title: "Refusal Recovery",
+                    desc: "Recover from a prior visa refusal",
+                    href: `/${countryCode}/recovery`,
+                    color: "bg-rose-50 text-rose-600",
+                  },
+                ].map((tool) => {
+                  const Icon = tool.icon;
+                  return (
+                    <Link
+                      key={tool.title}
+                      href={tool.href}
+                      className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors group"
                     >
-                      <div className="flex-1 min-w-0">
-                        <div className="flex flex-wrap items-center gap-2 mb-2">
-                          {result.pathway.subclass && (
-                            <span className="text-xs font-bold text-slate-400">SC {result.pathway.subclass}</span>
-                          )}
-                          <span
-                            className={cn(
-                              "inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full border",
-                              config.color
-                            )}
-                          >
-                            <RIcon className="w-3 h-3" />
-                            {config.label}
-                          </span>
-                          <span className="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
-                            {result.pathway.category}
-                          </span>
-                        </div>
-                        <h3 className="text-sm font-bold text-slate-900">{result.pathway.name}</h3>
-
-                        {/* Score bar */}
-                        <div className="flex items-center gap-2 mt-3">
-                          <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                            <div
-                              className={cn("h-full rounded-full transition-all", config.bar)}
-                              style={{ width: `${result.eligibilityScore}%` }}
-                            />
-                          </div>
-                          <span className="text-xs font-semibold text-slate-500">
-                            {result.eligibilityScore}%
-                          </span>
-                        </div>
+                      <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0", tool.color)}>
+                        <Icon className="w-4 h-4" />
                       </div>
-
-                      <div className="flex items-center gap-3 flex-shrink-0 mt-1">
-                        <div className="hidden sm:flex flex-col items-end gap-0.5">
-                          <span className="text-xs text-slate-500">{result.pathway.processingTime}</span>
-                          <span className="text-xs font-medium text-slate-700">{result.pathway.cost}</span>
+                      <div>
+                        <div className="text-xs font-semibold text-slate-900 group-hover:text-blue-600 transition-colors">
+                          {tool.title}
                         </div>
-                        <ChevronRight
-                          className={cn("w-4 h-4 text-slate-400 transition-transform", isExpanded && "rotate-90")}
-                        />
+                        <div className="text-xs text-slate-500">{tool.desc}</div>
                       </div>
-                    </button>
-
-                    {isExpanded && (
-                      <div className="px-6 pb-6 border-t border-slate-100 pt-5 space-y-5">
-                        {/* Blockers */}
-                        {result.blockers.length > 0 && (
-                          <div>
-                            <h4 className="text-xs font-bold text-red-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                              <XCircle className="w-3.5 h-3.5" /> Blockers
-                            </h4>
-                            <ul className="space-y-1.5">
-                              {result.blockers.map((b, i) => (
-                                <li key={i} className="flex items-start gap-2">
-                                  <div className="w-1.5 h-1.5 rounded-full bg-red-400 mt-1.5 flex-shrink-0" />
-                                  <span className="text-xs text-red-700">{b}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-
-                        {/* Conditionals */}
-                        {result.conditionals.length > 0 && (
-                          <div>
-                            <h4 className="text-xs font-bold text-amber-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                              <AlertCircle className="w-3.5 h-3.5" /> Conditions to review
-                            </h4>
-                            <ul className="space-y-1.5">
-                              {result.conditionals.map((c, i) => (
-                                <li key={i} className="flex items-start gap-2">
-                                  <div className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-1.5 flex-shrink-0" />
-                                  <span className="text-xs text-amber-800">{c}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-
-                        {/* Key benefits */}
-                        <div>
-                          <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                            <Star className="w-3.5 h-3.5" /> Key benefits
-                          </h4>
-                          <ul className="space-y-1.5">
-                            {result.pathway.keyBenefits.map((b, i) => (
-                              <li key={i} className="flex items-start gap-2">
-                                <CheckCircle className="w-3.5 h-3.5 text-emerald-500 mt-0.5 flex-shrink-0" />
-                                <span className="text-xs text-slate-700">{b}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-
-                        {/* Processing info */}
-                        <div className="grid grid-cols-3 gap-3">
-                          {[
-                            { icon: Clock, label: "Processing", value: result.pathway.processingTime },
-                            { icon: DollarSign, label: "Cost", value: result.pathway.cost },
-                            { icon: Globe, label: "Validity", value: result.pathway.validity },
-                          ].map((item) => {
-                            const Icon = item.icon;
-                            return (
-                              <div key={item.label} className="bg-slate-50 rounded-lg p-3">
-                                <Icon className="w-3.5 h-3.5 text-slate-400 mb-1" />
-                                <div className="text-xs text-slate-500 mb-0.5">{item.label}</div>
-                                <div className="text-xs font-semibold text-slate-800">{item.value}</div>
-                              </div>
-                            );
-                          })}
-                        </div>
-
-                        {/* Pathway leads to */}
-                        {result.pathway.pathwayTo && result.pathway.pathwayTo.length > 0 && (
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-xs text-slate-500">Pathway to:</span>
-                            {result.pathway.pathwayTo.map((p) => (
-                              <span key={p} className="text-xs bg-indigo-50 text-indigo-700 border border-indigo-100 px-2.5 py-1 rounded-full font-medium">
-                                {p}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-
-                        {result.eligible && (
-                          <div className="flex gap-3 pt-2">
-                            <Link
-                              href={`/${countryCode}/planner`}
-                              className="inline-flex items-center gap-1.5 text-xs font-semibold text-white bg-gradient-to-r from-blue-500 to-indigo-600 px-4 py-2.5 rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all"
-                            >
-                              <ListChecks className="w-3.5 h-3.5" /> Plan application
-                            </Link>
-                            <Link
-                              href={`/${countryCode}/audit`}
-                              className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-slate-100 px-4 py-2.5 rounded-lg hover:bg-slate-200 transition-all"
-                            >
-                              <BarChart3 className="w-3.5 h-3.5" /> Risk audit
-                            </Link>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-400 ml-auto group-hover:text-blue-500 transition-colors" />
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
 
-            {/* Start again */}
-            <div className="text-center pt-4">
-              <button
-                onClick={reset}
-                className="text-sm text-slate-500 hover:text-slate-700 transition-colors underline"
+            {/* Official resources */}
+            <div className="bg-slate-50 rounded-2xl border border-slate-200 p-5">
+              <h3 className="text-sm font-bold text-slate-900 mb-3">Official resources</h3>
+              <a
+                href={countryData.visaBodyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors"
               >
-                Start a new check with different profile
-              </button>
+                <Shield className="w-3.5 h-3.5 flex-shrink-0" />
+                {countryData.visaBodyName}
+                <ExternalLink className="w-3 h-3 ml-auto" />
+              </a>
+              <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+                Always verify requirements directly with the official immigration authority before applying.
+              </p>
+            </div>
+
+            {/* Disclaimer */}
+            <div className="text-xs text-slate-400 leading-relaxed px-1">
+              VisaSwitch provides structured information only. It does not constitute legal or immigration advice. For complex cases, consult a registered migration agent or immigration lawyer.
+            </div>
+          </div>
+        </div>
+
+        {/* Services directory */}
+        {countryData.services && countryData.services.length > 0 && (
+          <div className="mt-14">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900 mb-1">
+                  {countryData.name} — migration services directory
+                </h2>
+                <p className="text-sm text-slate-500">Migration agents, education providers, skills assessors, and recruiters</p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  onClick={() => setServiceFilter("all")}
+                  className={cn(
+                    "px-3.5 py-1.5 text-xs font-semibold rounded-full border transition-all",
+                    serviceFilter === "all"
+                      ? "bg-slate-900 text-white border-slate-900"
+                      : "bg-white text-slate-600 border-slate-200 hover:border-slate-300"
+                  )}
+                >
+                  All
+                </button>
+                {serviceTypes.map((type) => (
+                  <button
+                    key={type}
+                    onClick={() => setServiceFilter(type)}
+                    className={cn(
+                      "px-3.5 py-1.5 text-xs font-semibold rounded-full border transition-all",
+                      serviceFilter === type
+                        ? "bg-slate-900 text-white border-slate-900"
+                        : "bg-white text-slate-600 border-slate-200 hover:border-slate-300"
+                    )}
+                  >
+                    {serviceTypeLabels[type] ?? type}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredServices.map((service) => (
+                <ServiceCard key={service.id} service={service} />
+              ))}
+            </div>
+
+            <div className="mt-5 flex items-start gap-2 bg-amber-50 border border-amber-100 rounded-xl px-4 py-3">
+              <Users className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+              <p className="text-xs text-amber-800 leading-relaxed">
+                Services listed are for informational purposes. VisaSwitch does not endorse or guarantee any service provider. Always verify credentials and read independent reviews before engaging a service.
+              </p>
             </div>
           </div>
         )}
