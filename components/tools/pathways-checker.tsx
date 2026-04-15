@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   Globe,
   ChevronRight,
+  ChevronLeft,
   CheckCircle,
   XCircle,
   AlertTriangle,
@@ -337,6 +338,8 @@ export function PathwaysChecker({ countryData, countryCode }: Props) {
   const [goal, setGoal] = useState<string>("all");
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   const [serviceFilter, setServiceFilter] = useState<string>("all");
+  const [servicePage, setServicePage] = useState(0);
+  const SERVICES_PER_PAGE = 3;
 
   function toggleExpanded(id: string) {
     setExpandedIds((prev) => {
@@ -400,9 +403,17 @@ export function PathwaysChecker({ countryData, countryCode }: Props) {
   }, [countryData]);
 
   const filteredServices = useMemo(() => {
-    if (serviceFilter === "all") return countryData.services;
-    return countryData.services.filter((s) => s.type === serviceFilter);
+    const list = serviceFilter === "all"
+      ? countryData.services
+      : countryData.services.filter((s) => s.type === serviceFilter);
+    return list;
   }, [serviceFilter, countryData.services]);
+
+  const totalServicePages = Math.ceil(filteredServices.length / SERVICES_PER_PAGE);
+  const pagedServices = filteredServices.slice(
+    servicePage * SERVICES_PER_PAGE,
+    (servicePage + 1) * SERVICES_PER_PAGE
+  );
 
   const serviceTypeLabels: Record<string, string> = {
     "migration-agent": "Migration Agents",
@@ -676,7 +687,7 @@ export function PathwaysChecker({ countryData, countryCode }: Props) {
                 {/* Type filter */}
                 <div className="flex flex-wrap gap-1.5 mb-4">
                   <button
-                    onClick={() => setServiceFilter("all")}
+                    onClick={() => { setServiceFilter("all"); setServicePage(0); }}
                     className={cn(
                       "px-2.5 py-1 text-xs font-semibold rounded-full border transition-all",
                       serviceFilter === "all"
@@ -689,7 +700,7 @@ export function PathwaysChecker({ countryData, countryCode }: Props) {
                   {serviceTypes.map((type) => (
                     <button
                       key={type}
-                      onClick={() => setServiceFilter(type)}
+                      onClick={() => { setServiceFilter(type); setServicePage(0); }}
                       className={cn(
                         "px-2.5 py-1 text-xs font-semibold rounded-full border transition-all",
                         serviceFilter === type
@@ -702,11 +713,35 @@ export function PathwaysChecker({ countryData, countryCode }: Props) {
                   ))}
                 </div>
 
-                <div className="space-y-3">
-                  {filteredServices.map((service) => (
+                {/* Fixed-height card area — always fits exactly SERVICES_PER_PAGE cards */}
+                <div className="space-y-3 min-h-[calc(3*theme(spacing.1)+(3*168px))]">
+                  {pagedServices.map((service) => (
                     <ServiceCard key={service.id} service={service} />
                   ))}
                 </div>
+
+                {/* Pagination */}
+                {totalServicePages > 1 && (
+                  <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-100">
+                    <button
+                      onClick={() => setServicePage((p) => p - 1)}
+                      disabled={servicePage === 0}
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-slate-600 disabled:opacity-30 disabled:cursor-not-allowed hover:text-slate-900 transition-colors"
+                    >
+                      <ChevronLeft className="w-3.5 h-3.5" /> Prev
+                    </button>
+                    <span className="text-xs text-slate-400">
+                      {servicePage + 1} / {totalServicePages}
+                    </span>
+                    <button
+                      onClick={() => setServicePage((p) => p + 1)}
+                      disabled={servicePage >= totalServicePages - 1}
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-slate-600 disabled:opacity-30 disabled:cursor-not-allowed hover:text-slate-900 transition-colors"
+                    >
+                      Next <ChevronRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
 
                 <div className="mt-4 flex items-start gap-2 bg-amber-50 border border-amber-100 rounded-xl px-3 py-2.5">
                   <Users className="w-3.5 h-3.5 text-amber-600 flex-shrink-0 mt-0.5" />
