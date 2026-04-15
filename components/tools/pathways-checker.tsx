@@ -667,66 +667,62 @@ export function PathwaysChecker({ countryData, countryCode }: Props) {
               </p>
             </div>
 
+            {/* Services directory */}
+            {countryData.services && countryData.services.length > 0 && (
+              <div className="bg-white rounded-2xl border border-slate-200 p-5">
+                <h3 className="text-sm font-bold text-slate-900 mb-1">Services directory</h3>
+                <p className="text-xs text-slate-500 mb-3">Agents, education, assessors & recruiters</p>
+
+                {/* Type filter */}
+                <div className="flex flex-wrap gap-1.5 mb-4">
+                  <button
+                    onClick={() => setServiceFilter("all")}
+                    className={cn(
+                      "px-2.5 py-1 text-xs font-semibold rounded-full border transition-all",
+                      serviceFilter === "all"
+                        ? "bg-slate-900 text-white border-slate-900"
+                        : "bg-white text-slate-600 border-slate-200 hover:border-slate-300"
+                    )}
+                  >
+                    All
+                  </button>
+                  {serviceTypes.map((type) => (
+                    <button
+                      key={type}
+                      onClick={() => setServiceFilter(type)}
+                      className={cn(
+                        "px-2.5 py-1 text-xs font-semibold rounded-full border transition-all",
+                        serviceFilter === type
+                          ? "bg-slate-900 text-white border-slate-900"
+                          : "bg-white text-slate-600 border-slate-200 hover:border-slate-300"
+                      )}
+                    >
+                      {serviceTypeLabels[type] ?? type}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="space-y-3">
+                  {filteredServices.map((service) => (
+                    <ServiceCard key={service.id} service={service} />
+                  ))}
+                </div>
+
+                <div className="mt-4 flex items-start gap-2 bg-amber-50 border border-amber-100 rounded-xl px-3 py-2.5">
+                  <Users className="w-3.5 h-3.5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <p className="text-xs text-amber-800 leading-relaxed">
+                    Listings are informational only. VisaSwitch does not endorse any provider — verify credentials independently.
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Disclaimer */}
             <div className="text-xs text-slate-400 leading-relaxed px-1">
               VisaSwitch provides structured information only. It does not constitute legal or immigration advice. For complex cases, consult a registered migration agent or immigration lawyer.
             </div>
           </div>
         </div>
-
-        {/* Services directory */}
-        {countryData.services && countryData.services.length > 0 && (
-          <div className="mt-14">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-              <div>
-                <h2 className="text-xl font-bold text-slate-900 mb-1">
-                  {countryData.name} — migration services directory
-                </h2>
-                <p className="text-sm text-slate-500">Migration agents, education providers, skills assessors, and recruiters</p>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <button
-                  onClick={() => setServiceFilter("all")}
-                  className={cn(
-                    "px-3.5 py-1.5 text-xs font-semibold rounded-full border transition-all",
-                    serviceFilter === "all"
-                      ? "bg-slate-900 text-white border-slate-900"
-                      : "bg-white text-slate-600 border-slate-200 hover:border-slate-300"
-                  )}
-                >
-                  All
-                </button>
-                {serviceTypes.map((type) => (
-                  <button
-                    key={type}
-                    onClick={() => setServiceFilter(type)}
-                    className={cn(
-                      "px-3.5 py-1.5 text-xs font-semibold rounded-full border transition-all",
-                      serviceFilter === type
-                        ? "bg-slate-900 text-white border-slate-900"
-                        : "bg-white text-slate-600 border-slate-200 hover:border-slate-300"
-                    )}
-                  >
-                    {serviceTypeLabels[type] ?? type}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredServices.map((service) => (
-                <ServiceCard key={service.id} service={service} />
-              ))}
-            </div>
-
-            <div className="mt-5 flex items-start gap-2 bg-amber-50 border border-amber-100 rounded-xl px-4 py-3">
-              <Users className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
-              <p className="text-xs text-amber-800 leading-relaxed">
-                Services listed are for informational purposes. VisaSwitch does not endorse or guarantee any service provider. Always verify credentials and read independent reviews before engaging a service.
-              </p>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
