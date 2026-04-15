@@ -341,35 +341,26 @@ export function PathwaysChecker({ countryData, countryCode }: Props) {
   const [servicePage, setServicePage] = useState(0);
   const [servicesPerPage, setServicesPerPage] = useState(3);
 
-  // Measure the pathway column height and derive how many service cards fit
-  const pathwaysColRef = useRef<HTMLDivElement>(null);
+  // Measure the card list container — fills the stretched sidebar space —
+  // and derive how many cards fit per page.
+  const serviceListContainerRef = useRef<HTMLDivElement>(null);
   const firstServiceCardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const colEl = pathwaysColRef.current;
-    if (!colEl) return;
+    const containerEl = serviceListContainerRef.current;
+    if (!containerEl) return;
 
     const observer = new ResizeObserver(() => {
-      const colHeight = colEl.getBoundingClientRect().height;
+      const containerHeight = containerEl.getBoundingClientRect().height;
       const cardEl = firstServiceCardRef.current;
-      // Card height + 12px gap between cards
       const cardHeight = cardEl ? cardEl.getBoundingClientRect().height + 12 : 176;
-      const count = Math.max(1, Math.floor(colHeight / cardHeight));
+      const count = Math.max(1, Math.floor(containerHeight / cardHeight));
       setServicesPerPage(count);
-      // Keep current page in bounds
-      setServicePage((p) => {
-        const maxPage = Math.ceil(
-          (serviceFilter === "all"
-            ? countryData.services.length
-            : countryData.services.filter((s) => s.type === serviceFilter).length) / count
-        ) - 1;
-        return p > maxPage ? 0 : p;
-      });
+      setServicePage(0);
     });
 
-    observer.observe(colEl);
+    observer.observe(containerEl);
     return () => observer.disconnect();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function toggleExpanded(id: string) {
@@ -598,7 +589,7 @@ export function PathwaysChecker({ countryData, countryCode }: Props) {
         <div className="grid lg:grid-cols-3 gap-8">
 
           {/* Pathway results — 2/3 width */}
-          <div className="lg:col-span-2" ref={pathwaysColRef}>
+          <div className="lg:col-span-2">
             {!currentVisa && (
               <div className="mb-5 flex items-center justify-between">
                 <h2 className="text-lg font-bold text-slate-900">
@@ -640,8 +631,8 @@ export function PathwaysChecker({ countryData, countryCode }: Props) {
             </div>
           </div>
 
-          {/* Sidebar — 1/3 width */}
-          <div className="space-y-6">
+          {/* Sidebar — 1/3 width, stretches to match pathway column height */}
+          <div className="flex flex-col gap-6">
             {/* Other tools */}
             <div className="bg-white rounded-2xl border border-slate-200 p-5">
               <h3 className="text-sm font-bold text-slate-900 mb-4">Related tools</h3>
@@ -710,9 +701,9 @@ export function PathwaysChecker({ countryData, countryCode }: Props) {
               </p>
             </div>
 
-            {/* Services directory */}
+            {/* Services directory — flex-1 so it fills remaining sidebar height */}
             {countryData.services && countryData.services.length > 0 && (
-              <div className="bg-white rounded-2xl border border-slate-200 p-5">
+              <div className="flex-1 min-h-0 flex flex-col bg-white rounded-2xl border border-slate-200 p-5">
                 <h3 className="text-sm font-bold text-slate-900 mb-1">Services directory</h3>
                 <p className="text-xs text-slate-500 mb-3">Agents, education, assessors & recruiters</p>
 
@@ -745,8 +736,8 @@ export function PathwaysChecker({ countryData, countryCode }: Props) {
                   ))}
                 </div>
 
-                {/* Cards — height matches pathway column via servicesPerPage */}
-                <div className="space-y-3">
+                {/* Card container — flex-1 fills the available space; ResizeObserver measures this */}
+                <div ref={serviceListContainerRef} className="flex-1 min-h-0 space-y-3 overflow-hidden">
                   {pagedServices.map((service, i) => (
                     <div key={service.id} ref={i === 0 ? firstServiceCardRef : undefined}>
                       <ServiceCard service={service} />
