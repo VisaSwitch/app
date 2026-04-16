@@ -75,7 +75,15 @@ export function RiskAudit({ countryData, countryCode }: Props) {
     [selectedPathway, countryData]
   );
 
-  const totalFactors = countryData.riskFactors.length;
+  // Filtered risk factors by pathway
+  const filteredRiskFactors = useMemo(() => {
+    if (!selectedPathway) return countryData.riskFactors;
+    return countryData.riskFactors.filter(
+      (f) => !f.pathwayIds || f.pathwayIds.length === 0 || f.pathwayIds.includes(selectedPathway)
+    );
+  }, [countryData.riskFactors, selectedPathway]);
+
+  const totalFactors = filteredRiskFactors.length;
   const answeredCount = factorResults.size;
 
   function setAnswer(factorId: string, answer: "yes" | "no" | "partial") {
@@ -86,7 +94,7 @@ export function RiskAudit({ countryData, countryCode }: Props) {
     });
   }
 
-  const results: FactorResult[] = countryData.riskFactors.map((factor) => {
+  const results: FactorResult[] = filteredRiskFactors.map((factor) => {
     const answer = factorResults.get(factor.id) ?? null;
     let impact: "positive" | "neutral" | "negative" | "critical" = "neutral";
     let score = 100;
@@ -172,7 +180,7 @@ export function RiskAudit({ countryData, countryCode }: Props) {
             </div>
 
             {/* Risk factors */}
-            {countryData.riskFactors.map((factor, index) => {
+            {filteredRiskFactors.map((factor, index) => {
               const answer = factorResults.get(factor.id);
               const weightLabel = factor.weight >= 30 ? "Critical weight" : factor.weight >= 20 ? "High weight" : "Moderate weight";
               const weightColor = factor.weight >= 30 ? "text-red-600 bg-red-50" : factor.weight >= 20 ? "text-orange-600 bg-orange-50" : "text-amber-600 bg-amber-50";

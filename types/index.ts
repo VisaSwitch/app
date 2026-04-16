@@ -89,9 +89,10 @@ export interface ChecklistItem {
   title: string;
   description: string;
   category: "document" | "financial" | "health" | "form" | "other";
-  dueWeeks: number;
+  dueWeeks: number;  // negative = before lodgement date; 0 = at lodgement
   priority: "critical" | "high" | "medium" | "low";
   completed?: boolean;
+  pathwayIds?: string[];  // if omitted/empty, item applies to ALL pathways
 }
 
 export interface RiskFactor {
@@ -100,6 +101,7 @@ export interface RiskFactor {
   weight: number;
   description: string;
   mitigation: string;
+  pathwayIds?: string[];  // if omitted/empty, factor applies to ALL pathways
 }
 
 export interface CountryData {

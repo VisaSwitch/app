@@ -61,24 +61,37 @@ export function TimelinePlanner({ countryData, countryCode }: Props) {
     [selectedPathway, countryData]
   );
 
+  // Filtered checklist by pathway
+  const filteredChecklist = useMemo(() => {
+    if (!selectedPathway) return countryData.checklist;
+    return countryData.checklist.filter(
+      (item) => !item.pathwayIds || item.pathwayIds.length === 0 || item.pathwayIds.includes(selectedPathway)
+    );
+  }, [countryData.checklist, selectedPathway]);
+
   const checklistItems = useMemo(() => {
-    return countryData.checklist.map((item) => {
+    return filteredChecklist.map((item) => {
       const dueDate = targetDate ? addWeeks(targetDate, item.dueWeeks) : null;
       const weeksRemaining = dueDate ? getWeeksUntil(dueDate, today) : null;
       return { ...item, dueDate, weeksRemaining };
     });
-  }, [countryData.checklist, targetDate]);
+  }, [filteredChecklist, targetDate]);
 
   const totalTrackableItems = useMemo(() => {
-    let count = countryData.checklist.length;
+    let count = filteredChecklist.length;
     if (selectedPathwayData) {
       count += selectedPathwayData.nextSteps.length;
       count += selectedPathwayData.eligibility.length;
     }
     return count;
-  }, [selectedPathwayData, countryData.checklist]);
+  }, [selectedPathwayData, filteredChecklist]);
 
-  const completedCount = completed.size;
+  const completedCount = [...completed].filter(
+    (id) =>
+      filteredChecklist.some((i) => i.id === id) ||
+      id.startsWith("elig-") ||
+      id.startsWith("step-")
+  ).length;
   const progress = totalTrackableItems > 0 ? Math.min(100, Math.round((completedCount / totalTrackableItems) * 100)) : 0;
 
   const overdueItems = checklistItems.filter(
