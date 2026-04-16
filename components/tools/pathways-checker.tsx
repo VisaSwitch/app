@@ -2,6 +2,8 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import { useActivePathway } from "@/hooks/use-active-pathway";
+import { ActivePathwayBanner } from "@/components/tools/active-pathway-banner";
 import {
   Globe,
   ChevronRight,
@@ -360,6 +362,8 @@ export function PathwaysChecker({ countryData, countryCode }: Props) {
   const [goal, setGoal] = useState<string>("all");
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
+  const { active, clear, loaded } = useActivePathway(countryCode);
+
   function toggleExpanded(id: string) {
     setExpandedIds((prev) => {
       const next = new Set(prev);
@@ -451,6 +455,9 @@ export function PathwaysChecker({ countryData, countryCode }: Props) {
 
   return (
     <div className="min-h-screen bg-black">
+      {loaded && active && (
+        <ActivePathwayBanner active={active} currentTool="pathways" onClear={clear} />
+      )}
       {/* Hero */}
       <div className="hero-gradient">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">

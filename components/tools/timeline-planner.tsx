@@ -1,7 +1,9 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useActivePathway } from "@/hooks/use-active-pathway";
+import { ActivePathwayBanner } from "@/components/tools/active-pathway-banner";
 import {
   ListChecks, ChevronRight, CheckCircle, Circle, Clock, AlertCircle,
   CalendarDays, ArrowRight, BarChart3, RefreshCw, Info,
@@ -50,6 +52,24 @@ export function TimelinePlanner({ countryData, countryCode }: Props) {
 
   const [selectedPathway, setSelectedPathway] = useState<string>(pathwayParam);
   const [lodgementDate, setLodgementDate] = useState<string>("");
+
+  const { active, save, clear, loaded } = useActivePathway(countryCode);
+
+  // Save to localStorage whenever a pathway is selected
+  useEffect(() => {
+    if (selectedPathway) {
+      const pw = countryData.pathways.find(p => p.id === selectedPathway);
+      if (pw) {
+        save({
+          pathwayId: pw.id,
+          pathwayName: pw.name,
+          subclass: pw.subclass ?? null,
+          countryCode,
+          countryName: countryData.name,
+        });
+      }
+    }
+  }, [selectedPathway, countryData, countryCode, save]);
   const [completed, setCompleted] = useState<Set<string>>(new Set());
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
 
@@ -111,6 +131,9 @@ export function TimelinePlanner({ countryData, countryCode }: Props) {
 
   return (
     <div className="min-h-screen bg-black">
+      {loaded && active && (
+        <ActivePathwayBanner active={active} currentTool="planner" onClear={clear} />
+      )}
       {/* Hero header */}
       <div className="hero-gradient text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
