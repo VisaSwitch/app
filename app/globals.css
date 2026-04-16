@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #0f172a;
-  --border: #e2e8f0;
-  --muted: #f8fafc;
-  --muted-foreground: #64748b;
-  --primary: #3b82f6;
-  --primary-foreground: #ffffff;
+  --background: #000000;
+  --foreground: #ffffff;
+  --border: rgba(255,255,255,0.08);
+  --muted: #0a0d16;
+  --muted-foreground: #6b7280;
+  --primary: #ffffff;
+  --primary-foreground: #000000;
   --radius: 0.625rem;
 }
 
@@ -19,7 +19,6 @@
 }
 
 * { box-sizing: border-box; }
-
 html { scroll-behavior: smooth; }
 
 body {
@@ -30,76 +29,74 @@ body {
 }
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: #f1f5f9; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+::-webkit-scrollbar-track { background: #080808; }
+::-webkit-scrollbar-thumb { background: #282828; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #404040; }
 
-::selection { background: #dbeafe; color: #1e3a8a; }
+::selection { background: rgba(255,255,255,0.15); color: #ffffff; }
 
-/* ── Gradient text ── */
+/* Gradient text — silver/chrome shimmer */
 .gradient-text {
-  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 60%, #f0abfc 100%);
+  background: linear-gradient(120deg, #ffffff 0%, #c4d0e8 45%, #7a96b8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
+/* Legacy alias — same style for dark backgrounds */
 .gradient-text-dark {
-  background: linear-gradient(135deg, #3b82f6 0%, #6366f1 50%, #8b5cf6 100%);
+  background: linear-gradient(120deg, #ffffff 0%, #c4d0e8 45%, #7a96b8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* ── Hero / dark section backgrounds ── */
+/* Section backgrounds — all dark, flowing black */
 .hero-gradient {
-  background: linear-gradient(145deg, #050911 0%, #0d1424 40%, #0f1635 70%, #080c1e 100%);
+  background: #000000;
 }
 
 .section-dark {
-  background: linear-gradient(160deg, #060a14 0%, #0b1220 50%, #0e1530 100%);
+  background: linear-gradient(180deg, #04060c 0%, #080c18 100%);
 }
 
-/* ── Glassmorphism (on dark backgrounds) ── */
+.section-mid {
+  background: linear-gradient(180deg, #060810 0%, #040609 100%);
+}
+
+/* Glassmorphism — on dark backgrounds */
 .glass {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 .glass-hover {
-  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
 }
 .glass-hover:hover {
-  background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.055);
+  border-color: rgba(255, 255, 255, 0.13);
   transform: translateY(-2px);
+  box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.9);
 }
 
-/* ── Card hover (light backgrounds) ── */
+/* Card hover — dark bg version */
 .card-hover {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
 }
 .card-hover:hover {
   transform: translateY(-2px);
-  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.10);
+  box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.9);
+  border-color: rgba(255, 255, 255, 0.13);
+  background: rgba(255, 255, 255, 0.055);
 }
 
-/* ── Glow accents ── */
-.glow-blue {
-  box-shadow: 0 0 40px -8px rgba(59, 130, 246, 0.35);
+/* Glow accents */
+.glow-white {
+  box-shadow: 0 0 60px -12px rgba(255, 255, 255, 0.10);
 }
-.glow-indigo {
-  box-shadow: 0 0 40px -8px rgba(99, 102, 241, 0.35);
-}
-
-/* ── Noise texture overlay (subtle premium texture) ── */
-.noise::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-  pointer-events: none;
-  border-radius: inherit;
+.glow-subtle {
+  box-shadow: 0 0 40px -8px rgba(150, 180, 220, 0.12);
 }
