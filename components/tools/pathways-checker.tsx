@@ -22,6 +22,8 @@ import {
   Shield,
   FileCheck,
   TrendingUp,
+  Sparkles,
+  Zap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CountryData, VisaPathway, VisaCurrentOption, VisaGoalOption } from "@/types";
@@ -29,6 +31,108 @@ import type { CountryData, VisaPathway, VisaCurrentOption, VisaGoalOption } from
 interface Props {
   countryData: CountryData;
   countryCode: string;
+}
+
+// ── Personalised Summary Banner ──────────────────────────────────────────────
+function PersonalisedSummary({
+  currentVisaLabel,
+  goalLabel,
+  displayedPathways,
+  rankedPathwayIds,
+  bestMatch,
+  countryName,
+}: {
+  currentVisaLabel: string;
+  goalLabel: string;
+  displayedPathways: VisaPathway[];
+  rankedPathwayIds: string[];
+  bestMatch: VisaPathway | null;
+  countryName: string;
+}) {
+  const total = displayedPathways.length;
+  const rankedCount = displayedPathways.filter((p) => rankedPathwayIds.includes(p.id)).length;
+  const straightforwardCount = displayedPathways.filter((p) => p.difficulty === "straightforward").length;
+  const moderateCount = displayedPathways.filter((p) => p.difficulty === "moderate").length;
+
+  if (total === 0) return null;
+
+  // Headline — most specific when we have a ranked best match
+  const headline = bestMatch && rankedCount > 0
+    ? `${total} pathway${total !== 1 ? "s" : ""} matched — your strongest option is ${bestMatch.name}.`
+    : `${total} pathway${total !== 1 ? "s" : ""} available from your current status.`;
+
+  // Context sentence — personalized to the combination
+  let context: string;
+  if (straightforwardCount > 0 && bestMatch) {
+    context = `${straightforwardCount === 1 ? "One pathway is straightforward" : `${straightforwardCount} pathways are straightforward`} from your situation${goalLabel ? ` with a goal to ${goalLabel.toLowerCase()}` : ""}. ${bestMatch.tagline}.`;
+  } else if (bestMatch) {
+    context = `Based on your ${currentVisaLabel} status${goalLabel ? ` and goal to ${goalLabel.toLowerCase()}` : ""}, ${bestMatch.name} aligns best with your profile. ${bestMatch.tagline}.`;
+  } else {
+    context = `These pathways accept applications from ${currentVisaLabel} holders in ${countryName}. Expand any card for full details, pros and cons.`;
+  }
+
+  // Discovery insight — surface a hidden angle if there's a moderately-ranked path
+  const hiddenGem = rankedCount > 1 ? displayedPathways.find(
+    (p, i) => i > 0 && rankedPathwayIds.includes(p.id) && p.difficulty !== "complex"
+  ) : null;
+
+  return (
+    <div className="rounded-2xl border border-white/[0.13] bg-white/[0.03] p-5 mb-6 relative overflow-hidden">
+      {/* Top shimmer line */}
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+
+      <div className="flex items-start gap-3">
+        <div className="w-8 h-8 rounded-lg bg-white/[0.07] border border-white/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+          <Sparkles className="w-4 h-4 text-zinc-300" />
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <div className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2">Your analysis</div>
+
+          <p className="text-sm font-semibold text-white leading-snug mb-1.5">{headline}</p>
+          <p className="text-xs text-zinc-500 leading-relaxed mb-4">{context}</p>
+
+          {/* Quick stats chips */}
+          <div className="flex flex-wrap gap-2 mb-4">
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-300 bg-white/[0.06] border border-white/[0.09] px-2.5 py-1 rounded-full">
+              <span className="w-1.5 h-1.5 rounded-full bg-zinc-400" />
+              {total} matched
+            </span>
+            {straightforwardCount > 0 && (
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                {straightforwardCount} straightforward
+              </span>
+            )}
+            {moderateCount > 0 && (
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-full">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                {moderateCount} moderate
+              </span>
+            )}
+            {bestMatch && (
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-400 bg-white/[0.05] border border-white/[0.08] px-2.5 py-1 rounded-full">
+                <Clock className="w-3 h-3" />
+                Best match: {bestMatch.processingTime}
+              </span>
+            )}
+          </div>
+
+          {/* Hidden gem insight */}
+          {hiddenGem && (
+            <div className="flex items-start gap-2 bg-white/[0.03] border border-white/[0.07] rounded-xl px-3.5 py-3">
+              <Zap className="w-3.5 h-3.5 text-amber-400 flex-shrink-0 mt-0.5" />
+              <p className="text-xs text-zinc-400 leading-relaxed">
+                <span className="font-semibold text-zinc-300">Worth exploring: </span>
+                {hiddenGem.name} — {hiddenGem.tagline}. It&apos;s ranked #2 for your profile and is{" "}
+                <span className="font-semibold text-amber-400">{hiddenGem.difficulty}</span> difficulty.
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function getDifficultyConfig(difficulty: VisaPathway["difficulty"]) {
@@ -311,6 +415,10 @@ export function PathwaysChecker({ countryData, countryCode }: Props) {
     ? displayedPathways[0]
     : null;
 
+  // Labels for the personalised summary
+  const currentVisaLabel = countryData.currentVisaOptions.find((o) => o.value === currentVisa)?.label ?? currentVisa;
+  const goalLabel = goal === "all" ? "" : (countryData.goalOptions.find((o) => o.value === goal)?.label ?? "");
+
   const relatedTools = [
     {
       icon: ListChecks,
@@ -484,6 +592,7 @@ export function PathwaysChecker({ countryData, countryCode }: Props) {
 
             {/* Pathway results — 2/3 width */}
             <div className="lg:col-span-2">
+              {/* No filter — plain heading */}
               {!currentVisa && (
                 <div className="mb-5 flex items-center justify-between">
                   <h2 className="text-lg font-bold text-white">
@@ -491,6 +600,18 @@ export function PathwaysChecker({ countryData, countryCode }: Props) {
                   </h2>
                   <span className="text-sm text-zinc-500">{displayedPathways.length} pathways</span>
                 </div>
+              )}
+
+              {/* Filter active — personalised summary banner */}
+              {currentVisa && displayedPathways.length > 0 && (
+                <PersonalisedSummary
+                  currentVisaLabel={currentVisaLabel}
+                  goalLabel={goalLabel}
+                  displayedPathways={displayedPathways}
+                  rankedPathwayIds={rankedPathwayIds}
+                  bestMatch={bestMatchPathway}
+                  countryName={countryData.name}
+                />
               )}
 
               {currentVisa && displayedPathways.length === 0 && (
