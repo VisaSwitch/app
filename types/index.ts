@@ -93,6 +93,7 @@ export interface ChecklistItem {
   priority: "critical" | "high" | "medium" | "low";
   completed?: boolean;
   pathwayIds?: string[];  // if omitted/empty, item applies to ALL pathways
+  estimatedCost?: string;  // human-readable, e.g. "AUD 370"
 }
 
 export interface RiskFactor {
