@@ -186,8 +186,8 @@ function StepNav({
 }) {
   return (
     <div className="relative flex items-stretch">
-      {/* Connector line */}
-      <div className="absolute top-5 left-[calc(12.5%)] right-[calc(12.5%)] h-px bg-white/[0.07] hidden sm:block" />
+      {/* Connector line — starts/ends at edge of first/last circle, not beneath them */}
+      <div className="absolute top-5 left-[calc(12.5%+1.25rem)] right-[calc(12.5%+1.25rem)] h-px bg-white/[0.07] hidden sm:block" />
 
       {STEPS.map((s) => {
         const done = s.number < current;
