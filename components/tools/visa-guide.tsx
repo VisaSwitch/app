@@ -187,7 +187,7 @@ function StepNav({
   return (
     <div className="relative flex items-stretch">
       {/* Connector line — starts/ends at edge of first/last circle, not beneath them */}
-      <div className="absolute top-5 left-[calc(12.5%+1.25rem)] right-[calc(12.5%+1.25rem)] h-px bg-white/[0.07] hidden sm:block" />
+      <div className="absolute top-8 left-[calc(12.5%+1.25rem)] right-[calc(12.5%+1.25rem)] h-px bg-white/[0.07] hidden sm:block" />
 
       {STEPS.map((s) => {
         const done = s.number < current;
@@ -209,7 +209,7 @@ function StepNav({
             {/* Circle */}
             <div
               className={cn(
-                "w-10 h-10 rounded-full border-2 flex items-center justify-center z-10 transition-all",
+                "w-10 h-10 rounded-full border-2 flex items-center justify-center z-10 transition-all shadow-[0_0_0_4px_black]",
                 done
                   ? "bg-emerald-500/20 border-emerald-500/60"
                   : active
