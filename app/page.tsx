@@ -332,8 +332,11 @@ export default function HomePage() {
           </div>
 
           <div className="relative grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {/* Connector */}
-            <div className="hidden md:block absolute top-12 left-[calc(16.67%+2rem)] right-[calc(16.67%+2rem)] h-px bg-gradient-to-r from-white/5 via-white/20 to-white/5" />
+            {/* Two connector segments — gap between box 1→2 and box 2→3 only */}
+            <div className="hidden md:block absolute top-12 h-px bg-white/[0.14]"
+              style={{ left: "calc(16.67% + 3rem)", right: "calc(33.33% + 3rem)" }} />
+            <div className="hidden md:block absolute top-12 h-px bg-white/[0.14]"
+              style={{ left: "calc(50% + 3rem)", right: "calc(16.67% + 3rem)" }} />
 
             {[
               {
@@ -351,11 +354,10 @@ export default function HomePage() {
                 title: "Apply with confidence",
                 desc: "Know precisely what to prepare, when to lodge, and which risks to address — before you spend a dollar on fees.",
               },
-            ].map((step, i) => (
+            ].map((step) => (
               <div key={step.number} className="relative flex flex-col items-center text-center gap-5">
                 <div className="relative z-10 w-24 h-24 rounded-2xl border border-white/[0.12] bg-white/[0.04] flex items-center justify-center text-white font-bold text-3xl">
                   {step.number}
-                  {i < 2 && <div className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-px bg-white/20 hidden md:block" />}
                 </div>
                 <h3 className="text-lg font-bold text-white">{step.title}</h3>
                 <p className="text-sm text-zinc-500 leading-relaxed">{step.desc}</p>
