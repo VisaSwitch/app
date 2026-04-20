@@ -9,7 +9,7 @@ import { OutcomeTracker } from "@/components/tools/outcome-tracker";
 import { ReportModal } from "@/components/tools/report-modal";
 import {
   ListChecks, ChevronRight, CheckCircle, Circle, Clock, AlertCircle,
-  CalendarDays, BarChart3, Info,
+  CalendarDays, BarChart3, Info, ArrowRight,
   ChevronDown, ChevronUp, Sparkles, Target, FileCheck, Shield,
   LayoutList, GitBranch, DollarSign, FileDown,
 } from "lucide-react";
@@ -132,6 +132,20 @@ export function TimelinePlanner({ countryData, countryCode }: Props) {
     (item) => item.weeksRemaining !== null && item.weeksRemaining >= 0 && item.weeksRemaining <= 2 && !completed.has(item.id)
   );
 
+  // Single most important next action
+  const nextAction = useMemo(() => {
+    if (!selectedPathwayData) return null;
+    // First incomplete eligibility requirement
+    const firstElig = selectedPathwayData.eligibility.find(e => !completed.has(`elig-${e.id}`) && e.required);
+    if (firstElig) return { type: "eligibility" as const, label: firstElig.label, detail: firstElig.description };
+    // First incomplete critical/high checklist item
+    const firstTask = filteredChecklist
+      .filter(i => !completed.has(i.id) && (i.priority === "critical" || i.priority === "high"))
+      .sort((a, b) => a.dueWeeks - b.dueWeeks)[0];
+    if (firstTask) return { type: "task" as const, label: firstTask.title, detail: firstTask.description };
+    return null;
+  }, [selectedPathwayData, filteredChecklist, completed]);
+
   // Cost aggregation
   const itemCosts = useMemo(() => {
     return filteredChecklist
@@ -187,8 +201,8 @@ export function TimelinePlanner({ countryData, countryCode }: Props) {
             <span className="text-white">Checklist & Timeline</span>
           </div>
           <div className="flex items-center gap-4 mb-6">
-            <div className="w-12 h-12 rounded-xl bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center">
-              <ListChecks className="w-6 h-6 text-indigo-300" />
+            <div className="w-12 h-12 rounded-xl bg-white/[0.08] border border-white/10 flex items-center justify-center">
+              <ListChecks className="w-6 h-6 text-zinc-300" />
             </div>
             <div>
               <h1 className="text-2xl font-bold">Checklist & Timeline Planner</h1>
@@ -276,6 +290,21 @@ export function TimelinePlanner({ countryData, countryCode }: Props) {
 
       {/* Main content area */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+        {/* Next Action card */}
+        {nextAction && (
+          <div className="rounded-2xl border border-white/[0.15] bg-white/[0.03] p-4 flex items-start gap-3 relative overflow-hidden">
+            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+            <div className="w-8 h-8 rounded-lg bg-white/[0.08] border border-white/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <ArrowRight className="w-4 h-4 text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-0.5">Your next action</p>
+              <p className="text-sm font-bold text-white">{nextAction.label}</p>
+              <p className="text-xs text-zinc-500 leading-relaxed mt-0.5">{nextAction.detail}</p>
+            </div>
+          </div>
+        )}
+
         {/* B1: Context banner */}
         {selectedPathwayData && (
           <div className="glass border border-white/[0.09] rounded-2xl p-5 flex items-start gap-4">
@@ -376,7 +405,7 @@ export function TimelinePlanner({ countryData, countryCode }: Props) {
           <div className="glass rounded-2xl border border-white/[0.08] overflow-hidden">
             <div className="px-5 py-4 border-b border-white/[0.07] flex items-center gap-2">
               <Shield className="w-4 h-4 text-zinc-600" />
-              <h3 className="text-sm font-bold text-white">Eligibility requirements</h3>
+              <h3 className="text-sm font-bold text-white">Phase 1 — Confirm eligibility</h3>
               <span className="ml-auto text-xs text-zinc-600">
                 {selectedPathwayData.eligibility.filter((e) => completed.has(`elig-${e.id}`)).length} / {selectedPathwayData.eligibility.length} confirmed
               </span>
@@ -411,7 +440,7 @@ export function TimelinePlanner({ countryData, countryCode }: Props) {
           <div className="glass rounded-2xl border border-white/[0.08] overflow-hidden">
             <div className="px-5 py-4 border-b border-white/[0.07] flex items-center gap-2">
               <Target className="w-4 h-4 text-zinc-600" />
-              <h3 className="text-sm font-bold text-white">Application milestones</h3>
+              <h3 className="text-sm font-bold text-white">Phase 2 — Application steps</h3>
               <span className="ml-auto text-xs text-zinc-600">
                 {selectedPathwayData.nextSteps.filter((_, i) => completed.has(`step-${i}`)).length} / {selectedPathwayData.nextSteps.length} done
               </span>
@@ -450,7 +479,7 @@ export function TimelinePlanner({ countryData, countryCode }: Props) {
               <div className="glass rounded-2xl border border-white/[0.08] overflow-hidden">
                 <div className="px-5 py-4 border-b border-white/[0.07] flex items-center gap-2">
                   <FileCheck className="w-4 h-4 text-zinc-600" />
-                  <h3 className="text-sm font-bold text-white">Documents & tasks</h3>
+                  <h3 className="text-sm font-bold text-white">Phase 3 — Gather documents &amp; tasks</h3>
                   {!lodgementDate && (
                     <span className="ml-auto text-xs text-zinc-600 flex items-center gap-1">
                       <Info className="w-3 h-3" /> Set a target date above for due dates

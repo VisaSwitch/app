@@ -249,108 +249,139 @@ function PathwayCard({
           onClick={onToggle}
           className="w-full flex items-center justify-between text-xs font-semibold text-zinc-500 hover:text-zinc-300 transition-colors mt-1"
         >
-          <span>{expanded ? "Hide details" : "View details, pros & cons"}</span>
+          <span>{expanded ? "Hide details" : "View how to apply →"}</span>
           {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
         </button>
       </div>
 
       {/* Expandable content */}
       {expanded && (
-        <div className="px-5 pb-5 space-y-4 border-t border-white/[0.07] pt-4">
-          {/* Summary */}
-          <p className="text-xs text-zinc-400 leading-relaxed">{pathway.summary}</p>
-
-          {/* Pros / Cons grid */}
-          <div className="grid sm:grid-cols-2 gap-3">
-            <div className="bg-emerald-500/[0.07] rounded-xl border border-emerald-500/15 p-3.5">
-              <h4 className="text-xs font-bold text-emerald-400 mb-2 flex items-center gap-1.5">
-                <CheckCircle className="w-3.5 h-3.5" /> Pros
-              </h4>
-              <ul className="space-y-1.5">
-                {pathway.pros.map((pro, i) => (
-                  <li key={i} className="flex items-start gap-1.5">
-                    <div className="w-1 h-1 rounded-full bg-emerald-400 mt-1.5 flex-shrink-0" />
-                    <span className="text-xs text-emerald-300/80 leading-relaxed">{pro}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="bg-red-500/[0.07] rounded-xl border border-red-500/15 p-3.5">
-              <h4 className="text-xs font-bold text-red-400 mb-2 flex items-center gap-1.5">
-                <XCircle className="w-3.5 h-3.5" /> Cons
-              </h4>
-              <ul className="space-y-1.5">
-                {pathway.cons.map((con, i) => (
-                  <li key={i} className="flex items-start gap-1.5">
-                    <div className="w-1 h-1 rounded-full bg-red-400 mt-1.5 flex-shrink-0" />
-                    <span className="text-xs text-red-300/80 leading-relaxed">{con}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+        <div className="border-t border-white/[0.07]">
+          {/* ── How to Apply ── */}
+          <div className="px-5 pt-5 pb-4">
+            <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+              <span className="w-4 h-4 rounded-full bg-white text-black text-[10px] font-black flex items-center justify-center">→</span>
+              How to apply
+            </h4>
+            <ol className="space-y-3">
+              {(pathway.applicationSteps ?? pathway.nextSteps.map(s => ({ action: s, detail: "", link: undefined, duration: undefined }))).map((s, i) => (
+                <li key={i} className="flex items-start gap-3">
+                  <span className="w-5 h-5 rounded-full bg-white/[0.08] border border-white/[0.12] text-zinc-400 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
+                    {i + 1}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      {s.link ? (
+                        <a href={s.link} target="_blank" rel="noopener noreferrer"
+                          className="text-xs font-semibold text-white hover:text-zinc-300 underline decoration-white/20 transition-colors">
+                          {s.action} <ExternalLink className="inline w-3 h-3 ml-0.5 opacity-60" />
+                        </a>
+                      ) : (
+                        <span className="text-xs font-semibold text-white">{s.action}</span>
+                      )}
+                      {s.duration && (
+                        <span className="text-xs text-zinc-600 bg-white/[0.04] px-1.5 py-0.5 rounded-full border border-white/[0.06]">
+                          {s.duration}
+                        </span>
+                      )}
+                    </div>
+                    {s.detail && <p className="text-xs text-zinc-500 leading-relaxed mt-0.5">{s.detail}</p>}
+                  </div>
+                </li>
+              ))}
+            </ol>
           </div>
 
-          {/* Next steps */}
-          {pathway.nextSteps && pathway.nextSteps.length > 0 && (
-            <div>
-              <h4 className="text-xs font-bold text-zinc-400 mb-2">Next steps</h4>
-              <ol className="space-y-1.5">
-                {pathway.nextSteps.map((step, i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <span className="w-4 h-4 rounded-full bg-white/[0.08] text-zinc-300 border border-white/10 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
-                      {i + 1}
-                    </span>
-                    <span className="text-xs text-zinc-400 leading-relaxed">{step}</span>
-                  </li>
+          {/* ── Eligibility pills ── */}
+          {pathway.eligibility.length > 0 && (
+            <div className="px-5 py-4 border-t border-white/[0.06]">
+              <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">You must meet</h4>
+              <div className="flex flex-wrap gap-2">
+                {pathway.eligibility.map((req) => (
+                  <span key={req.id} className={cn(
+                    "inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full border",
+                    req.required
+                      ? "text-zinc-300 bg-white/[0.05] border-white/[0.10]"
+                      : "text-zinc-600 bg-transparent border-white/[0.05]"
+                  )}>
+                    {req.required ? <CheckCircle className="w-3 h-3 text-emerald-400 flex-shrink-0" /> : <div className="w-3 h-3" />}
+                    {req.label}
+                  </span>
                 ))}
-              </ol>
+              </div>
             </div>
           )}
 
-          {/* Leads to */}
-          {pathway.pathwayTo.length > 0 && (
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs font-semibold text-zinc-500">Leads to:</span>
-              {pathway.pathwayTo.map((p) => (
-                <span
-                  key={p}
-                  className="text-xs bg-indigo-500/15 text-indigo-400 border border-indigo-500/20 px-2.5 py-1 rounded-full font-medium"
-                >
-                  {p}
-                </span>
-              ))}
+          {/* ── Pros / Cons (collapsible) ── */}
+          <details className="px-5 py-3 border-t border-white/[0.06] group">
+            <summary className="text-xs font-semibold text-zinc-500 hover:text-zinc-300 cursor-pointer select-none list-none flex items-center gap-1.5">
+              <ChevronDown className="w-3.5 h-3.5 group-open:rotate-180 transition-transform" />
+              See pros &amp; cons
+            </summary>
+            <div className="grid sm:grid-cols-2 gap-3 mt-3">
+              <div className="bg-emerald-500/[0.07] rounded-xl border border-emerald-500/15 p-3.5">
+                <h4 className="text-xs font-bold text-emerald-400 mb-2 flex items-center gap-1.5">
+                  <CheckCircle className="w-3.5 h-3.5" /> Pros
+                </h4>
+                <ul className="space-y-1.5">
+                  {pathway.pros.map((pro, i) => (
+                    <li key={i} className="flex items-start gap-1.5">
+                      <div className="w-1 h-1 rounded-full bg-emerald-400 mt-1.5 flex-shrink-0" />
+                      <span className="text-xs text-emerald-300/80 leading-relaxed">{pro}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-red-500/[0.07] rounded-xl border border-red-500/15 p-3.5">
+                <h4 className="text-xs font-bold text-red-400 mb-2 flex items-center gap-1.5">
+                  <XCircle className="w-3.5 h-3.5" /> Cons
+                </h4>
+                <ul className="space-y-1.5">
+                  {pathway.cons.map((con, i) => (
+                    <li key={i} className="flex items-start gap-1.5">
+                      <div className="w-1 h-1 rounded-full bg-red-400 mt-1.5 flex-shrink-0" />
+                      <span className="text-xs text-red-300/80 leading-relaxed">{con}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-          )}
+          </details>
 
-          {/* Related occupations */}
-          {pathway.relatedOccupations && pathway.relatedOccupations.length > 0 && (
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs font-semibold text-zinc-500">Common for:</span>
-              {pathway.relatedOccupations.map((occ) => (
-                <span
-                  key={occ}
-                  className="text-xs bg-white/[0.06] text-zinc-400 px-2 py-0.5 rounded-full"
-                >
-                  {occ}
-                </span>
-              ))}
+          {/* ── Leads to + Related occupations + CTAs ── */}
+          <div className="px-5 pb-5 pt-3 border-t border-white/[0.06] space-y-3">
+            {pathway.pathwayTo.length > 0 && (
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs font-semibold text-zinc-500">Leads to:</span>
+                {pathway.pathwayTo.map((p) => (
+                  <span key={p} className="text-xs bg-white/[0.07] text-zinc-300 border border-white/[0.10] px-2.5 py-1 rounded-full font-medium">
+                    {p}
+                  </span>
+                ))}
+              </div>
+            )}
+            {pathway.relatedOccupations && pathway.relatedOccupations.length > 0 && (
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs font-semibold text-zinc-500">Common for:</span>
+                {pathway.relatedOccupations.map((occ) => (
+                  <span key={occ} className="text-xs bg-white/[0.06] text-zinc-400 px-2 py-0.5 rounded-full">{occ}</span>
+                ))}
+              </div>
+            )}
+            <div className="flex gap-2.5 pt-1">
+              <Link
+                href={`/${countryCode}/planner?pathway=${pathway.id}`}
+                className="inline-flex items-center gap-1.5 bg-white text-black text-xs font-semibold px-4 py-2.5 rounded-lg hover:bg-zinc-100 transition-all"
+              >
+                <ListChecks className="w-3.5 h-3.5" /> Plan this visa
+              </Link>
+              <Link
+                href={`/${countryCode}/audit?pathway=${pathway.id}`}
+                className="inline-flex items-center gap-1.5 border border-white/[0.12] text-zinc-400 text-xs font-semibold px-4 py-2.5 rounded-lg hover:border-white/25 hover:text-white transition-all"
+              >
+                <BarChart3 className="w-3.5 h-3.5" /> Risk audit
+              </Link>
             </div>
-          )}
-
-          {/* CTA buttons */}
-          <div className="flex gap-2.5 pt-1">
-            <Link
-              href={`/${countryCode}/planner?pathway=${pathway.id}`}
-              className="inline-flex items-center gap-1.5 bg-white text-black text-xs font-semibold px-4 py-2.5 rounded-lg hover:bg-zinc-100 transition-all"
-            >
-              <ListChecks className="w-3.5 h-3.5" /> Plan this visa
-            </Link>
-            <Link
-              href={`/${countryCode}/audit?pathway=${pathway.id}`}
-              className="inline-flex items-center gap-1.5 border border-white/[0.12] text-zinc-400 text-xs font-semibold px-4 py-2.5 rounded-lg hover:border-white/25 hover:text-white transition-all"
-            >
-              <BarChart3 className="w-3.5 h-3.5" /> Risk audit
-            </Link>
           </div>
         </div>
       )}

@@ -33,6 +33,12 @@ export interface VisaPathway {
   pros: string[];
   cons: string[];
   nextSteps: string[];
+  applicationSteps?: Array<{
+    action: string;       // short imperative, e.g. "Create ImmiAccount"
+    detail: string;       // 1-2 sentences of how/what
+    link?: string;        // URL if applicable
+    duration?: string;    // e.g. "5 min", "3–6 weeks"
+  }>;
   urgentNote?: string;
   // Connections
   pathwayTo: string[];
