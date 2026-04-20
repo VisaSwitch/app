@@ -21,17 +21,16 @@ export function Footer() {
           </Link>
 
           {/* All links in one line */}
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-zinc-600">
-            <span className="text-zinc-700 text-xs font-semibold uppercase tracking-wider">Countries</span>
+          <div className="flex items-center gap-5 text-sm text-zinc-600">
             {countryList.map((c) => (
-              <Link key={c.code} href={`/${c.code}/guide`} className="hover:text-white transition-colors">
+              <Link key={c.code} href={`/${c.code}/guide`} className="hover:text-white transition-colors whitespace-nowrap">
                 {c.name}
               </Link>
             ))}
-            <span className="text-white/[0.08]">·</span>
+            <span className="text-white/[0.15] select-none">|</span>
             <Link href="/about" className="hover:text-white transition-colors">About</Link>
             <Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link>
-            <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+            <Link href="/privacy" className="hover:text-white transition-colors whitespace-nowrap">Privacy</Link>
             <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
           </div>
         </div>
