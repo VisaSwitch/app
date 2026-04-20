@@ -1603,7 +1603,7 @@ function Step4TrackSubmit({
                 )}
               >
                 <OIcon
-                  className={cn("w-4 h-4", selected ? conf.color : "text-zinc-600")}
+                  className={cn("w-4 h-4", selected ? conf.color : cn(conf.color, "opacity-30"))}
                 />
                 <div>
                   <div
@@ -1686,14 +1686,27 @@ function Step4TrackSubmit({
       {outcome === "refused" && (
         <div className="space-y-5">
           <div className="bg-red-500/10 border border-red-500/25 rounded-2xl p-5">
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center gap-2 mb-3">
               <XCircle className="w-5 h-5 text-red-400" />
               <h3 className="text-base font-bold text-red-400">Refusal Recovery Plan</h3>
             </div>
-            <p className="text-sm text-zinc-400 leading-relaxed">
-              Select the reason(s) your application was refused — we&apos;ll build you a
-              targeted recovery plan.
+            <p className="text-sm text-zinc-400 leading-relaxed mb-4">
+              A refusal isn&apos;t the end. Most are recoverable — but only if you address
+              the exact reasons. Follow the steps below.
             </p>
+            {/* What to do next - 3 steps */}
+            <div className="space-y-2">
+              {[
+                { n: "1", text: "Select the reason(s) for refusal below", color: "bg-red-500/20 text-red-300" },
+                { n: "2", text: "Paste your refusal letter for a more targeted plan", color: "bg-orange-500/20 text-orange-300" },
+                { n: "3", text: "Download your recovery report and address every point before reapplying", color: "bg-amber-500/20 text-amber-300" },
+              ].map((s) => (
+                <div key={s.n} className="flex items-center gap-3">
+                  <span className={cn("w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black flex-shrink-0", s.color)}>{s.n}</span>
+                  <span className="text-xs text-zinc-400">{s.text}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Paste refusal letter */}
@@ -1839,15 +1852,32 @@ function Step4TrackSubmit({
                   </div>
                 ))}
               </div>
-              <div className="mt-5 pt-4 border-t border-white/[0.08]">
+              <div className="mt-5 pt-4 border-t border-white/[0.08] space-y-3">
                 <p className="text-xs text-zinc-500 leading-relaxed">
                   <span className="font-semibold text-zinc-300">Next step:</span> Address
                   every point above, then reapply with a comprehensive response addressing
                   the original reasons for refusal.
                 </p>
+                <button
+                  onClick={() => window.print()}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white text-black text-sm font-bold hover:bg-zinc-100 transition-all"
+                >
+                  <FileCheck className="w-4 h-4" />
+                  Download recovery report
+                </button>
               </div>
             </div>
           )}
+
+          {/* Migration agent nudge */}
+          <div className="flex items-start gap-3 px-4 py-3.5 rounded-xl border border-amber-500/20 bg-amber-500/[0.05]">
+            <Info className="w-4 h-4 text-amber-400/80 flex-shrink-0 mt-0.5" />
+            <p className="text-xs text-zinc-500 leading-relaxed">
+              <span className="font-semibold text-amber-300/80">Complex refusal?</span>{" "}
+              Consider engaging a registered migration agent — especially for character,
+              health, or second refusals. A professional review often makes the difference.
+            </p>
+          </div>
         </div>
       )}
     </div>
