@@ -182,10 +182,12 @@ const STEPS: { number: Step; label: string; sublabel: string; icon: React.Elemen
 function StepNav({
   current,
   maxUnlocked,
+  step4Complete,
   onStepClick,
 }: {
   current: Step;
   maxUnlocked: Step;
+  step4Complete: boolean;
   onStepClick: (s: Step) => void;
 }) {
   return (
@@ -203,8 +205,8 @@ function StepNav({
       ))}
 
       {STEPS.map((s) => {
-        const done = s.number < current;
-        const active = s.number === current;
+        const done = s.number < current || (s.number === 4 && step4Complete);
+        const active = s.number === current && !(s.number === 4 && step4Complete);
         const locked = s.number > maxUnlocked;
         const Icon = s.icon;
 
@@ -1935,6 +1937,26 @@ function Step4TrackSubmit({
           </div>
         </div>
       )}
+
+      {/* Generate report — shown once any outcome is selected */}
+      {outcome !== null && (
+        <div className="glass rounded-2xl border border-white/[0.10] p-5">
+          <div className="flex items-center gap-2 mb-1">
+            <FileCheck className="w-4 h-4 text-zinc-400" />
+            <h3 className="text-sm font-bold text-white">Download your guide report</h3>
+          </div>
+          <p className="text-xs text-zinc-500 mb-4 leading-relaxed">
+            Export a full PDF of your visa journey — pathway, eligibility results, checklist, risk score, and current status.
+          </p>
+          <button
+            onClick={() => window.print()}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white text-black text-sm font-bold hover:bg-zinc-100 transition-all"
+          >
+            <FileCheck className="w-4 h-4" />
+            Download full report
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -2046,6 +2068,7 @@ export function VisaGuide({ countryData, countryCode }: Props) {
             <StepNav
               current={state.step}
               maxUnlocked={state.maxUnlocked}
+              step4Complete={state.outcome !== null}
               onStepClick={goToStep}
             />
           </div>
@@ -2172,8 +2195,8 @@ export function VisaGuide({ countryData, countryCode }: Props) {
               </h3>
               <div className="space-y-2.5">
                 {STEPS.map((s) => {
-                  const done = s.number < state.step;
-                  const active = s.number === state.step;
+                  const done = s.number < state.step || (s.number === 4 && state.outcome !== null);
+                  const active = s.number === state.step && !(s.number === 4 && state.outcome !== null);
                   const locked = s.number > state.maxUnlocked;
                   const SIcon = s.icon;
                   return (
