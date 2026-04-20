@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Globe } from "lucide-react";
+import { Globe, ShieldAlert } from "lucide-react";
 import { countryList } from "@/data";
 
 export function Footer() {
@@ -35,10 +35,18 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Bottom micro-row */}
-        <div className="mt-8 pt-6 border-t border-white/[0.04] flex flex-col sm:flex-row items-center justify-between gap-2">
+        {/* Disclaimer bar */}
+        <div className="mt-8 flex items-center gap-2.5 px-4 py-3 rounded-xl border border-amber-500/20 bg-amber-500/[0.05]">
+          <ShieldAlert className="w-4 h-4 text-amber-400/80 flex-shrink-0" />
+          <p className="text-xs text-amber-300/70 leading-relaxed">
+            <span className="font-semibold text-amber-300/90">Not legal advice.</span>{" "}
+            Immigration rules change frequently. Always verify requirements with official government sources before lodging any application.
+          </p>
+        </div>
+
+        {/* Copyright */}
+        <div className="mt-4 flex items-center justify-center">
           <p className="text-xs text-zinc-700">&copy; {new Date().getFullYear()} VisaSwitch. All rights reserved.</p>
-          <p className="text-xs text-zinc-800">Not legal advice. Always verify with official government sources.</p>
         </div>
       </div>
     </footer>
