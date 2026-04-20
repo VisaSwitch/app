@@ -1,63 +1,45 @@
 import Link from "next/link";
-import { Globe, Shield } from "lucide-react";
+import { Globe } from "lucide-react";
 import { countryList } from "@/data";
 
 export function Footer() {
   return (
-    <footer className="bg-[#020407] text-zinc-500 border-t border-white/[0.05]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="py-14 grid grid-cols-1 md:grid-cols-4 gap-10">
+    <footer className="bg-[#020407] border-t border-white/[0.05]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
-          {/* Brand */}
-          <div className="md:col-span-2">
-            <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-white/[0.07] border border-white/[0.09] flex items-center justify-center">
-                <Globe className="w-4 h-4 text-zinc-300" />
-              </div>
-              <span className="font-bold text-white text-lg tracking-tight">
-                Visa<span className="text-zinc-400">Switch</span>
-              </span>
-            </Link>
-            <p className="text-sm text-zinc-600 leading-relaxed max-w-xs mb-5">
-              Intelligent visa navigation for Australia, UK, Canada, and Japan. Plan smarter, apply with confidence.
-            </p>
-            <div className="flex items-center gap-2 text-xs text-zinc-700">
-              <Shield className="w-3.5 h-3.5 flex-shrink-0" />
-              <span>Not legal advice. For informational purposes only.</span>
+        {/* Main row */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+
+          {/* Logo + tagline */}
+          <Link href="/" className="flex items-center gap-2 flex-shrink-0">
+            <div className="w-7 h-7 rounded-lg bg-white/[0.07] border border-white/[0.09] flex items-center justify-center">
+              <Globe className="w-3.5 h-3.5 text-zinc-400" />
             </div>
-          </div>
+            <span className="font-bold text-white tracking-tight">
+              Visa<span className="text-zinc-500">Switch</span>
+            </span>
+          </Link>
 
-          {/* Countries */}
-          <div>
-            <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-4">Countries</h3>
-            <ul className="space-y-3">
-              {countryList.map((country) => (
-                <li key={country.code}>
-                  <Link href={`/${country.code}/guide`} className="text-sm text-zinc-600 hover:text-white transition-colors">
-                    {country.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Company */}
-          <div>
-            <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-4">Company</h3>
-            <ul className="space-y-3">
-              <li><Link href="/about" className="text-sm text-zinc-600 hover:text-white transition-colors">About</Link></li>
-              <li><Link href="/pricing" className="text-sm text-zinc-600 hover:text-white transition-colors">Pricing</Link></li>
-              <li><Link href="/contact" className="text-sm text-zinc-600 hover:text-white transition-colors">Contact</Link></li>
-              <li><Link href="/privacy" className="text-sm text-zinc-600 hover:text-white transition-colors">Privacy Policy</Link></li>
-              <li><Link href="/terms" className="text-sm text-zinc-600 hover:text-white transition-colors">Terms of Use</Link></li>
-            </ul>
+          {/* All links in one line */}
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-zinc-600">
+            <span className="text-zinc-700 text-xs font-semibold uppercase tracking-wider">Countries</span>
+            {countryList.map((c) => (
+              <Link key={c.code} href={`/${c.code}/guide`} className="hover:text-white transition-colors">
+                {c.name}
+              </Link>
+            ))}
+            <span className="text-white/[0.08]">·</span>
+            <Link href="/about" className="hover:text-white transition-colors">About</Link>
+            <Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link>
+            <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
           </div>
         </div>
 
-        {/* Bottom bar */}
-        <div className="border-t border-white/[0.05] py-5 flex flex-col sm:flex-row items-center justify-between gap-2">
+        {/* Bottom micro-row */}
+        <div className="mt-8 pt-6 border-t border-white/[0.04] flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-xs text-zinc-700">&copy; {new Date().getFullYear()} VisaSwitch. All rights reserved.</p>
-          <p className="text-xs text-zinc-800">Always verify requirements with official government sources.</p>
+          <p className="text-xs text-zinc-800">Not legal advice. Always verify with official government sources.</p>
         </div>
       </div>
     </footer>
