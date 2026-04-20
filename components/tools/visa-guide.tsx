@@ -339,9 +339,10 @@ function Step1FindPathway({
       ? displayedPathways[0]
       : null;
 
-  const secondaryPathways = bestMatchPathway
+  const secondaryPathways = (bestMatchPathway
     ? displayedPathways.slice(1)
-    : displayedPathways;
+    : displayedPathways
+  ).slice().sort((a, b) => difficultyOrder[a.difficulty] - difficultyOrder[b.difficulty]);
 
   const hasResults = currentVisa && displayedPathways.length > 0;
 
