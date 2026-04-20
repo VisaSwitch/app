@@ -1,13 +1,6 @@
 import Link from "next/link";
-import { Globe, Shield, BookOpen, Mail, ArrowRight } from "lucide-react";
+import { Globe, Shield, BookOpen, Mail, ArrowRight, Sparkles } from "lucide-react";
 import { countryList } from "@/data";
-
-const tools = [
-  { href: "/pathways", label: "Pathway Checker" },
-  { href: "/planner", label: "Checklist & Timeline" },
-  { href: "/audit", label: "Risk Audit" },
-  { href: "/recovery", label: "Refusal Recovery" },
-];
 
 export function Footer() {
   return (
@@ -48,14 +41,18 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Tools */}
+          {/* Guide */}
           <div>
-            <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-5">Tools</h3>
+            <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-5">Visa Guide</h3>
             <ul className="space-y-3">
-              {tools.map((tool) => (
-                <li key={tool.href}>
-                  <Link href={`/au${tool.href}`} className="text-sm text-zinc-600 hover:text-white transition-colors">
-                    {tool.label}
+              {countryList.map((c) => (
+                <li key={c.code}>
+                  <Link
+                    href={`/${c.code}/guide`}
+                    className="text-sm text-zinc-600 hover:text-white transition-colors flex items-center gap-1.5 group"
+                  >
+                    <Sparkles className="w-3 h-3 opacity-50 group-hover:opacity-100 transition-opacity" />
+                    {c.name} Guide
                   </Link>
                 </li>
               ))}

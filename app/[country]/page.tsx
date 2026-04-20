@@ -3,9 +3,6 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import {
   Globe,
-  ListChecks,
-  BarChart3,
-  RefreshCw,
   ArrowRight,
   Clock,
   DollarSign,
@@ -35,12 +32,6 @@ export async function generateStaticParams() {
   return [{ country: "au" }, { country: "uk" }, { country: "ca" }, { country: "jp" }];
 }
 
-const tools = [
-  { icon: Globe, title: "Pathway Checker", description: "Find out which visa pathways you qualify for based on your personal profile and situation.", href: "pathways", badge: null },
-  { icon: ListChecks, title: "Checklist & Timeline", description: "Get a step-by-step personalised checklist with deadlines for your specific visa application.", href: "planner", badge: null },
-  { icon: BarChart3, title: "Pre-lodgement Risk Audit", description: "Analyse your application's risk profile before submitting to maximise your approval chances.", href: "audit", badge: null },
-  { icon: RefreshCw, title: "Refusal Recovery", description: "Received a refusal? Understand why and build your strongest path to overturning it.", href: "recovery", badge: null },
-];
 
 export default async function CountryPage({ params }: Props) {
   const { country } = await params;
@@ -154,49 +145,6 @@ export default async function CountryPage({ params }: Props) {
               </div>
             </div>
           </Link>
-        </div>
-      </section>
-
-      {/* Tools grid */}
-      <section className="section-dark py-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-6">
-            <h2 className="text-base font-bold text-zinc-400 mb-1">Individual tools</h2>
-            <p className="text-zinc-600 text-sm">Or access each tool directly if you know what you need.</p>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {tools.map((tool) => {
-              const Icon = tool.icon;
-              return (
-                <Link
-                  key={tool.title}
-                  href={`/${country}/${tool.href}`}
-                  className="glass card-hover rounded-2xl border border-white/[0.08] p-6 flex flex-col gap-4 group"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="w-10 h-10 rounded-xl border border-white/[0.09] bg-white/[0.05] flex items-center justify-center">
-                      <Icon className="w-5 h-5 text-zinc-300" />
-                    </div>
-                    {tool.badge && (
-                      <span className="text-xs font-semibold text-zinc-300 bg-white/[0.07] px-2 py-1 rounded-full border border-white/10">
-                        {tool.badge}
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-sm font-bold text-white mb-1.5 group-hover:text-zinc-200 transition-colors">
-                      {tool.title}
-                    </h3>
-                    <p className="text-xs text-zinc-500 leading-relaxed">{tool.description}</p>
-                  </div>
-                  <div className="flex items-center gap-1 text-xs font-semibold text-zinc-400 group-hover:text-white transition-colors">
-                    Open tool
-                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
         </div>
       </section>
 

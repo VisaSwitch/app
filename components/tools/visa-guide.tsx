@@ -762,50 +762,61 @@ function SecondaryCard({
           : "bg-white/[0.03] border-white/[0.08] hover:bg-white/[0.05] hover:border-white/[0.12]"
       )}
     >
-      <button onClick={onToggle} className="w-full p-5 flex items-center gap-4 text-left">
-        <div
-          className={cn(
-            "w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0",
-            pathway.iconBg
-          )}
-        >
-          <Globe className={cn("w-4 h-4", pathway.iconColor)} />
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex flex-wrap items-center gap-1.5 mb-1">
-            {pathway.subclass && (
-              <span className="text-xs text-zinc-400 bg-white/[0.05] px-1.5 py-0.5 rounded-full">
-                Subclass {pathway.subclass}
-              </span>
+      <button onClick={onToggle} className="w-full p-5 text-left">
+        {/* Top row: icon + name + chevron */}
+        <div className="flex items-start gap-3 mb-2.5">
+          <div
+            className={cn(
+              "w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5",
+              pathway.iconBg
             )}
-            <span className={cn("text-xs font-medium px-2 py-0.5 rounded-full border", difficulty.color)}>
-              {difficulty.label}
-            </span>
-            {confirmed && (
-              <span className="text-xs font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">
-                ✓ Selected
-              </span>
-            )}
+          >
+            <Globe className={cn("w-4 h-4", pathway.iconColor)} />
           </div>
-          <div className="text-sm font-bold text-white leading-snug">{pathway.name}</div>
-          <div className="text-xs text-zinc-500 mt-0.5 line-clamp-1">{pathway.tagline}</div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-1.5 mb-1">
+                  {pathway.subclass && (
+                    <span className="text-xs text-zinc-400 bg-white/[0.05] px-1.5 py-0.5 rounded-full">
+                      Subclass {pathway.subclass}
+                    </span>
+                  )}
+                  <span className={cn("text-xs font-medium px-2 py-0.5 rounded-full border", difficulty.color)}>
+                    {difficulty.label}
+                  </span>
+                  {confirmed && (
+                    <span className="text-xs font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">
+                      ✓ Selected
+                    </span>
+                  )}
+                </div>
+                <div className="text-sm font-bold text-white leading-snug">{pathway.name}</div>
+              </div>
+              {expanded ? (
+                <ChevronUp className="w-4 h-4 text-zinc-500 flex-shrink-0 mt-1" />
+              ) : (
+                <ChevronDown className="w-4 h-4 text-zinc-500 flex-shrink-0 mt-1" />
+              )}
+            </div>
+          </div>
         </div>
-        <div className="flex items-center gap-4 flex-shrink-0 ml-auto pl-2">
-          <div className="hidden lg:flex flex-col items-end gap-1 text-xs text-zinc-500">
-            <span className="flex items-center gap-1 whitespace-nowrap">
-              <Clock className="w-3 h-3 flex-shrink-0" />
-              {pathway.processingTime}
-            </span>
-            <span className="flex items-center gap-1 whitespace-nowrap">
-              <DollarSign className="w-3 h-3 flex-shrink-0" />
-              {pathway.cost}
-            </span>
-          </div>
-          {expanded ? (
-            <ChevronUp className="w-4 h-4 text-zinc-500 flex-shrink-0" />
-          ) : (
-            <ChevronDown className="w-4 h-4 text-zinc-500 flex-shrink-0" />
-          )}
+        {/* Tagline — full width, wraps freely */}
+        <p className="text-xs text-zinc-500 leading-relaxed pl-[52px] mb-2.5">{pathway.tagline}</p>
+        {/* Stats row */}
+        <div className="flex items-center gap-4 pl-[52px] text-xs text-zinc-600">
+          <span className="flex items-center gap-1">
+            <Clock className="w-3 h-3 flex-shrink-0" />
+            {pathway.processingTime}
+          </span>
+          <span className="flex items-center gap-1">
+            <DollarSign className="w-3 h-3 flex-shrink-0" />
+            {pathway.cost}
+          </span>
+          <span className="flex items-center gap-1">
+            <Calendar className="w-3 h-3 flex-shrink-0" />
+            {pathway.validity}
+          </span>
         </div>
       </button>
 
