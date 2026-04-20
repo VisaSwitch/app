@@ -13,6 +13,7 @@ import {
   ChevronRight,
   Info,
   CheckCircle,
+  Sparkles,
 } from "lucide-react";
 import { getCountryData, isValidCountry } from "@/data";
 
@@ -35,7 +36,7 @@ export async function generateStaticParams() {
 }
 
 const tools = [
-  { icon: Globe, title: "Pathway Checker", description: "Find out which visa pathways you qualify for based on your personal profile and situation.", href: "pathways", badge: "Start here" },
+  { icon: Globe, title: "Pathway Checker", description: "Find out which visa pathways you qualify for based on your personal profile and situation.", href: "pathways", badge: null },
   { icon: ListChecks, title: "Checklist & Timeline", description: "Get a step-by-step personalised checklist with deadlines for your specific visa application.", href: "planner", badge: null },
   { icon: BarChart3, title: "Pre-lodgement Risk Audit", description: "Analyse your application's risk profile before submitting to maximise your approval chances.", href: "audit", badge: null },
   { icon: RefreshCw, title: "Refusal Recovery", description: "Received a refusal? Understand why and build your strongest path to overturning it.", href: "recovery", badge: null },
@@ -83,10 +84,11 @@ export default async function CountryPage({ params }: Props) {
             </p>
             <div className="flex flex-wrap gap-3">
               <Link
-                href={`/${country}/pathways`}
+                href={`/${country}/guide`}
                 className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold bg-white text-black rounded-xl hover:bg-zinc-100 transition-all group"
               >
-                Check my pathways
+                <Sparkles className="w-4 h-4" />
+                Start my visa guide
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </Link>
               <a
@@ -117,12 +119,50 @@ export default async function CountryPage({ params }: Props) {
         <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-b from-transparent to-[#04060c] pointer-events-none" />
       </section>
 
-      {/* Tools grid */}
-      <section className="section-dark py-16">
+      {/* Unified guide CTA banner */}
+      <section className="section-dark pt-16 pb-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-10">
-            <h2 className="text-2xl font-bold text-white mb-2">Tools for {data.name}</h2>
-            <p className="text-zinc-500">Four interconnected tools that guide you from eligibility through to approval.</p>
+          <Link
+            href={`/${country}/guide`}
+            className="group block glass card-hover rounded-2xl border border-white/[0.14] p-7 relative overflow-hidden"
+          >
+            <div className="absolute inset-0 pointer-events-none" aria-hidden>
+              <div className="absolute top-[-30%] right-[-5%] w-[400px] h-[400px] rounded-full opacity-[0.04]"
+                style={{ background: "radial-gradient(circle, rgba(200,255,200,1) 0%, transparent 70%)" }} />
+            </div>
+            <div className="relative flex flex-col sm:flex-row sm:items-center gap-5">
+              <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center flex-shrink-0">
+                <Sparkles className="w-7 h-7 text-black" />
+              </div>
+              <div className="flex-1">
+                <div className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full mb-2 uppercase tracking-widest">
+                  New — all-in-one
+                </div>
+                <h2 className="text-xl font-bold text-white mb-1">
+                  Complete Visa Guide — one flow, start to approval
+                </h2>
+                <p className="text-sm text-zinc-500 leading-relaxed max-w-xl">
+                  Pathway finder, eligibility check, risk audit, checklist &amp; application
+                  tracker — all in a single guided journey. Your progress is saved.
+                </p>
+              </div>
+              <div className="flex-shrink-0">
+                <div className="inline-flex items-center gap-2 px-5 py-3 text-sm font-bold bg-white text-black rounded-xl group-hover:bg-zinc-100 transition-all">
+                  Start guide
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                </div>
+              </div>
+            </div>
+          </Link>
+        </div>
+      </section>
+
+      {/* Tools grid */}
+      <section className="section-dark py-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-6">
+            <h2 className="text-base font-bold text-zinc-400 mb-1">Individual tools</h2>
+            <p className="text-zinc-600 text-sm">Or access each tool directly if you know what you need.</p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {tools.map((tool) => {
