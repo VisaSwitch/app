@@ -145,7 +145,7 @@ export function RefusalRecovery({ countryData, countryCode }: Props) {
                   <textarea
                     rows={3}
                     placeholder="Paste key text from your refusal letter..."
-                    className="w-full px-3 py-2.5 rounded-xl border border-white/[0.12] bg-white/[0.05] text-white text-sm placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-white/20 resize-none"
+                    className="w-full px-3 py-2.5 rounded-xl border border-white/[0.12] bg-white/[0.05] text-white text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-white/20 resize-none"
                     value={refusalText}
                     onChange={(e) => setRefusalText(e.target.value)}
                   />
@@ -190,16 +190,19 @@ export function RefusalRecovery({ countryData, countryCode }: Props) {
           {/* Left column — reason selector (3/5 width) */}
           <div className="lg:col-span-3 space-y-4">
             {/* How to use */}
-            <div className="flex items-start gap-3 bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 mb-1">
-              <div className="flex flex-col gap-1.5 text-xs text-zinc-400 leading-relaxed">
-                <p><span className="font-semibold text-white">Got a refusal letter?</span> Select the reasons cited below to get a step-by-step recovery plan. Or paste your refusal letter text above to auto-detect them.</p>
-              </div>
+            <div className="flex items-start gap-3 bg-white/[0.03] border border-white/[0.08] rounded-xl p-4">
+              <Info className="w-4 h-4 text-zinc-400 flex-shrink-0 mt-0.5" />
+              <p className="text-xs text-zinc-400 leading-relaxed">
+                <span className="font-semibold text-white">Select every reason cited in your refusal letter.</span>{" "}
+                Recovery steps appear inline — or paste letter text above to auto-detect them.
+              </p>
             </div>
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-bold text-white">Select your refusal reasons</h2>
-              <span className="text-sm text-zinc-500">{selectedReasons.size} selected</span>
+              <h2 className="text-base font-bold text-white">Refusal reasons</h2>
+              {selectedReasons.size > 0 && (
+                <span className="text-xs font-semibold text-white bg-white/10 border border-white/20 px-2.5 py-1 rounded-full">{selectedReasons.size} selected</span>
+              )}
             </div>
-            <p className="text-sm text-zinc-500 -mt-2">Select all reasons cited in your refusal letter.</p>
 
             <div className="space-y-3">
               {relevantReasons.map((reason) => {
@@ -263,26 +266,29 @@ export function RefusalRecovery({ countryData, countryCode }: Props) {
           <div className="lg:col-span-2">
             <div className="sticky top-6 space-y-4">
               {/* Summary card */}
-              <div className="glass rounded-2xl border border-white/[0.08] p-5 text-white">
-                <h3 className="text-sm font-bold text-white mb-1">Recovery Plan</h3>
+              <div className="glass rounded-2xl border border-white/[0.08] p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-sm font-bold text-white">Recovery Plan</h3>
+                  {selectedReasons.size > 0 && (
+                    <span className="text-xs text-amber-400 font-semibold">
+                      {selectedReasonData.reduce((sum, r) => sum + r.solutions.length, 0)} action steps
+                    </span>
+                  )}
+                </div>
                 {selectedReasons.size === 0 ? (
                   <p className="text-xs text-zinc-500 leading-relaxed">Select reasons on the left to build your personalised recovery plan.</p>
                 ) : (
-                  <>
-                    <p className="text-xs text-zinc-500 mb-4">{selectedReasons.size} reason{selectedReasons.size !== 1 ? "s" : ""} identified</p>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="bg-white/[0.05] rounded-xl p-3 text-center border border-white/[0.08]">
-                        <div className="text-xl font-bold text-white mb-0.5">{selectedReasons.size}</div>
-                        <div className="text-xs text-zinc-500">Reasons</div>
-                      </div>
-                      <div className="bg-white/[0.05] rounded-xl p-3 text-center border border-white/[0.08]">
-                        <div className="text-xl font-bold text-amber-400 mb-0.5">
-                          {selectedReasonData.reduce((sum, r) => sum + r.solutions.length, 0)}
+                  <div className="space-y-2">
+                    {selectedReasonData.map((r) => (
+                      <div key={r.id} className="flex items-start gap-2">
+                        <XCircle className="w-3.5 h-3.5 text-red-400 flex-shrink-0 mt-0.5" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-semibold text-zinc-300 leading-snug">{r.title}</p>
+                          <p className="text-xs text-zinc-500">{r.solutions.length} step{r.solutions.length !== 1 ? "s" : ""} to fix</p>
                         </div>
-                        <div className="text-xs text-zinc-500">Action steps</div>
                       </div>
-                    </div>
-                  </>
+                    ))}
+                  </div>
                 )}
               </div>
 
