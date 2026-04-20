@@ -3,7 +3,9 @@ import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useActivePathway } from "@/hooks/use-active-pathway";
+import { useOutcome } from "@/hooks/use-outcome";
 import { ActivePathwayBanner } from "@/components/tools/active-pathway-banner";
+import { OutcomeTracker } from "@/components/tools/outcome-tracker";
 import { ReportModal } from "@/components/tools/report-modal";
 import {
   ListChecks, ChevronRight, CheckCircle, Circle, Clock, AlertCircle,
@@ -56,6 +58,11 @@ export function TimelinePlanner({ countryData, countryCode }: Props) {
   const [lodgementDate, setLodgementDate] = useState<string>("");
 
   const { active, save, clear, loaded } = useActivePathway(countryCode);
+
+  const { outcome, save: saveOutcome, reset: resetOutcome, loaded: outcomeLoaded } = useOutcome(
+    countryCode,
+    selectedPathway || "__general__"
+  );
 
   // Save to localStorage whenever a pathway is selected
   useEffect(() => {
@@ -574,6 +581,18 @@ export function TimelinePlanner({ countryData, countryCode }: Props) {
               );
             })}
           </div>
+        )}
+
+        {/* B5b: Outcome tracker */}
+        {outcomeLoaded && (completedCount > 0 || outcome !== null) && (
+          <OutcomeTracker
+            outcome={outcome}
+            pathwayId={selectedPathway || "__general__"}
+            pathwayName={selectedPathwayData?.name ?? countryData.name}
+            countryCode={countryCode}
+            onSelect={saveOutcome}
+            onReset={resetOutcome}
+          />
         )}
 
         {/* B6: Bottom CTA */}
