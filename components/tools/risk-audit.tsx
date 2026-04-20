@@ -5,9 +5,9 @@ import Link from "next/link";
 import { useActivePathway } from "@/hooks/use-active-pathway";
 import { ActivePathwayBanner } from "@/components/tools/active-pathway-banner";
 import {
-  BarChart3, ChevronRight, AlertTriangle, CheckCircle, XCircle,
-  Shield, RefreshCw, TrendingUp, TrendingDown, Minus, Info,
-  ListChecks, ChevronDown, ChevronUp, Sparkles, Zap, ArrowRight, Target,
+  BarChart3, ChevronRight, AlertTriangle, CheckCircle,
+  Shield, RefreshCw, TrendingUp, Info,
+  ListChecks, ChevronDown, ChevronUp, Zap, ArrowRight, Target,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CountryData, RiskFactor, VisaPathway } from "@/types";
@@ -177,7 +177,7 @@ export function RiskAudit({ countryData, countryCode }: Props) {
       <div className="hero-gradient text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           {/* Breadcrumb */}
-          <div className="flex items-center gap-1.5 text-sm text-zinc-600 mb-4">
+          <div className="flex items-center gap-1.5 text-sm text-zinc-500 mb-4">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
             <ChevronRight className="w-4 h-4" />
             <Link href={`/${countryCode}`} className="hover:text-white transition-colors">{countryData.name}</Link>
@@ -256,7 +256,7 @@ export function RiskAudit({ countryData, countryCode }: Props) {
                       <p className="text-xs text-zinc-500 leading-relaxed">{factor.description}</p>
                     </div>
                     <div className="flex-shrink-0 ml-2">
-                      {isExpanded ? <ChevronUp className="w-4 h-4 text-zinc-600 hover:text-zinc-300 transition-colors" /> : <ChevronDown className="w-4 h-4 text-zinc-600 hover:text-zinc-300 transition-colors" />}
+                      {isExpanded ? <ChevronUp className="w-4 h-4 text-zinc-500 hover:text-zinc-300 transition-colors" /> : <ChevronDown className="w-4 h-4 text-zinc-500 hover:text-zinc-300 transition-colors" />}
                     </div>
                   </button>
 
@@ -313,39 +313,6 @@ export function RiskAudit({ countryData, countryCode }: Props) {
               </div>
             )}
 
-            {/* Full breakdown table */}
-            {answeredCount > 0 && (
-              <div className="glass rounded-2xl border border-white/[0.08] overflow-hidden">
-                <div className="px-5 py-4 border-b border-white/[0.07]">
-                  <h3 className="text-sm font-bold text-white">Full Risk Factor Breakdown</h3>
-                </div>
-                <div className="divide-y divide-white/[0.06]">
-                  {results.map((r) => {
-                    const impactIcons = {
-                      positive: <TrendingUp className="w-4 h-4 text-emerald-400" />,
-                      neutral: <Minus className="w-4 h-4 text-zinc-600" />,
-                      negative: <TrendingDown className="w-4 h-4 text-orange-400" />,
-                      critical: <XCircle className="w-4 h-4 text-red-400" />,
-                    };
-                    return (
-                      <div key={r.factor.id} className="px-5 py-3.5 flex items-center gap-3">
-                        {impactIcons[r.impact]}
-                        <span className="text-sm text-zinc-400 flex-1">{r.factor.label}</span>
-                        <span className={cn(
-                          "text-xs font-semibold px-2 py-0.5 rounded-full",
-                          r.answer === "yes" ? "bg-red-500/15 text-red-400" :
-                          r.answer === "partial" ? "bg-amber-500/15 text-amber-400" :
-                          r.answer === "no" ? "bg-emerald-500/15 text-emerald-400" :
-                          "bg-white/[0.06] text-zinc-500"
-                        )}>
-                          {r.answer === "yes" ? "Applies" : r.answer === "partial" ? "Partial" : r.answer === "no" ? "Clear" : "Not assessed"}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Right column — live score panel */}
@@ -390,7 +357,7 @@ export function RiskAudit({ countryData, countryCode }: Props) {
                       <p className="text-xs text-zinc-400 leading-relaxed">{config.description}</p>
                       {/* Next threshold */}
                       {riskLevel !== "low" && (
-                        <p className="text-xs text-zinc-600 mt-1">
+                        <p className="text-xs text-zinc-500 mt-1">
                           {riskLevel === "critical" && `+${30 - overallScore} pts to reach High Risk`}
                           {riskLevel === "high" && `+${50 - overallScore} pts to reach Moderate Risk`}
                           {riskLevel === "moderate" && `+${75 - overallScore} pts to reach Low Risk`}
@@ -409,7 +376,7 @@ export function RiskAudit({ countryData, countryCode }: Props) {
 
                 {/* Progress bar */}
                 <div className="mt-2">
-                  <div className="flex justify-between text-xs text-zinc-600 mb-1.5">
+                  <div className="flex justify-between text-xs text-zinc-500 mb-1.5">
                     <span>{answeredCount} of {totalFactors} assessed</span>
                     <span>{Math.round((answeredCount / totalFactors) * 100)}%</span>
                   </div>
@@ -419,6 +386,9 @@ export function RiskAudit({ countryData, countryCode }: Props) {
                       style={{ width: `${(answeredCount / totalFactors) * 100}%` }}
                     />
                   </div>
+                  {answeredCount === totalFactors && answeredCount > 0 && (
+                    <p className="text-xs text-emerald-400 font-semibold text-center mt-2">Audit complete ✓</p>
+                  )}
                 </div>
               </div>
 
@@ -449,7 +419,7 @@ export function RiskAudit({ countryData, countryCode }: Props) {
                               </span>
                             )}
                           </div>
-                          <p className="text-xs text-zinc-600 leading-relaxed">{r.factor.mitigation}</p>
+                          <p className="text-xs text-zinc-500 leading-relaxed">{r.factor.mitigation}</p>
                         </div>
                       );
                     })}
@@ -467,23 +437,6 @@ export function RiskAudit({ countryData, countryCode }: Props) {
                 </div>
               )}
 
-              {/* Pathway-specific risk areas */}
-              {selectedPathwayData && selectedPathwayData.cons.length > 0 && (
-                <div className="glass rounded-2xl border border-white/[0.08] p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Sparkles className="w-3.5 h-3.5 text-zinc-400" />
-                    <h4 className="text-xs font-bold text-zinc-400">Known {selectedPathwayData.name} challenges</h4>
-                  </div>
-                  <ul className="space-y-1.5">
-                    {selectedPathwayData.cons.slice(0, 4).map((con, i) => (
-                      <li key={i} className="flex items-start gap-1.5">
-                        <div className="w-1 h-1 rounded-full bg-zinc-600 mt-1.5 flex-shrink-0" />
-                        <span className="text-xs text-zinc-500 leading-relaxed">{con}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
 
               {/* CTAs */}
               {answeredCount > 0 && (

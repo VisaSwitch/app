@@ -115,3 +115,7 @@ body {
 }
 
 .print-only { display: none; }
+
+/* Readable secondary text on dark backgrounds */
+.text-secondary { color: rgba(255, 255, 255, 0.45); }
+.text-tertiary { color: rgba(255, 255, 255, 0.30); }

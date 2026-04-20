@@ -96,7 +96,7 @@ export function RefusalRecovery({ countryData, countryCode }: Props) {
       <div className="hero-gradient text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           {/* Breadcrumb */}
-          <div className="flex items-center gap-1.5 text-sm text-zinc-600 mb-4">
+          <div className="flex items-center gap-1.5 text-sm text-zinc-500 mb-4">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
             <ChevronRight className="w-4 h-4" />
             <Link href={`/${countryCode}`} className="hover:text-white transition-colors">{countryData.name}</Link>
@@ -189,6 +189,12 @@ export function RefusalRecovery({ countryData, countryCode }: Props) {
 
           {/* Left column — reason selector (3/5 width) */}
           <div className="lg:col-span-3 space-y-4">
+            {/* How to use */}
+            <div className="flex items-start gap-3 bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 mb-1">
+              <div className="flex flex-col gap-1.5 text-xs text-zinc-400 leading-relaxed">
+                <p><span className="font-semibold text-white">Got a refusal letter?</span> Select the reasons cited below to get a step-by-step recovery plan. Or paste your refusal letter text above to auto-detect them.</p>
+              </div>
+            </div>
             <div className="flex items-center justify-between">
               <h2 className="text-base font-bold text-white">Select your refusal reasons</h2>
               <span className="text-sm text-zinc-500">{selectedReasons.size} selected</span>
@@ -229,7 +235,7 @@ export function RefusalRecovery({ countryData, countryCode }: Props) {
                       <div className="flex-shrink-0 mt-1">
                         {isSelected
                           ? <ChevronUp className="w-4 h-4 text-zinc-400" />
-                          : <ChevronDown className="w-4 h-4 text-zinc-600" />}
+                          : <ChevronDown className="w-4 h-4 text-zinc-500" />}
                       </div>
                     </button>
 
@@ -260,7 +266,7 @@ export function RefusalRecovery({ countryData, countryCode }: Props) {
               <div className="glass rounded-2xl border border-white/[0.08] p-5 text-white">
                 <h3 className="text-sm font-bold text-white mb-1">Recovery Plan</h3>
                 {selectedReasons.size === 0 ? (
-                  <p className="text-xs text-zinc-600 leading-relaxed">Select reasons on the left to build your personalised recovery plan.</p>
+                  <p className="text-xs text-zinc-500 leading-relaxed">Select reasons on the left to build your personalised recovery plan.</p>
                 ) : (
                   <>
                     <p className="text-xs text-zinc-500 mb-4">{selectedReasons.size} reason{selectedReasons.size !== 1 ? "s" : ""} identified</p>
@@ -310,9 +316,9 @@ export function RefusalRecovery({ countryData, countryCode }: Props) {
                   <Globe className="w-4 h-4 text-blue-400 flex-shrink-0" />
                   <div className="flex-1">
                     <div className="text-xs font-semibold text-zinc-300 group-hover:text-white transition-colors">Alternative pathways</div>
-                    <div className="text-xs text-zinc-600">Find other options</div>
+                    <div className="text-xs text-zinc-400">Find other options</div>
                   </div>
-                  <ChevronRight className="w-3.5 h-3.5 text-zinc-700 group-hover:text-zinc-400 flex-shrink-0 transition-colors" />
+                  <ChevronRight className="w-3.5 h-3.5 text-zinc-500 group-hover:text-zinc-400 flex-shrink-0 transition-colors" />
                 </Link>
                 <div className="border-t border-white/[0.06]" />
                 <Link
@@ -322,9 +328,9 @@ export function RefusalRecovery({ countryData, countryCode }: Props) {
                   <BarChart3 className="w-4 h-4 text-violet-400 flex-shrink-0" />
                   <div className="flex-1">
                     <div className="text-xs font-semibold text-zinc-300 group-hover:text-white transition-colors">Risk audit</div>
-                    <div className="text-xs text-zinc-600">Before re-applying</div>
+                    <div className="text-xs text-zinc-400">Before re-applying</div>
                   </div>
-                  <ChevronRight className="w-3.5 h-3.5 text-zinc-700 group-hover:text-zinc-400 flex-shrink-0 transition-colors" />
+                  <ChevronRight className="w-3.5 h-3.5 text-zinc-500 group-hover:text-zinc-400 flex-shrink-0 transition-colors" />
                 </Link>
                 <div className="border-t border-white/[0.06]" />
                 <Link
@@ -334,9 +340,9 @@ export function RefusalRecovery({ countryData, countryCode }: Props) {
                   <ListChecks className="w-4 h-4 text-indigo-400 flex-shrink-0" />
                   <div className="flex-1">
                     <div className="text-xs font-semibold text-zinc-300 group-hover:text-white transition-colors">New application plan</div>
-                    <div className="text-xs text-zinc-600">Fresh checklist & timeline</div>
+                    <div className="text-xs text-zinc-400">Fresh checklist & timeline</div>
                   </div>
-                  <ChevronRight className="w-3.5 h-3.5 text-zinc-700 group-hover:text-zinc-400 flex-shrink-0 transition-colors" />
+                  <ChevronRight className="w-3.5 h-3.5 text-zinc-500 group-hover:text-zinc-400 flex-shrink-0 transition-colors" />
                 </Link>
               </div>
             </div>

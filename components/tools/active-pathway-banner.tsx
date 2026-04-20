@@ -27,7 +27,7 @@ export function ActivePathwayBanner({ active, currentTool, onClear }: Props) {
         {/* Pathway indicator */}
         <div className="flex items-center gap-2 min-w-0">
           <MapPin className="w-3.5 h-3.5 text-zinc-400 flex-shrink-0" />
-          <span className="text-xs text-zinc-500 flex-shrink-0">Tracking:</span>
+          <span className="text-xs text-zinc-400 flex-shrink-0">Tracking:</span>
           <span className="text-xs font-semibold text-white truncate">{pathwayLabel}</span>
         </div>
 
@@ -44,7 +44,7 @@ export function ActivePathwayBanner({ active, currentTool, onClear }: Props) {
                 href={href(active.countryCode, active.pathwayId)}
                 className="flex items-center gap-1 px-2.5 py-1 rounded-lg border border-white/[0.08] bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/[0.14] transition-all"
               >
-                <Icon className="w-3 h-3 text-zinc-500" />
+                <Icon className="w-3 h-3 text-zinc-400" />
                 <span className="text-xs text-zinc-400 hover:text-zinc-200 transition-colors">{label}</span>
               </Link>
             ))}
@@ -53,7 +53,7 @@ export function ActivePathwayBanner({ active, currentTool, onClear }: Props) {
         {/* Spacer + dismiss */}
         <button
           onClick={onClear}
-          className="ml-auto flex items-center gap-1 text-zinc-600 hover:text-zinc-400 transition-colors"
+          className="ml-auto flex items-center gap-1 text-zinc-500 hover:text-zinc-200 transition-colors"
           aria-label="Clear active pathway"
         >
           <X className="w-3.5 h-3.5" />

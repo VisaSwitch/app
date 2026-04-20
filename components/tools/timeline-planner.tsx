@@ -10,7 +10,7 @@ import { ReportModal } from "@/components/tools/report-modal";
 import {
   ListChecks, ChevronRight, CheckCircle, Circle, Clock, AlertCircle,
   CalendarDays, BarChart3, Info, ArrowRight,
-  ChevronDown, ChevronUp, Sparkles, Target, FileCheck, Shield,
+  ChevronDown, ChevronUp, Target, FileCheck, Shield,
   LayoutList, GitBranch, DollarSign, FileDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -193,7 +193,7 @@ export function TimelinePlanner({ countryData, countryCode }: Props) {
       <div className="hero-gradient text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           {/* Breadcrumb */}
-          <div className="flex items-center gap-1.5 text-sm text-zinc-600 mb-4">
+          <div className="flex items-center gap-1.5 text-sm text-zinc-500 mb-4">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
             <ChevronRight className="w-4 h-4" />
             <Link href={`/${countryCode}`} className="hover:text-white transition-colors">{countryData.name}</Link>
@@ -305,33 +305,6 @@ export function TimelinePlanner({ countryData, countryCode }: Props) {
           </div>
         )}
 
-        {/* B1: Context banner */}
-        {selectedPathwayData && (
-          <div className="glass border border-white/[0.09] rounded-2xl p-5 flex items-start gap-4">
-            <div className="w-10 h-10 rounded-xl bg-white/[0.07] border border-white/10 flex items-center justify-center flex-shrink-0">
-              <Sparkles className="w-5 h-5 text-zinc-300" />
-            </div>
-            <div className="flex-1">
-              <div className="flex flex-wrap items-center gap-3 mb-1">
-                <h2 className="text-sm font-bold text-white">Planning for: {selectedPathwayData.name}</h2>
-                {selectedPathwayData.subclass && (
-                  <span className="text-xs font-semibold text-zinc-600 bg-white/[0.07] px-2 py-0.5 rounded-full">
-                    Subclass {selectedPathwayData.subclass}
-                  </span>
-                )}
-              </div>
-              <div className="flex flex-wrap gap-3 text-xs text-zinc-500">
-                <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {selectedPathwayData.processingTime}</span>
-                <span className="flex items-center gap-1"><CalendarDays className="w-3 h-3" /> {selectedPathwayData.validity}</span>
-                <span className="flex items-center gap-1"><Target className="w-3 h-3" /> {selectedPathwayData.difficulty}</span>
-              </div>
-            </div>
-            <button
-              onClick={() => setSelectedPathway("")}
-              className="text-xs text-zinc-600 hover:text-zinc-300 underline whitespace-nowrap"
-            >Clear</button>
-          </div>
-        )}
 
         {/* B1b: Total Investment card */}
         {selectedPathwayData && (applicationFee || itemCosts.length > 0) && (
@@ -440,7 +413,7 @@ export function TimelinePlanner({ countryData, countryCode }: Props) {
           <div className="glass rounded-2xl border border-white/[0.08] overflow-hidden">
             <div className="px-5 py-4 border-b border-white/[0.07] flex items-center gap-2">
               <Target className="w-4 h-4 text-zinc-600" />
-              <h3 className="text-sm font-bold text-white">Phase 2 — Application steps</h3>
+              <h3 className="text-sm font-bold text-white">Phase 2 — Lodgement steps</h3>
               <span className="ml-auto text-xs text-zinc-600">
                 {selectedPathwayData.nextSteps.filter((_, i) => completed.has(`step-${i}`)).length} / {selectedPathwayData.nextSteps.length} done
               </span>
@@ -472,7 +445,7 @@ export function TimelinePlanner({ countryData, countryCode }: Props) {
               <div className="glass border border-white/[0.08] rounded-2xl p-6 text-center">
                 <GitBranch className="w-8 h-8 text-zinc-700 mx-auto mb-3" />
                 <p className="text-sm font-semibold text-zinc-400 mb-1">Set a target lodgement date</p>
-                <p className="text-xs text-zinc-600">Timeline view groups tasks by week — set a target date above to activate it.</p>
+                <p className="text-xs text-zinc-500">Timeline view groups tasks by week — set a target date above to activate it.</p>
               </div>
             )}
             {(viewMode === "list" || !targetDate) && (
@@ -481,7 +454,7 @@ export function TimelinePlanner({ countryData, countryCode }: Props) {
                   <FileCheck className="w-4 h-4 text-zinc-600" />
                   <h3 className="text-sm font-bold text-white">Phase 3 — Gather documents &amp; tasks</h3>
                   {!lodgementDate && (
-                    <span className="ml-auto text-xs text-zinc-600 flex items-center gap-1">
+                    <span className="ml-auto text-xs text-zinc-500 flex items-center gap-1">
                       <Info className="w-3 h-3" /> Set a target date above for due dates
                     </span>
                   )}
@@ -539,7 +512,7 @@ export function TimelinePlanner({ countryData, countryCode }: Props) {
                             )}
                             <button
                               onClick={() => setExpandedItem(isExpanded ? null : item.id)}
-                              className="text-zinc-600 hover:text-zinc-300 transition-colors mt-1"
+                              className="text-zinc-500 hover:text-zinc-300 transition-colors mt-1"
                             >
                               {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                             </button>
@@ -563,7 +536,7 @@ export function TimelinePlanner({ countryData, countryCode }: Props) {
             <div className="flex items-center gap-2 mb-4">
               <GitBranch className="w-4 h-4 text-zinc-600" />
               <h3 className="text-sm font-bold text-white">Week-by-week plan</h3>
-              <span className="text-xs text-zinc-600 ml-auto">Relative to {formatDate(targetDate!)}</span>
+              <span className="text-xs text-zinc-500 ml-auto">Relative to {formatDate(targetDate!)}</span>
             </div>
             {weekGroups!.map(({ week, items }) => {
               const weekLabel = week === 0
@@ -580,8 +553,8 @@ export function TimelinePlanner({ countryData, countryCode }: Props) {
                   <div className={cn("px-5 py-3 flex items-center gap-3 border-b border-white/[0.07]", allDone ? "bg-emerald-500/[0.05]" : "bg-white/[0.02]")}>
                     <div className={cn("w-2 h-2 rounded-full flex-shrink-0", allDone ? "bg-emerald-400" : isPast ? "bg-red-400" : "bg-zinc-600")} />
                     <span className="text-xs font-bold text-white">{weekLabel}</span>
-                    <span className="text-xs text-zinc-600">{formatDate(weekDate)}</span>
-                    <span className="ml-auto text-xs text-zinc-600">{items.filter(i => completed.has(i.id)).length}/{items.length} done</span>
+                    <span className="text-xs text-zinc-400">{formatDate(weekDate)}</span>
+                    <span className="ml-auto text-xs text-zinc-400">{items.filter(i => completed.has(i.id)).length}/{items.length} done</span>
                   </div>
                   {/* Items in this week */}
                   <div className="divide-y divide-white/[0.05]">

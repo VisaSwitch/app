@@ -527,7 +527,7 @@ export function PathwaysChecker({ countryData, countryCode }: Props) {
       {/* Hero */}
       <div className="hero-gradient">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          <div className="flex items-center gap-1.5 text-sm text-zinc-600 mb-4">
+          <div className="flex items-center gap-1.5 text-sm text-zinc-500 mb-4">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
             <ChevronRight className="w-4 h-4" />
             <Link href={`/${countryCode}`} className="hover:text-white transition-colors capitalize">{countryData.name}</Link>
@@ -796,7 +796,7 @@ export function PathwaysChecker({ countryData, countryCode }: Props) {
                     ? `${displayedPathways.length} pathway${displayedPathways.length !== 1 ? "s" : ""} matched`
                     : "Start by filtering above"}
                 </p>
-                <p className="text-xs text-zinc-600 leading-relaxed">
+                <p className="text-xs text-zinc-500 leading-relaxed">
                   {currentVisa
                     ? "Expand any pathway for full pros, cons, next steps and an application plan."
                     : "Select your current visa and your goal to see personalised, ranked results."}
@@ -939,7 +939,7 @@ export function PathwaysChecker({ countryData, countryCode }: Props) {
               </div>
 
               {/* Disclaimer */}
-              <div className="text-xs text-zinc-700 leading-relaxed px-1">
+              <div className="text-xs text-zinc-500 leading-relaxed px-1">
                 VisaSwitch provides structured information only. It does not constitute legal or immigration advice. For complex cases, consult a registered migration agent or immigration lawyer.
               </div>
             </div>
