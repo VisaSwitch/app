@@ -194,7 +194,7 @@ function PathwayCard({
           )}
 
           {/* ── Pros / Cons (collapsible) ── */}
-          <details className="px-5 py-3 border-t border-white/[0.06] group">
+          <details open={isBestMatch} className="px-5 py-3 border-t border-white/[0.06] group">
             <summary className="text-xs font-semibold text-zinc-500 hover:text-zinc-300 cursor-pointer select-none list-none flex items-center gap-1.5">
               <ChevronDown className="w-3.5 h-3.5 group-open:rotate-180 transition-transform" />
               See pros &amp; cons
