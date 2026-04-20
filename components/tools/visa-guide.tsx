@@ -1028,8 +1028,7 @@ function Step2CheckReadiness({
               <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
               <p className="text-xs text-amber-300/90 leading-relaxed">
                 <span className="font-semibold">
-                  {blockers.length} required criterion
-                  {blockers.length !== 1 ? "a" : "on"} not yet confirmed.
+                  {blockers.length} required {blockers.length === 1 ? "criterion" : "criteria"} not yet confirmed.
                 </span>{" "}
                 Tick each requirement above once you&apos;ve verified you meet it.
               </p>
