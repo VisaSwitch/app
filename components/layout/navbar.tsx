@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, ChevronDown, Globe, LogIn } from "lucide-react";
+import { Menu, X, ChevronDown, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { countryList } from "@/data";
 
@@ -134,20 +134,13 @@ export function Navbar() {
             </Link>
           </div>
 
-          {/* Auth */}
-          <div className="hidden md:flex items-center gap-2">
+          {/* CTA */}
+          <div className="hidden md:flex items-center">
             <Link
-              href="/sign-in"
-              className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-zinc-400 hover:text-white rounded-lg border border-white/[0.10] hover:border-white/20 transition-all"
-            >
-              <LogIn className="w-3.5 h-3.5" />
-              Sign in
-            </Link>
-            <Link
-              href="/sign-up"
+              href={`${base}/guide`}
               className="inline-flex items-center px-4 py-2 text-sm font-semibold bg-white text-black rounded-lg hover:bg-zinc-100 transition-all"
             >
-              Get started free
+              Start free guide
             </Link>
           </div>
 
@@ -191,9 +184,8 @@ export function Navbar() {
               <Link href="/pricing" className="block px-3 py-2.5 text-sm text-zinc-300 hover:bg-white/[0.05] rounded-xl" onClick={() => setMobileOpen(false)}>Pricing</Link>
               <Link href="/about" className="block px-3 py-2.5 text-sm text-zinc-300 hover:bg-white/[0.05] rounded-xl" onClick={() => setMobileOpen(false)}>About</Link>
             </div>
-            <div className="pt-3 space-y-2">
-              <Link href="/sign-in" className="block px-3 py-2.5 text-sm font-medium text-zinc-300 hover:bg-white/[0.05] rounded-xl" onClick={() => setMobileOpen(false)}>Sign in</Link>
-              <Link href="/sign-up" className="block px-3 py-2.5 text-sm font-semibold text-black text-center bg-white rounded-xl hover:bg-zinc-100 transition-all" onClick={() => setMobileOpen(false)}>Get started free</Link>
+            <div className="pt-3">
+              <Link href={`${base}/guide`} className="block px-3 py-2.5 text-sm font-semibold text-black text-center bg-white rounded-xl hover:bg-zinc-100 transition-all" onClick={() => setMobileOpen(false)}>Start free guide</Link>
             </div>
           </div>
         </div>

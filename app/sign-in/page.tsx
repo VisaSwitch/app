@@ -31,7 +31,7 @@ export default function SignInPage() {
 
         <div className="glass rounded-2xl border border-white/[0.09] p-8">
           <h1 className="text-2xl font-bold text-white mb-1 text-center">Welcome back</h1>
-          <p className="text-zinc-500 text-sm text-center mb-7">Sign in to your VisaSwitch account</p>
+          <p className="text-zinc-500 text-sm text-center mb-7">Sync your progress across devices</p>
 
           <form className="space-y-4">
             <div>
@@ -71,8 +71,8 @@ export default function SignInPage() {
         </div>
 
         <p className="text-center text-xs text-zinc-700 mt-6">
-          Continue without an account —{" "}
-          <Link href="/au/pathways" className="text-zinc-500 hover:text-white transition-colors">free pathway check</Link>
+          No account needed —{" "}
+          <Link href="/au/guide" className="text-zinc-500 hover:text-white transition-colors">start the free guide</Link>
         </p>
       </div>
     </div>
