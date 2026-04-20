@@ -464,6 +464,13 @@ function Step1FindPathway({
               pathway={bestMatchPathway}
               confirmedPathwayId={confirmedPathwayId}
               onConfirm={() => onConfirm(bestMatchPathway.id)}
+              onPathwayPillClick={(id) => {
+                const el = document.getElementById(`pathway-${id}`);
+                if (el) {
+                  el.scrollIntoView({ behavior: "smooth", block: "center" });
+                  toggleExpanded(id);
+                }
+              }}
             />
           )}
 
@@ -505,10 +512,12 @@ function BestMatchCard({
   pathway,
   confirmedPathwayId,
   onConfirm,
+  onPathwayPillClick,
 }: {
   pathway: VisaPathway;
   confirmedPathwayId: string | null;
   onConfirm: () => void;
+  onPathwayPillClick: (id: string) => void;
 }) {
   const difficulty = getDifficultyConfig(pathway.difficulty);
   const steps =
@@ -715,12 +724,13 @@ function BestMatchCard({
           <div className="flex items-center gap-2 flex-wrap mb-4">
             <span className="text-xs font-semibold text-zinc-500">Leads to:</span>
             {pathway.pathwayTo.map((p) => (
-              <span
+              <button
                 key={p}
-                className="text-xs bg-white/[0.07] text-zinc-300 border border-white/[0.10] px-2.5 py-1 rounded-full font-medium"
+                onClick={() => onPathwayPillClick(p)}
+                className="text-xs bg-white/[0.07] text-zinc-300 border border-white/[0.10] px-2.5 py-1 rounded-full font-medium hover:bg-white/[0.14] hover:border-white/[0.25] hover:text-white transition-all"
               >
-                {p}
-              </span>
+                {p} ↓
+              </button>
             ))}
           </div>
         )}
@@ -777,6 +787,7 @@ function SecondaryCard({
 
   return (
     <div
+      id={`pathway-${pathway.id}`}
       className={cn(
         "rounded-2xl border overflow-hidden transition-all",
         confirmed
