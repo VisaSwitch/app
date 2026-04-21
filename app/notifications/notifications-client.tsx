@@ -141,30 +141,31 @@ export function NotificationsClient() {
     <div className="flex flex-col min-h-screen" style={{ background: "var(--background)" }}>
 
       {/* ── Hero banner ─────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden" style={{ background: "linear-gradient(135deg, #0f766e 0%, #0d9488 50%, #14b8a6 100%)" }}>
-        <div className="absolute inset-0 opacity-10 pointer-events-none"
-          style={{ backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.6) 1px, transparent 1px)", backgroundSize: "28px 28px" }} />
+      <section className="relative overflow-hidden hero-gradient border-b" style={{ borderColor: "var(--border)" }}>
+        <div className="absolute inset-0 opacity-[0.04] pointer-events-none"
+          style={{ backgroundImage: "radial-gradient(circle, var(--foreground) 1px, transparent 1px)", backgroundSize: "28px 28px" }} />
         <div className="relative max-w-lg mx-auto px-4 sm:px-6 py-12 text-center">
-          <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center mx-auto mb-5 border border-white/30">
-            <Bell className="w-8 h-8 text-white" />
+          <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5 border" style={{ background: "var(--muted)", borderColor: "var(--border)" }}>
+            <Bell className="w-8 h-8" style={{ color: "var(--foreground)" }} />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-3 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-3 tracking-tight" style={{ color: "var(--foreground)" }}>
             Stay ahead of visa changes
           </h1>
-          <p className="text-teal-100 text-sm leading-relaxed max-w-sm mx-auto">
+          <p className="text-sm leading-relaxed max-w-sm mx-auto" style={{ color: "var(--muted-foreground)" }}>
             Get instant alerts when processing times, fees, or requirements change for the visas you&apos;re watching — before it affects your application.
           </p>
           {permission !== "granted" && (
             <div className="mt-7">
               {isIOS && !isStandalone ? (
-                <p className="text-xs text-teal-200 bg-white/10 rounded-xl px-4 py-2.5 inline-block border border-white/20">
+                <p className="text-xs rounded-xl px-4 py-2.5 inline-block border" style={{ color: "var(--muted-foreground)", background: "var(--muted)", borderColor: "var(--border)" }}>
                   📲 Add VisaSwitch to your Home Screen first to enable notifications on iPhone
                 </p>
               ) : (
                 <button
                   onClick={requestPermission}
                   disabled={permission === "denied"}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-white text-teal-700 text-sm font-bold rounded-xl hover:bg-teal-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
+                  style={{ background: "var(--primary)", color: "var(--primary-foreground)" }}
                 >
                   <Bell className="w-4 h-4" />
                   {permission === "denied" ? "Notifications blocked in browser" : "Enable notifications"}
@@ -173,7 +174,7 @@ export function NotificationsClient() {
             </div>
           )}
           {permission === "granted" && (
-            <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 bg-white/20 border border-white/30 rounded-full text-white text-xs font-semibold">
+            <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 border rounded-full text-xs font-semibold" style={{ background: "var(--muted)", borderColor: "var(--border)", color: "var(--foreground)" }}>
               <CheckCircle className="w-4 h-4" /> Notifications enabled
             </div>
           )}
@@ -339,9 +340,10 @@ export function NotificationsClient() {
             onClick={savePrefs}
             disabled={watchedVisas.size === 0 || updatePrefs.size === 0}
             className={cn(
-              "w-full py-3.5 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2",
-              saved ? "bg-emerald-600 text-white" : "bg-teal-600 hover:bg-teal-700 text-white disabled:opacity-40 disabled:cursor-not-allowed"
+              "w-full py-3.5 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90",
+              saved ? "bg-emerald-600 text-white" : ""
             )}
+            style={saved ? undefined : { background: "var(--primary)", color: "var(--primary-foreground)" }}
           >
             {saved ? (
               <><CheckCircle className="w-4 h-4" /> Preferences saved</>
