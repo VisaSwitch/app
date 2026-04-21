@@ -118,7 +118,7 @@ body {
 
 /* ── Gradient text ─────────────────────────────────────────────────────── */
 .gradient-text {
-  background: linear-gradient(120deg, #4f46e5 0%, #7c3aed 50%, #2563eb 100%);
+  background: linear-gradient(120deg, #18181b 0%, #71717a 45%, #3f3f46 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -131,7 +131,7 @@ body {
 }
 
 .gradient-text-dark {
-  background: linear-gradient(120deg, #4f46e5 0%, #7c3aed 50%, #2563eb 100%);
+  background: linear-gradient(120deg, #18181b 0%, #71717a 45%, #3f3f46 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
