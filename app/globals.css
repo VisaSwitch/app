@@ -212,3 +212,53 @@ body {
 /* ── Text helpers ──────────────────────────────────────────────────────── */
 .text-secondary { color: var(--text-secondary); }
 .text-tertiary  { color: var(--text-tertiary); }
+
+/* ── Light-mode overrides for dark-first hardcoded Tailwind classes ────────
+   The guide and many components use white-based colors assuming a dark bg.
+   These overrides flip them to readable equivalents in light mode.
+   Scoped to html:not(.dark) so dark mode is entirely unaffected.
+─────────────────────────────────────────────────────────────────────────── */
+html:not(.dark) .text-white {
+  color: var(--foreground) !important;
+}
+html:not(.dark) .text-zinc-300 {
+  color: #52525b !important;
+}
+html:not(.dark) .text-zinc-400 {
+  color: #52525b !important;
+}
+
+/* Opt-out: elements with .dark-surface keep white text even in light mode
+   (used by the report modal overlay which is always dark) */
+html:not(.dark) .dark-surface,
+html:not(.dark) .dark-surface .text-white,
+html:not(.dark) .dark-surface .text-zinc-300,
+html:not(.dark) .dark-surface .text-zinc-400 {
+  color: revert !important;
+}
+html:not(.dark) .dark-surface [class*="border-white/"],
+html:not(.dark) .dark-surface [class*="bg-white/"] {
+  border-color: revert !important;
+  background-color: revert !important;
+}
+
+/* Transparent-white borders → transparent-black */
+html:not(.dark) [class*="border-white/"] {
+  border-color: rgba(0, 0, 0, 0.09) !important;
+}
+
+/* Transparent-white backgrounds → transparent-black */
+html:not(.dark) [class*="bg-white/"] {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Shadow glows using rgba(255,255,255,…) become invisible on light bg — just suppress */
+html:not(.dark) [class*="shadow-[0_0"] {
+  box-shadow: none !important;
+}
+
+/* Select option bg — ensure option text is readable regardless of browser */
+html:not(.dark) option {
+  background-color: #ffffff;
+  color: #0a0a0a;
+}

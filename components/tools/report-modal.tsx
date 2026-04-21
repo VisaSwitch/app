@@ -565,7 +565,7 @@ export function ReportModal({
   ]);
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-black/95 backdrop-blur-sm">
+    <div className="dark-surface fixed inset-0 z-50 flex flex-col bg-black/95 backdrop-blur-sm">
       {/* Top bar */}
       <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-b border-white/[0.08] bg-black">
         <div>

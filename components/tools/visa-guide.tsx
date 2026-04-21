@@ -205,8 +205,9 @@ function StepNav({
       {[0, 1, 2].map((i) => (
         <div
           key={i}
-          className="absolute top-8 h-px bg-white/[0.10] hidden sm:block"
+          className="absolute top-8 h-px hidden sm:block"
           style={{
+            background: "var(--connector-line)",
             left: `calc(${(i + 0.5) * 25}% + 1.25rem)`,
             width: `calc(25% - 2.5rem)`,
           }}
@@ -237,7 +238,7 @@ function StepNav({
                 done
                   ? "bg-emerald-500/20 border-emerald-500/60"
                   : active
-                  ? "bg-white border-white"
+                  ? "dark:bg-white dark:border-white bg-gray-900 border-gray-900"
                   : locked
                   ? "bg-white/[0.05] border-white/[0.18]"
                   : "bg-white/[0.08] border-white/[0.20]"
@@ -249,7 +250,7 @@ function StepNav({
                 <Lock className="w-4 h-4 text-zinc-500" />
               ) : (
                 <Icon
-                  className={cn("w-4 h-4", active ? "text-black" : "text-zinc-400")}
+                  className={cn("w-4 h-4", active ? "dark:text-black text-white" : "text-zinc-500")}
                 />
               )}
             </div>
@@ -377,17 +378,18 @@ function Step1FindPathway({
         {/* Current visa */}
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-white text-black text-[10px] font-black">
+            <span className="inline-flex items-center justify-center w-5 h-5 rounded-full dark:bg-white dark:text-black bg-gray-900 text-white text-[10px] font-black">
               1
             </span>
-            <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">
+            <label className="text-xs font-bold uppercase tracking-wider" style={{ color: "var(--muted-foreground)" }}>
               Your current visa
             </label>
           </div>
           <select
             value={currentVisa}
             onChange={(e) => onCurrentVisaChange(e.target.value)}
-            className="w-full bg-white/[0.06] border border-white/[0.12] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-white/30 appearance-none cursor-pointer"
+            className="w-full rounded-xl px-4 py-3 text-sm focus:outline-none appearance-none cursor-pointer"
+            style={{ background: "var(--muted)", border: "1px solid var(--border)", color: "var(--foreground)" }}
           >
             <option value="" className="bg-zinc-900">
               — Select your current status —
@@ -403,17 +405,18 @@ function Step1FindPathway({
         {/* Goal */}
         <div className={cn("transition-opacity", !currentVisa && "opacity-40 pointer-events-none")}>
           <div className="flex items-center gap-2 mb-2">
-            <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-white/20 text-white text-[10px] font-black">
+            <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-white/20 text-[10px] font-black" style={{ color: "var(--muted-foreground)" }}>
               2
             </span>
-            <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">
+            <label className="text-xs font-bold uppercase tracking-wider" style={{ color: "var(--muted-foreground)" }}>
               Your goal
             </label>
           </div>
           <select
             value={goal}
             onChange={(e) => onGoalChange(e.target.value)}
-            className="w-full bg-white/[0.06] border border-white/[0.12] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-white/30 appearance-none cursor-pointer"
+            className="w-full rounded-xl px-4 py-3 text-sm focus:outline-none appearance-none cursor-pointer"
+            style={{ background: "var(--muted)", border: "1px solid var(--border)", color: "var(--foreground)" }}
           >
             {countryData.goalOptions.map((opt) => (
               <option key={opt.value} value={opt.value} className="bg-zinc-900">
@@ -628,7 +631,7 @@ function BestMatchCard({
         {/* How to apply */}
         <div className="mb-5">
           <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-            <span className="w-4 h-4 rounded-full bg-white text-black text-[10px] font-black flex items-center justify-center">
+            <span className="w-4 h-4 rounded-full dark:bg-white dark:text-black bg-gray-900 text-white text-[10px] font-black flex items-center justify-center">
               →
             </span>
             How to apply
@@ -760,7 +763,7 @@ function BestMatchCard({
             "text-xs sm:text-sm",
             isConfirmed
               ? "bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 cursor-default"
-              : "bg-white text-black hover:bg-zinc-100"
+              : "dark:bg-white dark:text-black dark:hover:bg-zinc-100 bg-gray-900 text-white hover:bg-gray-700"
           )}
         >
           {isConfirmed ? (
@@ -933,7 +936,7 @@ function SecondaryCard({
               "w-full inline-flex items-center justify-center gap-2 text-xs font-bold px-4 py-2.5 rounded-xl transition-all",
               confirmed
                 ? "bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 cursor-default"
-                : "bg-white text-black hover:bg-zinc-100"
+                : "dark:bg-white dark:text-black dark:hover:bg-zinc-100 bg-gray-900 text-white hover:bg-gray-700"
             )}
           >
             {confirmed ? (
@@ -1215,7 +1218,7 @@ function Step2CheckReadiness({
           className={cn(
             "w-full inline-flex items-center justify-center gap-2 text-sm font-bold px-5 py-3.5 rounded-xl transition-all",
             canContinue
-              ? "bg-white text-black hover:bg-zinc-100"
+              ? "dark:bg-white dark:text-black dark:hover:bg-zinc-100 bg-gray-900 text-white hover:bg-gray-700"
               : "bg-white/10 text-zinc-600 cursor-not-allowed"
           )}
         >
@@ -1524,7 +1527,7 @@ function Step3BuildPlan({
           className={cn(
             "w-full inline-flex items-center justify-center gap-2 text-sm font-bold px-5 py-3.5 rounded-xl transition-all",
             canContinue
-              ? "bg-white text-black hover:bg-zinc-100"
+              ? "dark:bg-white dark:text-black dark:hover:bg-zinc-100 bg-gray-900 text-white hover:bg-gray-700"
               : "bg-white/10 text-zinc-600 cursor-not-allowed"
           )}
         >
@@ -2007,7 +2010,7 @@ function Step4TrackSubmit({
           </p>
           <button
             onClick={onDownloadReport}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white text-black text-sm font-bold hover:bg-zinc-100 transition-all"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold transition-all dark:bg-white dark:text-black dark:hover:bg-zinc-100 bg-gray-900 text-white hover:bg-gray-700"
           >
             <FileCheck className="w-4 h-4" />
             Download full report
@@ -2097,7 +2100,7 @@ export function VisaGuide({ countryData, countryCode }: Props) {
   if (!hydrated) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="w-6 h-6 rounded-full border-2 border-white/20 border-t-white/60 animate-spin" />
+        <div className="w-6 h-6 rounded-full border-2 animate-spin" style={{ borderColor: "var(--border)", borderTopColor: "var(--foreground)" }} />
       </div>
     );
   }
@@ -2314,7 +2317,7 @@ export function VisaGuide({ countryData, countryCode }: Props) {
                           done
                             ? "bg-emerald-500/20 border-emerald-500/60"
                             : active
-                            ? "bg-white border-white"
+                            ? "dark:bg-white dark:border-white bg-gray-900 border-gray-900"
                             : "bg-white/[0.05] border-white/[0.15]"
                         )}
                       >
@@ -2324,7 +2327,7 @@ export function VisaGuide({ countryData, countryCode }: Props) {
                           <SIcon
                             className={cn(
                               "w-3 h-3",
-                              active ? "text-black" : locked ? "text-zinc-500" : "text-zinc-400"
+                              active ? "dark:text-black text-white" : locked ? "text-zinc-500" : "text-zinc-500"
                             )}
                           />
                         )}
