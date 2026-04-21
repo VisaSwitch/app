@@ -46,7 +46,7 @@ function Step1Preview() {
       <div className="grid sm:grid-cols-2 gap-4">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-white text-black text-[10px] font-black">1</span>
+            <span className="inline-flex items-center justify-center w-5 h-5 rounded-full dark:bg-white dark:text-black bg-gray-900 text-white text-[10px] font-black">1</span>
             <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Your current visa</label>
           </div>
           <div className="w-full bg-white/[0.06] border border-white/[0.12] rounded-xl px-4 py-3 text-sm text-white flex items-center justify-between">
@@ -487,7 +487,7 @@ function Step4Preview() {
             ))}
           </div>
         </div>
-        <button className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-white text-black text-sm font-bold hover:bg-zinc-100 transition-all">
+        <button className="w-full flex items-center justify-center gap-2 py-3 rounded-xl dark:bg-white dark:text-black dark:hover:bg-zinc-100 bg-gray-900 text-white hover:bg-gray-700 text-sm font-bold transition-all">
           <FileText className="w-4 h-4" />
           Download full report
         </button>
@@ -541,10 +541,10 @@ export function ProductPreview() {
                 onClick={() => setActive(tab.id as 1 | 2 | 3 | 4)}
                 className={cn(
                   "flex-1 min-w-0 flex flex-col sm:flex-row items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap",
-                  isActive ? "bg-white text-black shadow-sm" : "text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.04]"
+                  isActive ? "dark:bg-white dark:text-black dark:shadow-sm bg-gray-900 text-white shadow-sm" : "text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.04]"
                 )}
               >
-                <Icon className={cn("w-3.5 h-3.5 flex-shrink-0", isActive ? "text-black" : "text-zinc-500")} />
+                <Icon className={cn("w-3.5 h-3.5 flex-shrink-0", isActive ? "dark:text-black text-white" : "text-zinc-500")} />
                 <span className="hidden sm:inline">{tab.label}</span>
                 <span className="sm:hidden text-[10px]">{tab.label.split(" ")[0]}</span>
               </button>
@@ -553,7 +553,7 @@ export function ProductPreview() {
         </div>
 
         {/* Browser chrome frame */}
-        <div className="rounded-2xl border border-white/[0.12] bg-[#0a0d14] overflow-hidden shadow-[0_0_80px_rgba(0,0,0,0.6)]">
+        <div className="rounded-2xl border border-white/[0.12] overflow-hidden shadow-[0_0_80px_rgba(0,0,0,0.6)]" style={{ background: "var(--muted)" }}>
           {/* Browser bar */}
           <div className="flex items-center gap-3 px-4 py-3 border-b border-white/[0.07] bg-white/[0.03]">
             <div className="flex items-center gap-1.5">
@@ -571,13 +571,13 @@ export function ProductPreview() {
             </div>
             <div className="hidden sm:flex items-center gap-1.5">
               {TABS.map((t) => (
-                <div key={t.id} className={cn("w-1.5 h-1.5 rounded-full transition-all", t.id === active ? "bg-white" : t.id < active ? "bg-emerald-400" : "bg-white/[0.15]")} />
+                <div key={t.id} className={cn("w-1.5 h-1.5 rounded-full transition-all", t.id === active ? "dark:bg-white bg-gray-700" : t.id < active ? "bg-emerald-400" : "bg-white/[0.15]")} />
               ))}
             </div>
           </div>
 
           {/* Sticky step nav inside browser — mirrors the real guide's StepNav */}
-          <div className="px-4 py-3 border-b border-white/[0.06] bg-black/40">
+          <div className="px-4 py-3 border-b border-white/[0.06] dark:bg-black/40 bg-black/[0.03]">
             <div className="relative flex items-stretch max-w-lg mx-auto">
               {[0, 1, 2].map((i) => (
                 <div key={i} className="absolute top-5 h-px bg-white/[0.10]"
@@ -592,8 +592,8 @@ export function ProductPreview() {
                   <button key={s.id} onClick={() => setActive(s.id as 1|2|3|4)}
                     className="relative flex-1 flex flex-col items-center gap-1.5 px-1 py-2 transition-all">
                     <div className={cn("w-10 h-10 rounded-full border-2 flex items-center justify-center z-10 transition-all",
-                      done ? "bg-emerald-500/20 border-emerald-500/60" : isActive ? "bg-white border-white" : "bg-white/[0.05] border-white/[0.18]")}>
-                      {done ? <CheckCircle className="w-5 h-5 text-emerald-400" /> : locked ? <Lock className="w-4 h-4 text-zinc-500" /> : <Icon className={cn("w-4 h-4", isActive ? "text-black" : "text-zinc-400")} />}
+                      done ? "bg-emerald-500/20 border-emerald-500/60" : isActive ? "dark:bg-white dark:border-white bg-gray-900 border-gray-900" : "bg-white/[0.05] border-white/[0.18]")}>
+                      {done ? <CheckCircle className="w-5 h-5 text-emerald-400" /> : locked ? <Lock className="w-4 h-4 text-zinc-500" /> : <Icon className={cn("w-4 h-4", isActive ? "dark:text-black text-white" : "text-zinc-400")} />}
                     </div>
                     <div className="text-center">
                       <div className={cn("text-[10px] font-bold leading-tight hidden sm:block",
@@ -615,7 +615,7 @@ export function ProductPreview() {
         {/* CTA */}
         <div className="flex flex-col items-center gap-2 mt-8">
           <a href="/au/guide"
-            className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold bg-white text-black rounded-xl hover:bg-zinc-100 transition-all group">
+            className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold dark:bg-white dark:text-black dark:hover:bg-zinc-100 bg-gray-900 text-white hover:bg-gray-700 rounded-xl transition-all group">
             Try it free
             <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
           </a>
