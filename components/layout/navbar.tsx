@@ -47,13 +47,6 @@ export function Navbar() {
             </Link>
           )}
 
-          {/* CTA */}
-          <Link
-            href={`${base}/guide`}
-            className="inline-flex items-center px-4 py-2 text-sm font-semibold bg-white text-black rounded-lg hover:bg-zinc-100 transition-all"
-          >
-            Start free guide
-          </Link>
         </div>
       </nav>
     </header>
