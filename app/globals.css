@@ -218,6 +218,8 @@ body {
    These overrides flip them to readable equivalents in light mode.
    Scoped to html:not(.dark) so dark mode is entirely unaffected.
 ─────────────────────────────────────────────────────────────────────────── */
+
+/* 1 ── White text → foreground color */
 html:not(.dark) .text-white {
   color: var(--foreground) !important;
 }
@@ -228,36 +230,53 @@ html:not(.dark) .text-zinc-400 {
   color: #52525b !important;
 }
 
-/* Opt-out: elements with .dark-surface keep white text even in light mode
-   (used by the report modal overlay which is always dark) */
-html:not(.dark) .dark-surface,
-html:not(.dark) .dark-surface .text-white,
-html:not(.dark) .dark-surface .text-zinc-300,
-html:not(.dark) .dark-surface .text-zinc-400 {
-  color: revert !important;
-}
-html:not(.dark) .dark-surface [class*="border-white/"],
-html:not(.dark) .dark-surface [class*="bg-white/"] {
-  border-color: revert !important;
-  background-color: revert !important;
+/* 2 ── Restore white text on explicitly dark backgrounds (buttons, active circles)
+        Higher specificity than rule 1, so these win */
+html:not(.dark) .bg-gray-900 .text-white,
+html:not(.dark) .bg-gray-900.text-white,
+html:not(.dark) .bg-gray-800 .text-white,
+html:not(.dark) .bg-gray-800.text-white {
+  color: white !important;
 }
 
-/* Transparent-white borders → transparent-black */
+/* 3 ── Darken washed-out accent colors for light backgrounds */
+html:not(.dark) .text-emerald-400 { color: #047857 !important; } /* emerald-700 */
+html:not(.dark) .text-red-400     { color: #b91c1c !important; } /* red-700 */
+html:not(.dark) .text-amber-400   { color: #b45309 !important; } /* amber-700 */
+html:not(.dark) [class*="text-amber-3"] { color: #92400e !important; } /* amber-800 for /90 variants */
+
+/* 4 ── Transparent-white borders → transparent-black */
 html:not(.dark) [class*="border-white/"] {
   border-color: rgba(0, 0, 0, 0.09) !important;
 }
 
-/* Transparent-white backgrounds → transparent-black */
+/* 5 ── Transparent-white backgrounds → very light tint */
 html:not(.dark) [class*="bg-white/"] {
   background-color: rgba(0, 0, 0, 0.04) !important;
 }
 
-/* Shadow glows using rgba(255,255,255,…) become invisible on light bg — just suppress */
+/* 6 ── Shadow glows (white-based) → invisible on light bg, suppress */
 html:not(.dark) [class*="shadow-[0_0"] {
   box-shadow: none !important;
 }
 
-/* Select option bg — ensure option text is readable regardless of browser */
+/* 7 ── .dark-surface opt-out: always-dark overlays (e.g. report modal)
+        All overrides above are countered here with higher specificity */
+html:not(.dark) .dark-surface .text-white        { color: white   !important; }
+html:not(.dark) .dark-surface .text-zinc-300     { color: #d4d4d8 !important; }
+html:not(.dark) .dark-surface .text-zinc-400     { color: #a1a1aa !important; }
+html:not(.dark) .dark-surface .text-emerald-400  { color: #34d399 !important; }
+html:not(.dark) .dark-surface .text-red-400      { color: #f87171 !important; }
+html:not(.dark) .dark-surface .text-amber-400    { color: #fbbf24 !important; }
+html:not(.dark) .dark-surface [class*="text-amber-3"] { color: #fcd34d !important; }
+html:not(.dark) .dark-surface [class*="border-white/"] {
+  border-color: rgba(255, 255, 255, 0.09) !important;
+}
+html:not(.dark) .dark-surface [class*="bg-white/"] {
+  background-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* 8 ── Select option bg */
 html:not(.dark) option {
   background-color: #ffffff;
   color: #0a0a0a;
