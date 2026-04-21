@@ -229,10 +229,10 @@ export default async function CountryPage({ params }: Props) {
       <section className="py-8 border-t" style={{ background: "var(--stats-bg)", borderColor: "var(--border)" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-start gap-3 max-w-3xl">
-            <Info className="w-5 h-5 text-amber-500/70 flex-shrink-0 mt-0.5" />
+            <Info className="w-5 h-5 dark:text-amber-500/70 text-amber-600 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-semibold text-amber-400/80 mb-1">Important notice</p>
-              <p className="text-sm text-zinc-600 leading-relaxed">
+              <p className="text-sm font-semibold dark:text-amber-400/80 text-amber-700 mb-1">Important notice</p>
+              <p className="text-sm dark:text-zinc-600 text-zinc-700 leading-relaxed">
                 Immigration rules change frequently. All information on VisaSwitch is for guidance purposes only and does not constitute legal advice. Always verify current requirements with{" "}
                 <a href={data.visaBodyUrl} target="_blank" rel="noopener noreferrer" className="font-semibold underline" style={{ color: "var(--muted-foreground)" }}>
                   {data.visaBodyName}
