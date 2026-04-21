@@ -36,6 +36,7 @@ import {
   SendHorizonal,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ReportModal } from "@/components/tools/report-modal";
 import type {
   CountryData,
   VisaPathway,
@@ -1561,6 +1562,7 @@ function Step4TrackSubmit({
   onRefusalLetterChange,
   onAppReferenceChange,
   onStartPathway,
+  onDownloadReport,
 }: {
   countryData: CountryData;
   pathway: VisaPathway;
@@ -1574,6 +1576,7 @@ function Step4TrackSubmit({
   onRefusalLetterChange: (text: string) => void;
   onAppReferenceChange: (val: string) => void;
   onStartPathway: (pathwayId: string) => void;
+  onDownloadReport: () => void;
 }) {
   const [expandedReason, setExpandedReason] = useState<string | null>(null);
 
@@ -1943,7 +1946,7 @@ function Step4TrackSubmit({
                   the original reasons for refusal.
                 </p>
                 <button
-                  onClick={() => window.print()}
+                  onClick={onDownloadReport}
                   className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white text-black text-sm font-bold hover:bg-zinc-100 transition-all"
                 >
                   <FileCheck className="w-4 h-4" />
@@ -1976,7 +1979,7 @@ function Step4TrackSubmit({
             Export a full PDF of your visa journey — pathway, eligibility results, checklist, risk score, and current status.
           </p>
           <button
-            onClick={() => window.print()}
+            onClick={onDownloadReport}
             className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white text-black text-sm font-bold hover:bg-zinc-100 transition-all"
           >
             <FileCheck className="w-4 h-4" />
@@ -2045,6 +2048,24 @@ export function VisaGuide({ countryData, countryCode }: Props) {
   const confirmedPathway = state.confirmedPathwayId
     ? countryData.pathways.find((p) => p.id === state.confirmedPathwayId) ?? null
     : null;
+
+  // Report modal state
+  const [showReport, setShowReport] = useState(false);
+
+  // Derived values for report
+  const filteredChecklist = confirmedPathway
+    ? countryData.checklist.filter(
+        (item) => !item.pathwayIds?.length || item.pathwayIds.includes(confirmedPathway.id)
+      )
+    : [];
+  const completedSet = new Set(
+    Object.keys(state.checklistCompleted).filter((k) => state.checklistCompleted[k])
+  );
+  const checklistCostTotal = filteredChecklist.reduce(
+    (sum, item) => sum + (item.estimatedCostNumeric ?? 0), 0
+  );
+  const reportTotalEstimate = (confirmedPathway?.costNumeric ?? 0) + checklistCostTotal;
+  const reportApplicationFee = confirmedPathway?.cost ?? null;
 
   if (!hydrated) {
     return (
@@ -2185,6 +2206,7 @@ export function VisaGuide({ countryData, countryCode }: Props) {
                 }}
                 onRefusalLetterChange={(text) => persist({ refusalLetter: text })}
                 onAppReferenceChange={(val) => persist({ appReferenceNumber: val })}
+                onDownloadReport={() => setShowReport(true)}
                 onStartPathway={(pathwayId) => {
                   // Go to Step 1 with the pathway expanded for review — not yet confirmed
                   persist({
@@ -2438,6 +2460,28 @@ export function VisaGuide({ countryData, countryCode }: Props) {
           </button>
         </div>
       </div>
+
+      {/* Full guide report modal */}
+      {showReport && confirmedPathway && (
+        <ReportModal
+          pathway={confirmedPathway}
+          countryName={countryData.name}
+          countryCode={countryCode}
+          checklist={filteredChecklist}
+          completed={completedSet}
+          lodgementDate={state.lodgementDate}
+          totalEstimate={reportTotalEstimate}
+          applicationFee={reportApplicationFee}
+          eligibilityChecks={state.eligibilityChecks}
+          riskAnswers={state.riskAnswers}
+          riskFactors={countryData.riskFactors}
+          outcome={state.outcome}
+          appReferenceNumber={state.appReferenceNumber}
+          refusalReasons={state.refusalReasons}
+          refusalReasonData={countryData.refusalReasons}
+          onClose={() => setShowReport(false)}
+        />
+      )}
     </div>
   );
 }
