@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Globe } from "lucide-react";
+import { Globe, Sun, Moon } from "lucide-react";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { countryList } from "@/data";
 
@@ -19,33 +21,56 @@ export function Navbar() {
   const currentCountry = countryList.find((c) => c.code === countryCode);
   const base = currentCountry ? `/${currentCountry.code}` : "/au";
 
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   return (
-    <header className="sticky top-0 z-50 bg-black/85 backdrop-blur-md border-b border-white/[0.07]">
+    <header className="sticky top-0 z-50 border-b" style={{ background: "var(--nav-bg)", borderColor: "var(--nav-border)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-zinc-700 to-zinc-800 flex items-center justify-center border border-white/[0.08]">
-              <Globe className="w-4 h-4 text-zinc-300" />
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center border" style={{ background: "var(--muted)", borderColor: "var(--border)" }}>
+              <Globe className="w-4 h-4" style={{ color: "var(--muted-foreground)" }} />
             </div>
-            <span className="font-bold text-white text-lg tracking-tight">
-              Visa<span className="text-zinc-400">Switch</span>
+            <span className="font-bold text-lg tracking-tight" style={{ color: "var(--foreground)" }}>
+              Visa<span style={{ color: "var(--muted-foreground)" }}>Switch</span>
             </span>
           </Link>
 
-          {/* Country context pill — only shown when inside a country */}
-          {currentCountry && (
-            <Link
-              href={`/${currentCountry.code}`}
-              className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/[0.08] bg-white/[0.04] hover:bg-white/[0.07] transition-colors"
-            >
-              <span className={cn("text-[11px] font-bold px-1.5 py-0.5 rounded", countryMeta[currentCountry.code]?.color)}>
-                {countryMeta[currentCountry.code]?.abbr}
-              </span>
-              <span className="text-sm text-zinc-400">{currentCountry.name}</span>
-            </Link>
-          )}
+          <div className="flex items-center gap-3">
+            {/* Country context pill — only shown when inside a country */}
+            {currentCountry && (
+              <Link
+                href={`/${currentCountry.code}`}
+                className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full border transition-colors"
+                style={{ borderColor: "var(--border)", background: "var(--muted)" }}
+              >
+                <span className={cn("text-[11px] font-bold px-1.5 py-0.5 rounded", countryMeta[currentCountry.code]?.color)}>
+                  {countryMeta[currentCountry.code]?.abbr}
+                </span>
+                <span className="text-sm" style={{ color: "var(--muted-foreground)" }}>{currentCountry.name}</span>
+              </Link>
+            )}
+
+            {/* Theme toggle */}
+            {mounted && (
+              <button
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                className="w-9 h-9 rounded-lg flex items-center justify-center border transition-all hover:scale-105"
+                style={{ background: "var(--muted)", borderColor: "var(--border)", color: "var(--muted-foreground)" }}
+                aria-label="Toggle theme"
+              >
+                {theme === "dark" ? (
+                  <Sun className="w-4 h-4" />
+                ) : (
+                  <Moon className="w-4 h-4" />
+                )}
+              </button>
+            )}
+          </div>
 
         </div>
       </nav>

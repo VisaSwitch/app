@@ -55,10 +55,10 @@ const sections = [
 
 export default function PrivacyPage() {
   return (
-    <div className="flex flex-col bg-black min-h-screen">
+    <div className="flex flex-col min-h-screen hero-gradient">
 
       {/* Hero */}
-      <section className="relative overflow-hidden bg-black py-20">
+      <section className="relative overflow-hidden py-20 hero-gradient">
         <div className="absolute inset-0 pointer-events-none" aria-hidden>
           <div className="absolute top-0 left-[20%] w-[500px] h-[300px] rounded-full opacity-[0.04]"
             style={{ background: "radial-gradient(circle, rgba(180,200,255,1) 0%, transparent 70%)" }} />
@@ -67,8 +67,8 @@ export default function PrivacyPage() {
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/[0.08] bg-white/[0.04] text-xs font-semibold text-zinc-500 mb-5 uppercase tracking-widest">
             Legal
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3 tracking-tight">Privacy Policy</h1>
-          <p className="text-zinc-600 text-sm">Last updated: April 2025</p>
+          <h1 className="text-3xl sm:text-4xl font-bold mb-3 tracking-tight" style={{ color: "var(--foreground)" }}>Privacy Policy</h1>
+          <p className="text-sm" style={{ color: "var(--muted-foreground)" }}>Last updated: April 2025</p>
         </div>
         <div className="absolute bottom-0 inset-x-0 h-12 bg-gradient-to-b from-transparent to-[#04060c] pointer-events-none" />
       </section>
@@ -78,9 +78,9 @@ export default function PrivacyPage() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
 
           {/* TL;DR */}
-          <div className="glass rounded-xl border border-white/[0.20] p-5 mb-10">
-            <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">tl;dr</p>
-            <p className="text-sm text-zinc-400 leading-relaxed">
+          <div className="glass rounded-xl p-5 mb-10" style={{ border: "1px solid var(--border)" }}>
+            <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "var(--muted-foreground)" }}>tl;dr</p>
+            <p className="text-sm leading-relaxed" style={{ color: "var(--muted-foreground)" }}>
               Your guide progress is stored in your browser only. We never send it anywhere unless you sign up for cloud sync. No ads. No tracking. No data sales.
             </p>
           </div>
@@ -88,7 +88,7 @@ export default function PrivacyPage() {
           <div className="space-y-8">
             {sections.map((s) => (
               <div key={s.title}>
-                <h2 className="text-sm font-bold text-white mb-2">{s.title}</h2>
+                <h2 className="text-sm font-bold mb-2" style={{ color: "var(--foreground)" }}>{s.title}</h2>
                 {s.body.split("\n\n").map((para, i) => (
                   <p key={i} className="text-sm text-zinc-500 leading-relaxed mb-2 last:mb-0">{para}</p>
                 ))}
@@ -96,7 +96,7 @@ export default function PrivacyPage() {
             ))}
           </div>
 
-          <div className="mt-12 pt-8 border-t border-white/[0.06]">
+          <div className="mt-12 pt-8 border-t" style={{ borderColor: "var(--border)" }}>
             <p className="text-xs text-amber-500/60 mb-4">
               VisaSwitch is not a migration agent or legal service. Always verify immigration requirements with official government sources.
             </p>

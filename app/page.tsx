@@ -152,10 +152,10 @@ const faqs = [
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col bg-black">
+    <div className="flex flex-col">
 
       {/* ── HERO ──────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-black min-h-[90vh] sm:min-h-screen flex items-center">
+      <section className="relative overflow-hidden min-h-[90vh] sm:min-h-screen flex items-center hero-gradient">
         {/* Background glows */}
         <div className="absolute inset-0 pointer-events-none" aria-hidden>
           <div className="absolute top-[-15%] left-[10%] w-[700px] h-[700px] rounded-full opacity-[0.07]"
@@ -173,13 +173,13 @@ export default function HomePage() {
           <div className="max-w-4xl mx-auto text-center">
 
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/[0.04] text-xs font-semibold text-zinc-400 mb-8 uppercase tracking-widest">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[var(--border)] bg-[var(--muted)] text-xs font-semibold text-zinc-500 mb-8 uppercase tracking-widest">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
               Australia · UK · Canada · Japan
             </div>
 
             {/* H1 */}
-            <h1 className="text-4xl sm:text-6xl lg:text-[5rem] font-bold leading-[1.08] sm:leading-[1.04] mb-6 tracking-tight text-white">
+            <h1 className="text-4xl sm:text-6xl lg:text-[5rem] font-bold leading-[1.08] sm:leading-[1.04] mb-6 tracking-tight text-[var(--foreground)]">
               Your visa journey,
               <br />
               <span className="gradient-text">step by step.</span>
@@ -196,7 +196,8 @@ export default function HomePage() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center mb-16">
               <Link
                 href="/au/guide"
-                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 text-sm font-semibold bg-white text-black rounded-xl hover:bg-zinc-100 transition-all shadow-[0_0_60px_rgba(255,255,255,0.10)] group"
+                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 text-sm font-semibold rounded-xl transition-all group"
+                style={{ background: "var(--primary)", color: "var(--primary-foreground)" }}
               >
                 <Sparkles className="w-4 h-4" />
                 Start my visa guide
@@ -204,7 +205,8 @@ export default function HomePage() {
               </Link>
               <Link
                 href="#how-it-works"
-                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 text-sm font-medium text-zinc-400 rounded-xl border border-white/10 hover:border-white/20 hover:text-white transition-all"
+                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 text-sm font-medium rounded-xl border transition-all"
+                style={{ borderColor: "var(--border)", color: "var(--muted-foreground)" }}
               >
                 See how it works
               </Link>
@@ -212,7 +214,7 @@ export default function HomePage() {
 
             {/* Country selector */}
             <div>
-              <p className="text-xs font-semibold text-zinc-600 uppercase tracking-widest mb-5">Select your destination</p>
+              <p className="text-xs font-semibold uppercase tracking-widest mb-5" style={{ color: "var(--muted-foreground)" }}>Select your destination</p>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl mx-auto">
                 {countryList.map((country) => {
                   const meta = countryMeta[country.code];
@@ -227,7 +229,7 @@ export default function HomePage() {
                       <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${col.badge}`}>
                         {meta.abbr}
                       </span>
-                      <span className="text-sm font-semibold text-white leading-tight">{meta.tagline}</span>
+                      <span className="text-sm font-semibold leading-tight" style={{ color: "var(--foreground)" }}>{meta.tagline}</span>
                       <span className="text-xs text-zinc-600">{meta.pathways}</span>
                       <ChevronRight className="w-3.5 h-3.5 text-zinc-700 group-hover:text-zinc-300 group-hover:translate-x-0.5 transition-all" />
                     </Link>
@@ -238,18 +240,18 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-b from-transparent to-[#04060c] pointer-events-none" />
+        <div className="absolute bottom-0 inset-x-0 h-32 pointer-events-none" style={{ background: "linear-gradient(to bottom, transparent, var(--section-dark-from))" }} />
       </section>
 
       {/* ── STATS ─────────────────────────────────────────────────────── */}
-      <section className="bg-[#04060c] border-t border-white/[0.04]">
+      <section className="border-t" style={{ background: "var(--stats-bg)", borderColor: "var(--border)" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/[0.04] rounded-2xl overflow-hidden">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-px rounded-2xl overflow-hidden" style={{ background: "var(--border)" }}>
             {stats.map((stat) => (
-              <div key={stat.label} className="bg-[#04060c] px-5 sm:px-8 py-6 sm:py-7 flex flex-col gap-1">
-                <div className="text-2xl sm:text-3xl font-bold text-white">{stat.value}</div>
-                <div className="text-xs sm:text-sm font-medium text-zinc-300">{stat.label}</div>
-                <div className="text-xs text-zinc-500">{stat.sub}</div>
+              <div key={stat.label} className="px-5 sm:px-8 py-6 sm:py-7 flex flex-col gap-1" style={{ background: "var(--stats-bg)" }}>
+                <div className="text-2xl sm:text-3xl font-bold" style={{ color: "var(--foreground)" }}>{stat.value}</div>
+                <div className="text-xs sm:text-sm font-medium text-zinc-500">{stat.label}</div>
+                <div className="text-xs text-zinc-500 opacity-70">{stat.sub}</div>
               </div>
             ))}
           </div>
@@ -269,7 +271,7 @@ export default function HomePage() {
               <Sparkles className="w-3 h-3" />
               One guided flow
             </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-5 tracking-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-5 tracking-tight" style={{ color: "var(--foreground)" }}>
               Every stage of your visa journey,{" "}
               <span className="gradient-text">in order.</span>
             </h2>
@@ -291,8 +293,8 @@ export default function HomePage() {
                       </div>
                     </div>
                     <div className="flex-1 min-w-0 pt-0.5">
-                      <div className="text-xs font-bold text-zinc-600 uppercase tracking-widest mb-2">Stage {step.step}</div>
-                      <h3 className="text-base font-bold text-white mb-2">{step.title}</h3>
+                      <div className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2">Stage {step.step}</div>
+                      <h3 className="text-base font-bold mb-2" style={{ color: "var(--foreground)" }}>{step.title}</h3>
                       <p className="text-sm text-zinc-500 leading-relaxed">{step.description}</p>
                     </div>
                   </div>
@@ -305,7 +307,8 @@ export default function HomePage() {
           <div className="flex justify-center mt-12">
             <Link
               href="/au/guide"
-              className="inline-flex items-center gap-2 px-8 py-3.5 text-sm font-semibold bg-white text-black rounded-xl hover:bg-zinc-100 transition-all group"
+              className="inline-flex items-center gap-2 px-8 py-3.5 text-sm font-semibold rounded-xl transition-all group"
+              style={{ background: "var(--primary)", color: "var(--primary-foreground)" }}
             >
               <Sparkles className="w-4 h-4" />
               Start the guide — Australia
@@ -322,7 +325,7 @@ export default function HomePage() {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-5 tracking-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-5 tracking-tight" style={{ color: "var(--foreground)" }}>
               From uncertainty to action{" "}
               <span className="gradient-text">in minutes.</span>
             </h2>
@@ -334,8 +337,8 @@ export default function HomePage() {
 
           <div className="relative grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {/* Single connector line — sits behind all boxes via z-index -1 */}
-            <div className="hidden md:block absolute top-12 h-px bg-white/[0.14]"
-              style={{ left: "calc(16.67% + 3rem)", right: "calc(16.67% + 3rem)", zIndex: -1 }} />
+            <div className="hidden md:block absolute top-12 h-px"
+              style={{ left: "calc(16.67% + 3rem)", right: "calc(16.67% + 3rem)", zIndex: -1, background: "var(--connector-line)" }} />
 
             {[
               {
@@ -355,10 +358,10 @@ export default function HomePage() {
               },
             ].map((step) => (
               <div key={step.number} className="relative z-10 flex flex-col items-center text-center gap-5">
-                <div className="w-24 h-24 rounded-2xl border border-white/[0.12] bg-[#09090b] flex items-center justify-center text-white font-bold text-3xl">
+                <div className="w-24 h-24 rounded-2xl border flex items-center justify-center font-bold text-3xl" style={{ borderColor: "var(--border)", background: "var(--muted)", color: "var(--foreground)" }}>
                   {step.number}
                 </div>
-                <h3 className="text-lg font-bold text-white">{step.title}</h3>
+                <h3 className="text-lg font-bold" style={{ color: "var(--foreground)" }}>{step.title}</h3>
                 <p className="text-sm text-zinc-500 leading-relaxed">{step.desc}</p>
               </div>
             ))}
@@ -377,7 +380,7 @@ export default function HomePage() {
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-5 tracking-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-5 tracking-tight" style={{ color: "var(--foreground)" }}>
               Why VisaSwitch is different
             </h2>
             <p className="text-zinc-500 max-w-xl mx-auto leading-relaxed text-lg">
@@ -394,7 +397,7 @@ export default function HomePage() {
                     <Icon className="w-5 h-5 text-zinc-300" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-white mb-2">{f.title}</h3>
+                    <h3 className="text-sm font-bold mb-2" style={{ color: "var(--foreground)" }}>{f.title}</h3>
                     <p className="text-sm text-zinc-500 leading-relaxed">{f.description}</p>
                   </div>
                 </div>
@@ -412,7 +415,7 @@ export default function HomePage() {
               <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
               What people say
             </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight" style={{ color: "var(--foreground)" }}>
               People who used it.{" "}
               <span className="gradient-text">People who got through.</span>
             </h2>
@@ -426,13 +429,13 @@ export default function HomePage() {
                       <Star key={j} className="w-4 h-4 fill-amber-400 text-amber-400" />
                     ))}
                   </div>
-                  <span className="text-xs font-semibold text-zinc-300 bg-white/[0.07] border border-white/10 px-2.5 py-1 rounded-full whitespace-nowrap">
+                  <span className="text-xs font-semibold px-2.5 py-1 rounded-full whitespace-nowrap" style={{ color: "var(--muted-foreground)", background: "var(--muted)", border: "1px solid var(--border)" }}>
                     {t.highlight}
                   </span>
                 </div>
                 <p className="text-sm text-zinc-400 leading-relaxed flex-1">&ldquo;{t.quote}&rdquo;</p>
-                <div className="pt-4 border-t border-white/[0.06]">
-                  <div className="text-sm font-bold text-white">{t.name}</div>
+                <div className="pt-4 border-t" style={{ borderColor: "var(--border)" }}>
+                  <div className="text-sm font-bold" style={{ color: "var(--foreground)" }}>{t.name}</div>
                   <div className="text-xs text-zinc-600 mt-0.5">{t.role}</div>
                 </div>
               </div>
@@ -448,15 +451,15 @@ export default function HomePage() {
       <section className="section-dark relative py-28">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3 tracking-tight">Common questions</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-3 tracking-tight" style={{ color: "var(--foreground)" }}>Common questions</h2>
             <p className="text-zinc-500">Straight answers — no fluff.</p>
           </div>
           <div className="space-y-3">
             {faqs.map((faq, i) => (
               <div key={i} className="glass card-hover rounded-2xl border border-white/[0.07] overflow-hidden">
                 <div className="px-7 py-6">
-                  <h3 className="text-sm font-bold text-white mb-3 flex items-start gap-3">
-                    <span className="w-6 h-6 rounded-lg border border-white/[0.09] bg-white/[0.05] text-zinc-400 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
+                  <h3 className="text-sm font-bold mb-3 flex items-start gap-3" style={{ color: "var(--foreground)" }}>
+                    <span className="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5" style={{ background: "var(--muted)", border: "1px solid var(--border)", color: "var(--muted-foreground)" }}>
                       {i + 1}
                     </span>
                     {faq.q}
@@ -470,7 +473,7 @@ export default function HomePage() {
       </section>
 
       {/* ── FINAL CTA ─────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-black py-32">
+      <section className="relative overflow-hidden py-32 hero-gradient">
         <div className="absolute inset-0 pointer-events-none" aria-hidden>
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[400px] rounded-full opacity-[0.07]"
             style={{ background: "radial-gradient(ellipse, rgba(200,220,255,1) 0%, transparent 70%)" }} />
@@ -479,11 +482,11 @@ export default function HomePage() {
           style={{ backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
 
         <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/[0.09] bg-white/[0.04] text-xs font-semibold text-zinc-500 mb-7 uppercase tracking-widest">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-xs font-semibold text-zinc-500 mb-7 uppercase tracking-widest" style={{ borderColor: "var(--border)", background: "var(--muted)" }}>
             <CheckCircle className="w-3.5 h-3.5 text-emerald-500" />
             Free to use · No account required
           </div>
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 tracking-tight">
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 tracking-tight" style={{ color: "var(--foreground)" }}>
             Your next step{" "}
             <span className="gradient-text">starts here.</span>
           </h2>
@@ -494,7 +497,8 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center mb-10">
             <Link
               href="/au/guide"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 text-sm font-semibold bg-white text-black rounded-xl hover:bg-zinc-100 transition-all shadow-[0_0_80px_rgba(255,255,255,0.12)] group"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 text-sm font-semibold rounded-xl transition-all group"
+              style={{ background: "var(--primary)", color: "var(--primary-foreground)" }}
             >
               <Sparkles className="w-4 h-4" />
               Start with Australia
@@ -502,7 +506,8 @@ export default function HomePage() {
             </Link>
             <Link
               href="/pricing"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 text-sm font-medium text-zinc-400 rounded-xl border border-white/10 hover:border-white/20 hover:text-white transition-all"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 text-sm font-medium rounded-xl border transition-all"
+              style={{ borderColor: "var(--border)", color: "var(--muted-foreground)" }}
             >
               View pricing
             </Link>

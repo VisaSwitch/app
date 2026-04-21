@@ -55,22 +55,22 @@ const sections = [
 
 export default function TermsPage() {
   return (
-    <div className="flex flex-col bg-black min-h-screen">
+    <div className="flex flex-col min-h-screen hero-gradient">
 
       {/* Hero */}
-      <section className="relative overflow-hidden bg-black py-20">
+      <section className="relative overflow-hidden py-20 hero-gradient">
         <div className="absolute inset-0 pointer-events-none" aria-hidden>
           <div className="absolute top-0 right-[20%] w-[500px] h-[300px] rounded-full opacity-[0.04]"
             style={{ background: "radial-gradient(circle, rgba(180,200,255,1) 0%, transparent 70%)" }} />
         </div>
         <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/[0.08] bg-white/[0.04] text-xs font-semibold text-zinc-500 mb-5 uppercase tracking-widest">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold text-zinc-500 mb-5 uppercase tracking-widest" style={{ borderColor: "var(--border)", background: "var(--muted)" }}>
             Legal
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3 tracking-tight">Terms of Use</h1>
-          <p className="text-zinc-600 text-sm">Last updated: April 2025</p>
+          <h1 className="text-3xl sm:text-4xl font-bold mb-3 tracking-tight" style={{ color: "var(--foreground)" }}>Terms of Use</h1>
+          <p className="text-sm" style={{ color: "var(--muted-foreground)" }}>Last updated: April 2025</p>
         </div>
-        <div className="absolute bottom-0 inset-x-0 h-12 bg-gradient-to-b from-transparent to-[#04060c] pointer-events-none" />
+        <div className="absolute bottom-0 inset-x-0 h-12 pointer-events-none" style={{ background: "linear-gradient(to bottom, transparent, var(--section-dark-from))" }} />
       </section>
 
       {/* Body */}
@@ -79,17 +79,17 @@ export default function TermsPage() {
           <div className="space-y-8">
             {sections.map((s) => (
               <div key={s.title}>
-                <h2 className="text-sm font-bold text-white mb-2">{s.title}</h2>
+                <h2 className="text-sm font-bold mb-2" style={{ color: "var(--foreground)" }}>{s.title}</h2>
                 <p className="text-sm text-zinc-500 leading-relaxed">{s.body}</p>
               </div>
             ))}
           </div>
 
-          <div className="mt-12 pt-8 border-t border-white/[0.06]">
+          <div className="mt-12 pt-8 border-t" style={{ borderColor: "var(--border)" }}>
             <p className="text-xs text-amber-500/60 mb-4">
               VisaSwitch is not a migration agent or legal service. Always verify immigration requirements with official government sources.
             </p>
-            <Link href="/privacy" className="text-xs text-zinc-600 hover:text-white transition-colors">
+            <Link href="/privacy" className="text-xs transition-colors" style={{ color: "var(--muted-foreground)" }}>
               Privacy Policy →
             </Link>
           </div>

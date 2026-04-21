@@ -48,24 +48,24 @@ export default async function CountryPage({ params }: Props) {
   };
 
   return (
-    <div className="flex flex-col bg-black">
+    <div className="flex flex-col">
       {/* Hero */}
-      <section className="relative overflow-hidden bg-black">
+      <section className="relative overflow-hidden hero-gradient">
         <div className="absolute inset-0 pointer-events-none" aria-hidden>
           <div className="absolute top-[-10%] left-[10%] w-[600px] h-[600px] rounded-full opacity-[0.06]"
             style={{ background: "radial-gradient(circle, rgba(180,200,255,1) 0%, transparent 70%)" }} />
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
-          <div className="flex items-center gap-1.5 text-sm text-zinc-600 mb-8">
-            <Link href="/" className="hover:text-white transition-colors">Home</Link>
+          <div className="flex items-center gap-1.5 text-sm text-zinc-500 mb-8">
+            <Link href="/" className="transition-colors hover:opacity-80">Home</Link>
             <ChevronRight className="w-4 h-4" />
-            <span className="text-white">{data.name}</span>
+            <span style={{ color: "var(--foreground)" }}>{data.name}</span>
           </div>
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/[0.08] bg-white/[0.04] text-xs font-semibold text-zinc-500 mb-5 uppercase tracking-widest">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold text-zinc-500 mb-5 uppercase tracking-widest" style={{ borderColor: "var(--border)", background: "var(--muted)" }}>
               {data.name} Immigration Guide
             </div>
-            <h1 className="text-4xl sm:text-5xl font-bold mb-5 tracking-tight leading-tight text-white">
+            <h1 className="text-4xl sm:text-5xl font-bold mb-5 tracking-tight leading-tight" style={{ color: "var(--foreground)" }}>
               Every visa pathway for{" "}
               <span className="gradient-text">{data.name}</span>,<br />
               mapped and explained.
@@ -76,7 +76,8 @@ export default async function CountryPage({ params }: Props) {
             <div className="flex flex-wrap gap-3">
               <Link
                 href={`/${country}/guide`}
-                className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold bg-white text-black rounded-xl hover:bg-zinc-100 transition-all group"
+                className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold rounded-xl transition-all group"
+                style={{ background: "var(--primary)", color: "var(--primary-foreground)" }}
               >
                 <Sparkles className="w-4 h-4" />
                 Start my visa guide
@@ -86,7 +87,8 @@ export default async function CountryPage({ params }: Props) {
                 href={data.visaBodyUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium text-zinc-400 border border-white/[0.12] rounded-xl hover:border-white/25 hover:text-white transition-all"
+                className="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium rounded-xl transition-all border"
+                style={{ borderColor: "var(--border)", color: "var(--muted-foreground)" }}
               >
                 <Building2 className="w-4 h-4" />
                 {data.visaBodyName}
@@ -100,14 +102,14 @@ export default async function CountryPage({ params }: Props) {
               { label: "Categories", value: categoryCount },
               { label: "Permanent options", value: permanentCount },
             ].map((stat) => (
-              <div key={stat.label} className="glass rounded-xl border border-white/[0.08] p-4 text-center">
-                <div className="text-2xl font-bold text-white mb-1">{stat.value}</div>
+              <div key={stat.label} className="glass rounded-xl p-4 text-center" style={{ border: "1px solid var(--border)" }}>
+                <div className="text-2xl font-bold mb-1" style={{ color: "var(--foreground)" }}>{stat.value}</div>
                 <div className="text-xs text-zinc-600">{stat.label}</div>
               </div>
             ))}
           </div>
         </div>
-        <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-b from-transparent to-[#04060c] pointer-events-none" />
+        <div className="absolute bottom-0 inset-x-0 h-24 pointer-events-none" style={{ background: "linear-gradient(to bottom, transparent, var(--section-dark-from))" }} />
       </section>
 
       {/* Unified guide CTA banner */}
@@ -122,14 +124,14 @@ export default async function CountryPage({ params }: Props) {
                 style={{ background: "radial-gradient(circle, rgba(200,255,200,1) 0%, transparent 70%)" }} />
             </div>
             <div className="relative flex flex-col sm:flex-row sm:items-center gap-5">
-              <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center flex-shrink-0">
-                <Sparkles className="w-7 h-7 text-black" />
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: "var(--primary)" }}>
+                <Sparkles className="w-7 h-7" style={{ color: "var(--primary-foreground)" }} />
               </div>
               <div className="flex-1">
                 <div className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full mb-2 uppercase tracking-widest">
                   New — all-in-one
                 </div>
-                <h2 className="text-xl font-bold text-white mb-1">
+                <h2 className="text-xl font-bold mb-1" style={{ color: "var(--foreground)" }}>
                   Complete Visa Guide — one flow, start to approval
                 </h2>
                 <p className="text-sm text-zinc-500 leading-relaxed max-w-xl">
@@ -138,7 +140,7 @@ export default async function CountryPage({ params }: Props) {
                 </p>
               </div>
               <div className="flex-shrink-0">
-                <div className="inline-flex items-center gap-2 px-5 py-3 text-sm font-bold bg-white text-black rounded-xl group-hover:bg-zinc-100 transition-all">
+                <div className="inline-flex items-center gap-2 px-5 py-3 text-sm font-bold rounded-xl transition-all" style={{ background: "var(--primary)", color: "var(--primary-foreground)" }}>
                   Start guide
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                 </div>
@@ -153,12 +155,13 @@ export default async function CountryPage({ params }: Props) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
             <div>
-              <h2 className="text-2xl font-bold text-white mb-2">Visa Pathways</h2>
+              <h2 className="text-2xl font-bold mb-2" style={{ color: "var(--foreground)" }}>Visa Pathways</h2>
               <p className="text-zinc-500">All current pathways for {data.name} — click to explore each in detail.</p>
             </div>
             <Link
               href={`/${country}/guide`}
-              className="inline-flex items-center gap-2 text-sm font-semibold text-zinc-300 hover:text-white transition-colors"
+              className="inline-flex items-center gap-2 text-sm font-semibold transition-colors"
+              style={{ color: "var(--muted-foreground)" }}
             >
               Full eligibility check
               <ArrowRight className="w-4 h-4" />
@@ -170,7 +173,7 @@ export default async function CountryPage({ params }: Props) {
               const order = { straightforward: 0, moderate: 1, complex: 2 };
               return order[a.difficulty] - order[b.difficulty];
             }).map((pathway) => (
-              <div key={pathway.id} className="glass card-hover rounded-xl border border-white/[0.08] p-5 flex flex-col gap-3">
+              <div key={pathway.id} className="glass card-hover rounded-xl p-5 flex flex-col gap-3" style={{ border: "1px solid var(--border)" }}>
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
@@ -181,9 +184,9 @@ export default async function CountryPage({ params }: Props) {
                         {pathway.difficulty}
                       </span>
                     </div>
-                    <h3 className="text-sm font-bold text-white leading-snug">{pathway.name}</h3>
+                    <h3 className="text-sm font-bold leading-snug" style={{ color: "var(--foreground)" }}>{pathway.name}</h3>
                   </div>
-                  <span className="text-xs text-zinc-600 bg-white/[0.05] px-2 py-1 rounded-md whitespace-nowrap flex-shrink-0">
+                  <span className="text-xs text-zinc-500 px-2 py-1 rounded-md whitespace-nowrap flex-shrink-0" style={{ background: "var(--muted)" }}>
                     {pathway.category}
                   </span>
                 </div>
@@ -199,8 +202,8 @@ export default async function CountryPage({ params }: Props) {
                   </div>
                 </div>
 
-                <div className="text-xs text-zinc-600 border-t border-white/[0.06] pt-3">
-                  Validity: <span className="font-medium text-zinc-400">{pathway.validity}</span>
+                <div className="text-xs text-zinc-500 border-t pt-3" style={{ borderColor: "var(--border)" }}>
+                  Validity: <span className="font-medium" style={{ color: "var(--muted-foreground)" }}>{pathway.validity}</span>
                 </div>
 
                 <div>
@@ -223,7 +226,7 @@ export default async function CountryPage({ params }: Props) {
       </section>
 
       {/* Disclaimer */}
-      <section className="py-8 bg-[#04060c] border-t border-white/[0.05]">
+      <section className="py-8 border-t" style={{ background: "var(--stats-bg)", borderColor: "var(--border)" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-start gap-3 max-w-3xl">
             <Info className="w-5 h-5 text-amber-500/70 flex-shrink-0 mt-0.5" />
@@ -231,7 +234,7 @@ export default async function CountryPage({ params }: Props) {
               <p className="text-sm font-semibold text-amber-400/80 mb-1">Important notice</p>
               <p className="text-sm text-zinc-600 leading-relaxed">
                 Immigration rules change frequently. All information on VisaSwitch is for guidance purposes only and does not constitute legal advice. Always verify current requirements with{" "}
-                <a href={data.visaBodyUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-zinc-400 hover:text-white underline">
+                <a href={data.visaBodyUrl} target="_blank" rel="noopener noreferrer" className="font-semibold underline" style={{ color: "var(--muted-foreground)" }}>
                   {data.visaBodyName}
                 </a>{" "}
                 before lodging your application.

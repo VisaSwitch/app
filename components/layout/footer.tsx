@@ -4,39 +4,39 @@ import { countryList } from "@/data";
 
 export function Footer() {
   return (
-    <footer className="bg-[#020407] border-t border-white/[0.05]">
+    <footer className="border-t" style={{ background: "var(--footer-bg)", borderColor: "var(--footer-border)" }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         {/* Logo */}
         <Link href="/" className="inline-flex items-center gap-2 mb-5">
-          <div className="w-7 h-7 rounded-lg bg-white/[0.07] border border-white/[0.09] flex items-center justify-center">
-            <Globe className="w-3.5 h-3.5 text-zinc-400" />
+          <div className="w-7 h-7 rounded-lg border flex items-center justify-center" style={{ background: "var(--muted)", borderColor: "var(--border)" }}>
+            <Globe className="w-3.5 h-3.5" style={{ color: "var(--muted-foreground)" }} />
           </div>
-          <span className="font-bold text-white tracking-tight">
-            Visa<span className="text-zinc-500">Switch</span>
+          <span className="font-bold tracking-tight" style={{ color: "var(--foreground)" }}>
+            Visa<span style={{ color: "var(--muted-foreground)" }}>Switch</span>
           </span>
         </Link>
 
-        {/* Country links — wrap on mobile */}
-        <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-zinc-500 mb-3">
+        {/* Country links */}
+        <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm mb-3" style={{ color: "var(--muted-foreground)" }}>
           {countryList.map((c) => (
-            <Link key={c.code} href={`/${c.code}/guide`} className="hover:text-white transition-colors">
+            <Link key={c.code} href={`/${c.code}/guide`} className="transition-colors hover:opacity-80">
               {c.name}
             </Link>
           ))}
         </div>
 
         {/* Page links */}
-        <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-zinc-600 mb-6">
-          <Link href="/about" className="hover:text-white transition-colors">About</Link>
-          <Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link>
-          <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
-          <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
+        <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm mb-6" style={{ color: "var(--muted-foreground)", opacity: 0.7 }}>
+          <Link href="/about" className="transition-colors hover:opacity-100">About</Link>
+          <Link href="/pricing" className="transition-colors hover:opacity-100">Pricing</Link>
+          <Link href="/privacy" className="transition-colors hover:opacity-100">Privacy</Link>
+          <Link href="/terms" className="transition-colors hover:opacity-100">Terms</Link>
         </div>
 
         {/* Bottom row */}
-        <div className="pt-5 border-t border-white/[0.04] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5">
-          <p className="text-xs text-zinc-700">&copy; {new Date().getFullYear()} VisaSwitch. All rights reserved.</p>
+        <div className="pt-5 border-t flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5" style={{ borderColor: "var(--footer-border)" }}>
+          <p className="text-xs" style={{ color: "var(--muted-foreground)", opacity: 0.6 }}>&copy; {new Date().getFullYear()} VisaSwitch. All rights reserved.</p>
           <p className="text-xs text-amber-500/60">Not legal advice. Always verify with official government sources.</p>
         </div>
       </div>

@@ -1,14 +1,94 @@
 @import "tailwindcss";
 
+/* ── Tailwind v4 dark-mode variant (class-based via next-themes) ───────── */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ── Light mode defaults (:root) ─────────────────────────────────────── */
 :root {
-  --background: #000000;
-  --foreground: #ffffff;
-  --border: rgba(255,255,255,0.08);
-  --muted: #0a0d16;
-  --muted-foreground: #6b7280;
-  --primary: #ffffff;
-  --primary-foreground: #000000;
-  --radius: 0.625rem;
+  --background:          #ffffff;
+  --foreground:          #0a0a0a;
+  --border:              rgba(0,0,0,0.08);
+  --muted:               #f3f4f8;
+  --muted-foreground:    #6b7280;
+  --primary:             #0a0a0a;
+  --primary-foreground:  #ffffff;
+  --radius:              0.625rem;
+
+  /* Section tones */
+  --section-dark-from:   #f3f4f8;
+  --section-dark-to:     #eef0f5;
+  --section-mid-from:    #eef0f5;
+  --section-mid-to:      #f3f4f8;
+  --hero-bg:             #ffffff;
+  --stats-bg:            #f3f4f8;
+
+  /* Glass card */
+  --glass-bg:            rgba(255,255,255,0.75);
+  --glass-border:        rgba(0,0,0,0.09);
+  --glass-hover-bg:      rgba(255,255,255,0.95);
+  --glass-hover-border:  rgba(0,0,0,0.14);
+  --glass-hover-shadow:  0 24px 60px -12px rgba(0,0,0,0.12);
+
+  /* Nav */
+  --nav-bg:              rgba(255,255,255,0.90);
+  --nav-border:          rgba(0,0,0,0.07);
+
+  /* Footer */
+  --footer-bg:           #f0f1f5;
+  --footer-border:       rgba(0,0,0,0.06);
+
+  /* Scrollbar */
+  --scroll-track:        #f0f0f0;
+  --scroll-thumb:        #d0d0d0;
+  --scroll-thumb-hover:  #a8a8a8;
+
+  /* Text helpers */
+  --text-secondary:      rgba(0,0,0,0.45);
+  --text-tertiary:       rgba(0,0,0,0.30);
+
+  /* Dot grid on light */
+  --dot-color:           rgba(0,0,0,0.5);
+  --connector-line:      rgba(0,0,0,0.12);
+}
+
+/* ── Dark mode overrides ──────────────────────────────────────────────── */
+.dark {
+  --background:          #000000;
+  --foreground:          #ffffff;
+  --border:              rgba(255,255,255,0.08);
+  --muted:               #0a0d16;
+  --muted-foreground:    #6b7280;
+  --primary:             #ffffff;
+  --primary-foreground:  #000000;
+
+  --section-dark-from:   #04060c;
+  --section-dark-to:     #080c18;
+  --section-mid-from:    #060810;
+  --section-mid-to:      #040609;
+  --hero-bg:             #000000;
+  --stats-bg:            #04060c;
+
+  --glass-bg:            rgba(255,255,255,0.03);
+  --glass-border:        rgba(255,255,255,0.07);
+  --glass-hover-bg:      rgba(255,255,255,0.055);
+  --glass-hover-border:  rgba(255,255,255,0.13);
+  --glass-hover-shadow:  0 24px 60px -12px rgba(0,0,0,0.9);
+
+  --nav-bg:              rgba(0,0,0,0.85);
+  --nav-border:          rgba(255,255,255,0.07);
+
+  --footer-bg:           #020407;
+  --footer-border:       rgba(255,255,255,0.05);
+
+  --scroll-track:        #080808;
+  --scroll-thumb:        #282828;
+  --scroll-thumb-hover:  #404040;
+
+  --text-secondary:      rgba(255,255,255,0.45);
+  --text-tertiary:       rgba(255,255,255,0.30);
+
+  --dot-color:           rgba(255,255,255,0.8);
+  --connector-line:      rgba(255,255,255,0.14);
 }
 
 @theme inline {
@@ -26,51 +106,62 @@ body {
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: #080808; }
-::-webkit-scrollbar-thumb { background: #282828; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #404040; }
+::-webkit-scrollbar-track { background: var(--scroll-track); }
+::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--scroll-thumb-hover); }
 
-::selection { background: rgba(255,255,255,0.15); color: #ffffff; }
+::selection { background: rgba(99,102,241,0.25); color: inherit; }
 
-/* Gradient text — silver/chrome shimmer */
+/* ── Gradient text ─────────────────────────────────────────────────────── */
 .gradient-text {
+  background: linear-gradient(120deg, #4f46e5 0%, #7c3aed 50%, #2563eb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.dark .gradient-text {
   background: linear-gradient(120deg, #ffffff 0%, #c4d0e8 45%, #7a96b8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* Legacy alias — same style for dark backgrounds */
 .gradient-text-dark {
+  background: linear-gradient(120deg, #4f46e5 0%, #7c3aed 50%, #2563eb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.dark .gradient-text-dark {
   background: linear-gradient(120deg, #ffffff 0%, #c4d0e8 45%, #7a96b8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* Section backgrounds — all dark, flowing black */
+/* ── Section backgrounds ───────────────────────────────────────────────── */
 .hero-gradient {
-  background: #000000;
+  background: var(--hero-bg);
 }
 
 .section-dark {
-  background: linear-gradient(180deg, #04060c 0%, #080c18 100%);
+  background: linear-gradient(180deg, var(--section-dark-from) 0%, var(--section-dark-to) 100%);
 }
 
 .section-mid {
-  background: linear-gradient(180deg, #060810 0%, #040609 100%);
+  background: linear-gradient(180deg, var(--section-mid-from) 0%, var(--section-mid-to) 100%);
 }
 
-/* Glassmorphism — on dark backgrounds */
+/* ── Glassmorphism ─────────────────────────────────────────────────────── */
 .glass {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--glass-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  /* Force GPU compositing to prevent backdrop-filter text rendering glitch */
+  border: 1px solid var(--glass-border);
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
   isolation: isolate;
@@ -80,29 +171,31 @@ body {
   transition: background 0.25s ease, border-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
 }
 .glass-hover:hover {
-  background: rgba(255, 255, 255, 0.055);
-  border-color: rgba(255, 255, 255, 0.13);
+  background: var(--glass-hover-bg);
+  border-color: var(--glass-hover-border);
   transform: translateY(-2px);
-  box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.9);
+  box-shadow: var(--glass-hover-shadow);
 }
 
-/* Card hover — dark bg version */
 .card-hover {
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
 }
 .card-hover:hover {
   transform: translateY(-2px);
-  box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.9);
-  border-color: rgba(255, 255, 255, 0.13);
-  background: rgba(255, 255, 255, 0.055);
+  box-shadow: var(--glass-hover-shadow);
+  border-color: var(--glass-hover-border);
+  background: var(--glass-hover-bg);
 }
 
-/* Glow accents */
+/* ── Glow accents ──────────────────────────────────────────────────────── */
 .glow-white {
   box-shadow: 0 0 60px -12px rgba(255, 255, 255, 0.10);
 }
+.dark .glow-white {
+  box-shadow: 0 0 60px -12px rgba(255, 255, 255, 0.10);
+}
 .glow-subtle {
-  box-shadow: 0 0 40px -8px rgba(150, 180, 220, 0.12);
+  box-shadow: 0 0 40px -8px rgba(100, 120, 200, 0.10);
 }
 
 /* ── Print / Report export ─────────────────────────────────────────────── */
@@ -116,6 +209,6 @@ body {
 
 .print-only { display: none; }
 
-/* Readable secondary text on dark backgrounds */
-.text-secondary { color: rgba(255, 255, 255, 0.45); }
-.text-tertiary { color: rgba(255, 255, 255, 0.30); }
+/* ── Text helpers ──────────────────────────────────────────────────────── */
+.text-secondary { color: var(--text-secondary); }
+.text-tertiary  { color: var(--text-tertiary); }

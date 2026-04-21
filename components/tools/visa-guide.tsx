@@ -2103,43 +2103,43 @@ export function VisaGuide({ countryData, countryCode }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen" style={{ background: "var(--background)" }}>
       {/* Hero */}
       <div className="hero-gradient">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           {/* Breadcrumb */}
           <div className="flex items-center gap-1.5 text-sm text-zinc-500 mb-6">
-            <Link href="/" className="hover:text-white transition-colors">
+            <Link href="/" className="hover:opacity-80 transition-opacity">
               Home
             </Link>
             <ChevronRight className="w-4 h-4" />
             <Link
               href={`/${countryCode}`}
-              className="hover:text-white transition-colors capitalize"
+              className="hover:opacity-80 transition-opacity capitalize"
             >
               {countryData.name}
             </Link>
             <ChevronRight className="w-4 h-4" />
-            <span className="text-white">Guide</span>
+            <span style={{ color: "var(--foreground)" }}>Guide</span>
           </div>
 
           {/* Title */}
           <div className="mb-8">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/[0.08] bg-white/[0.04] text-xs font-semibold text-zinc-500 mb-4 uppercase tracking-widest">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-semibold text-zinc-500 mb-4 uppercase tracking-widest" style={{ borderColor: "var(--border)", background: "var(--muted)" }}>
               {countryData.name} · Complete Visa Guide
             </div>
-            <h1 className="text-2xl sm:text-4xl font-bold text-white mb-3 tracking-tight">
+            <h1 className="text-2xl sm:text-4xl font-bold mb-3 tracking-tight" style={{ color: "var(--foreground)" }}>
               Your step-by-step{" "}
               <span className="gradient-text">visa journey</span>
             </h1>
-            <p className="text-zinc-400 text-sm leading-relaxed max-w-xl">
+            <p className="text-zinc-500 text-sm leading-relaxed max-w-xl">
               From finding your best pathway through to lodgement and approval — everything
               in one guided flow. Your progress is saved automatically.
             </p>
           </div>
 
           {/* Step navigation */}
-          <div className="glass rounded-2xl border border-white/[0.10] overflow-hidden">
+          <div className="glass rounded-2xl overflow-hidden" style={{ border: "1px solid var(--border)" }}>
             <StepNav
               current={state.step}
               maxUnlocked={state.maxUnlocked}
@@ -2282,8 +2282,8 @@ export function VisaGuide({ countryData, countryCode }: Props) {
           {/* Sidebar — hidden on mobile, sticky on desktop */}
           <div className="hidden lg:block space-y-4 lg:sticky lg:top-6">
             {/* Progress overview */}
-            <div className="glass rounded-2xl border border-white/[0.10] p-5">
-              <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-4">
+            <div className="glass rounded-2xl p-5" style={{ border: "1px solid var(--border)" }}>
+              <h3 className="text-xs font-bold uppercase tracking-wider mb-4" style={{ color: "var(--muted-foreground)" }}>
                 Your progress
               </h3>
               <div className="space-y-2.5">
