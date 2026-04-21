@@ -176,8 +176,8 @@ export function NotificationsClient() {
         const regs = await navigator.serviceWorker.getRegistrations();
         await Promise.all(regs.map((r) => r.unregister()));
       }
-      // 3. Wipe all localStorage
-      localStorage.clear();
+      // 3. Wipe only notification preferences
+      localStorage.removeItem("vs_notif_prefs");
       // 4. Set a flag so the page knows it just cleared (survives reload via sessionStorage)
       sessionStorage.setItem("vs_just_cleared", "1");
     } catch (e) {
