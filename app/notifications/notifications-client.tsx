@@ -188,7 +188,7 @@ export function NotificationsClient() {
             <div className="px-5 py-4 border-b" style={{ borderColor: "var(--border)", background: "var(--muted)" }}>
               <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--muted-foreground)" }}>3 quick steps to get started</p>
             </div>
-            <div className="divide-y" style={{ divideColor: "var(--border)" }}>
+            <div className="divide-y">
               {STEPS.map((step, i) => {
                 const Icon = step.icon;
                 return (
@@ -212,7 +212,7 @@ export function NotificationsClient() {
           <div className="px-5 py-4 border-b" style={{ borderColor: "var(--border)", background: "var(--muted)" }}>
             <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--muted-foreground)" }}>Why turn on notifications?</p>
           </div>
-          <div className="divide-y" style={{ divideColor: "var(--border)" }}>
+          <div className="divide-y">
             {BENEFITS.map((b) => {
               const Icon = b.icon;
               return (
@@ -256,7 +256,7 @@ export function NotificationsClient() {
           )}
 
           {showVisaSelector && (
-            <div className="divide-y" style={{ divideColor: "var(--border)" }}>
+            <div className="divide-y">
               {Object.entries(groupedVisas).map(([country, visas]) => (
                 <div key={country}>
                   <div className="px-5 py-2.5" style={{ background: "var(--muted)" }}>
@@ -293,7 +293,7 @@ export function NotificationsClient() {
           <div className="px-5 py-4 border-b" style={{ borderColor: "var(--border)", background: "var(--muted)" }}>
             <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--muted-foreground)" }}>Notify me about</p>
           </div>
-          <div className="divide-y" style={{ divideColor: "var(--border)" }}>
+          <div className="divide-y">
             {UPDATE_PREFS.map((pref) => {
               const Icon = pref.icon;
               const active = updatePrefs.has(pref.id);
