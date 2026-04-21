@@ -95,7 +95,7 @@ export function ChatWidget() {
             ...messages.map((m) => ({ role: m.role, content: m.content })),
             { role: "user", content },
           ],
-          countryContext: currentCountry?.name,
+          countryCode: countryCode || undefined,
         }),
       });
 

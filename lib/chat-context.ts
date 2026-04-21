@@ -1,29 +1,50 @@
-import { countries } from "@/data";
+import { countries, countryList } from "@/data";
+import type { CountryCode } from "@/types";
 
-/**
- * Builds a compact plain-text summary of all visa data to inject into
- * the AI system prompt. Keeps tokens manageable by extracting only the
- * fields that matter for answering user questions.
- */
-export function buildVisaContext(): string {
+const OFFICIAL_SOURCES: Record<string, string> = {
+  au: "https://immi.homeaffairs.gov.au",
+  uk: "https://www.gov.uk/browse/visas-immigration",
+  ca: "https://www.canada.ca/en/immigration-refugees-citizenship.html",
+  jp: "https://www.mofa.go.jp/j_info/visit/visa/index.html",
+};
+
+const RULES = `
+## Your role
+You are a knowledgeable, friendly visa assistant for VisaSwitch. Help users understand visa options, eligibility, processing times, fees, and application steps.
+
+## Rules
+1. Answer from the visa data provided first. If a detail isn't in the data, use your general knowledge but flag it: "(verify on the official site — this may have changed)".
+2. Always cite the relevant official source at the end:
+   - Australia: https://immi.homeaffairs.gov.au
+   - UK: https://www.gov.uk/browse/visas-immigration
+   - Canada: https://www.canada.ca/en/immigration-refugees-citizenship.html
+   - Japan: https://www.mofa.go.jp/j_info/visit/visa/index.html
+3. End every answer with: "This is general guidance only — not legal advice. Always verify with the official source before applying."
+4. Be concise. Use bullet points for eligibility and steps.
+5. If asked about countries outside AU/UK/CA/JP, politely say VisaSwitch currently only covers those four.
+6. Never invent specific figures (fees, points, dates) — say "check the official site for the latest" if unsure.
+`;
+
+/** Full detail for one country — used when user is on a country page (~700 tokens) */
+function buildCountryContext(code: CountryCode): string {
+  const data = countries[code];
+  if (!data) return "";
+
   const lines: string[] = [
-    "You are a visa assistant for VisaSwitch, a platform covering Australia, UK, Canada and Japan.",
-    "Below is a structured summary of every visa pathway in the system.",
+    `## ${data.name} (${code.toUpperCase()}) — full visa data`,
+    `Official source: ${OFFICIAL_SOURCES[code]}`,
     "",
   ];
 
-  for (const [code, data] of Object.entries(countries)) {
-    lines.push(`## ${data.name} (${code.toUpperCase()})`);
-    for (const pathway of data.pathways) {
-      lines.push(`\n### ${pathway.name}${pathway.subclass ? ` (Subclass ${pathway.subclass})` : ""}`);
-      if (pathway.processingTime) lines.push(`- Processing time: ${pathway.processingTime}`);
-      if (pathway.cost) lines.push(`- Fee: ${pathway.cost}`);
-      if (pathway.validity) lines.push(`- Validity: ${pathway.validity}`);
-      if (pathway.eligibility?.length) {
-        lines.push("- Key eligibility:");
-        for (const e of pathway.eligibility.slice(0, 5)) {
-          lines.push(`  • ${e.label}${e.description ? ": " + e.description : ""}`);
-        }
+  for (const pathway of data.pathways) {
+    lines.push(`### ${pathway.name}${pathway.subclass ? ` (Subclass ${pathway.subclass})` : ""}`);
+    if (pathway.processingTime) lines.push(`- Processing time: ${pathway.processingTime}`);
+    if (pathway.cost)           lines.push(`- Fee: ${pathway.cost}`);
+    if (pathway.validity)       lines.push(`- Validity: ${pathway.validity}`);
+    if (pathway.eligibility?.length) {
+      lines.push("- Key eligibility:");
+      for (const e of pathway.eligibility.slice(0, 5)) {
+        lines.push(`  • ${e.label}${e.description ? ": " + e.description : ""}`);
       }
     }
     lines.push("");
@@ -32,24 +53,42 @@ export function buildVisaContext(): string {
   return lines.join("\n");
 }
 
-export const SYSTEM_PROMPT = `${buildVisaContext()}
+/** Brief index of all countries — used on general pages (~200 tokens) */
+function buildGeneralContext(): string {
+  const lines: string[] = [
+    "## VisaSwitch covers these countries and visa types:",
+    "",
+  ];
 
----
+  for (const { code, name } of countryList) {
+    const data = countries[code];
+    const visaNames = data.pathways.map((p) =>
+      `${p.name}${p.subclass ? ` (${p.subclass})` : ""}`
+    ).join(", ");
+    lines.push(`**${name}**: ${visaNames}`);
+    lines.push(`Official source: ${OFFICIAL_SOURCES[code]}`);
+    lines.push("");
+  }
 
-## Your role
+  return lines.join("\n");
+}
 
-You are a knowledgeable, friendly visa assistant for VisaSwitch. You help users understand visa options, eligibility, processing times, fees, and application steps for Australia, the UK, Canada, and Japan.
+/**
+ * Returns the full system prompt tailored to the current country context.
+ * - On a country page: ~700 tokens (one country's full data)
+ * - On a general page: ~200 tokens (brief index of all countries)
+ * vs the old approach of ~3,000 tokens every time.
+ */
+export function buildSystemPrompt(countryCode?: string): string {
+  const isValidCode = countryCode && countryCode in countries;
 
-## Rules
+  const context = isValidCode
+    ? buildCountryContext(countryCode as CountryCode)
+    : buildGeneralContext();
 
-1. Answer based on the visa data above first. If the user asks about something not in the data, answer from your general knowledge but note you may not have the latest figures.
-2. Always cite the relevant official source at the end of your answer:
-   - Australia: https://immi.homeaffairs.gov.au
-   - UK: https://www.gov.uk/browse/visas-immigration
-   - Canada: https://www.canada.ca/en/immigration-refugees-citizenship.html
-   - Japan: https://www.mofa.go.jp/j_info/visit/visa/index.html
-3. Always end with a short disclaimer: "This is general guidance only — not legal advice. Verify with the official source before applying."
-4. Be concise. Use bullet points for eligibility and steps. Avoid walls of text.
-5. If asked about countries outside AU/UK/CA/JP, politely say VisaSwitch currently only covers those four.
-6. Never invent specific figures (fees, points thresholds, dates) — say "check the official site for the latest" if unsure.
-`;
+  const focus = isValidCode
+    ? `The user is currently viewing the ${countries[countryCode as CountryCode].name} section. Prioritise ${countries[countryCode as CountryCode].name} visa information in your answers, but answer questions about other countries too if asked.`
+    : "The user is on a general page. Answer questions about any of the four countries.";
+
+  return `${focus}\n\n${context}\n---\n${RULES}`;
+}
