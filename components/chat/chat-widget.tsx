@@ -100,8 +100,13 @@ export function ChatWidget() {
       });
 
       if (!res.ok || !res.body) {
-        const errText = await res.text();
-        throw new Error(errText || "Request failed");
+        // Only use server message for short, plain-text errors (not HTML dumps)
+        const raw = await res.text();
+        const isPlain = raw.length < 300 && !raw.trimStart().startsWith("<");
+        throw new Error(isPlain ? raw : res.status >= 500
+          ? "Something went wrong on our end. Please try again."
+          : "Request failed. Please try again."
+        );
       }
 
       const reader = res.body.getReader();

@@ -1,8 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { buildSystemPrompt } from "@/lib/chat-context";
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-
 export const runtime = "nodejs";
 export const maxDuration = 30;
 
@@ -12,6 +10,12 @@ interface Message {
 }
 
 export async function POST(req: Request) {
+  if (!process.env.ANTHROPIC_API_KEY) {
+    return new Response("Chat is not configured yet. Please try again later.", { status: 503 });
+  }
+
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
   try {
     const { messages, countryCode } = await req.json() as {
       messages: Message[];
