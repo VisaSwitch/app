@@ -160,11 +160,11 @@ export default async function CountryPage({ params }: Props) {
             </div>
             <Link
               href={`/${country}/guide`}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-90 group flex-shrink-0"
-              style={{ background: "var(--primary)", color: "var(--primary-foreground)" }}
+              className="inline-flex items-center gap-1.5 text-sm font-semibold hover:opacity-60 transition-opacity group flex-shrink-0"
+              style={{ color: "var(--muted-foreground)" }}
             >
               Full eligibility check
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
             </Link>
           </div>
 
