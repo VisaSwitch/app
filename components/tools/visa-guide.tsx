@@ -1401,7 +1401,7 @@ function Step3BuildPlan({
                       >
                         {item.description}
                       </p>
-                      {(item.estimatedCost || item.dueWeeks !== 0) && (
+                      {(item.estimatedCost || item.dueWeeks !== 0 || item.link) && (
                         <div className="flex flex-wrap items-center gap-3 mt-1.5">
                           {item.estimatedCost && (
                             <span className="text-xs text-zinc-500 flex items-center gap-1">
@@ -1415,6 +1415,18 @@ function Step3BuildPlan({
                               Due:{" "}
                               {formatDate(addWeeks(targetDate, item.dueWeeks))}
                             </span>
+                          )}
+                          {item.link && (
+                            <a
+                              href={item.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="inline-flex items-center gap-1 text-xs font-semibold text-blue-400 hover:text-blue-300 transition-colors"
+                            >
+                              <ExternalLink className="w-3 h-3" />
+                              {item.linkLabel ?? "Open →"}
+                            </a>
                           )}
                         </div>
                       )}

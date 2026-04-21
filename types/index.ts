@@ -102,6 +102,8 @@ export interface ChecklistItem {
   pathwayIds?: string[];  // if omitted/empty, item applies to ALL pathways
   estimatedCost?: string;  // human-readable, e.g. "AUD 370"
   estimatedCostNumeric?: number; // for aggregation
+  link?: string;  // official URL to complete or learn more about this task
+  linkLabel?: string; // optional short label, defaults to "Open →"
 }
 
 export interface RiskFactor {
