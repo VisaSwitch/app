@@ -99,7 +99,10 @@ export function ChatWidget() {
         }),
       });
 
-      if (!res.ok || !res.body) throw new Error("Request failed");
+      if (!res.ok || !res.body) {
+        const errText = await res.text();
+        throw new Error(errText || "Request failed");
+      }
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
@@ -115,10 +118,11 @@ export function ChatWidget() {
       }
     } catch (err: unknown) {
       if (err instanceof Error && err.name === "AbortError") return;
+      const msg = err instanceof Error ? err.message : "Something went wrong. Please try again.";
       setMessages((prev) =>
         prev.map((m) =>
           m.id === assistantId
-            ? { ...m, content: "Something went wrong. Please try again.", error: true }
+            ? { ...m, content: msg, error: true }
             : m
         )
       );
@@ -283,14 +287,15 @@ export function ChatWidget() {
 
           {/* Input */}
           <div className="px-3 pb-3 pt-1.5 flex-shrink-0">
-            <div className="flex items-end gap-2 rounded-xl border px-3 py-2"
+            <div className="relative flex items-end gap-2 rounded-xl border px-3 py-2"
               style={{ borderColor: "var(--border)", background: "var(--muted)" }}>
               <textarea
                 ref={inputRef}
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
+                onChange={(e) => setInput(e.target.value.slice(0, 1000))}
                 onKeyDown={handleKey}
                 placeholder="Ask about visas…"
+                maxLength={1000}
                 rows={1}
                 className="flex-1 bg-transparent text-sm resize-none outline-none leading-relaxed"
                 style={{
@@ -299,6 +304,11 @@ export function ChatWidget() {
                   overflow: input.split("\n").length > 3 ? "auto" : "hidden",
                 }}
               />
+              {input.length > 800 && (
+                <span className="absolute bottom-2 right-12 text-[10px]" style={{ color: "var(--muted-foreground)" }}>
+                  {1000 - input.length}
+                </span>
+              )}
               <button
                 onClick={() => sendMessage()}
                 disabled={!input.trim() || streaming}

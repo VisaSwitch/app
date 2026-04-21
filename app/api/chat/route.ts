@@ -22,6 +22,22 @@ export async function POST(req: Request) {
       return new Response("Missing messages", { status: 400 });
     }
 
+    // ── Abuse guards ────────────────────────────────────────────────
+    if (messages.length > 20) {
+      return new Response("Session limit reached. Please start a new chat.", { status: 400 });
+    }
+
+    const lastMessage = messages.at(-1)?.content ?? "";
+    if (lastMessage.length > 1000) {
+      return new Response("Message too long. Please keep messages under 1,000 characters.", { status: 400 });
+    }
+
+    const totalChars = messages.reduce((sum, m) => sum + m.content.length, 0);
+    if (totalChars > 8000) {
+      return new Response("Conversation too long. Please start a new chat.", { status: 400 });
+    }
+    // ────────────────────────────────────────────────────────────────
+
     const systemPrompt = buildSystemPrompt(countryCode);
 
     const stream = await client.messages.stream({
