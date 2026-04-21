@@ -171,23 +171,43 @@ export default function PricingPage() {
             <FAQAccordion items={[
               {
                 q: "Is the guide really fully free?",
-                a: "Yes — all four steps (pathway finder, eligibility check, risk score, checklist, and tracker) are completely free. No account, no credit card, no time limit.",
+                a: "Yes — the complete visa guide (pathway finder, eligibility check, risk score, checklist, and application tracker) is completely free. No account, no credit card, no time limit.",
               },
               {
                 q: "What does Pro add?",
-                a: "PDF export of your full guide, cloud sync so you don't lose progress if you switch devices, multi-pathway comparison, and priority email support.",
+                a: "PDF export of your full guide, cloud sync across devices, multi-pathway side-by-side comparison, and priority email support. Everything in Free, plus tools that save time when your situation is complex.",
               },
               {
                 q: "Does one payment cover all countries?",
-                a: "Yes. A single Pro purchase covers Australia, UK, Canada, and Japan — for all your applications, forever.",
+                a: "Yes. A single Pro purchase covers Australia, UK, Canada, and Japan — for all your applications, forever. No per-country charges.",
               },
               {
                 q: "Is this a subscription?",
-                a: "No. Pro is a one-time payment. You pay once and keep access forever — no recurring charges, no renewal reminders.",
+                a: "No. Pro is a one-time payment. You pay once and keep access forever — no recurring charges, no renewal reminders, no surprises.",
+              },
+              {
+                q: "Do I need an account to use the free tools?",
+                a: "No. All free tools work in your browser without signing up. Pro requires an account so your data can sync across devices.",
+              },
+              {
+                q: "Can I upgrade from Free to Pro later?",
+                a: "Yes, at any time. Your existing progress and checklist answers carry over — nothing is lost when you upgrade.",
+              },
+              {
+                q: "What payment methods do you accept?",
+                a: "All major credit and debit cards (Visa, Mastercard, Amex), Apple Pay, and Google Pay. Payments are processed securely — we never store your card details.",
+              },
+              {
+                q: "Is Pro useful if I'm only applying for one visa?",
+                a: "Absolutely. Even for a single application, PDF export alone is worth it — you get a shareable, printable document covering your pathway, eligibility, risk score, and full checklist.",
               },
               {
                 q: "What if it's not useful for me?",
-                a: "7-day full refund, no questions asked. Just email us at support@visaswitch.com.",
+                a: "7-day full refund, no questions asked. Just email us at support@visaswitch.com and we'll process it the same day.",
+              },
+              {
+                q: "Is VisaSwitch legal advice?",
+                a: "No. VisaSwitch provides structured information and self-assessment tools. It is not a law firm and does not provide legal or migration advice. For complex cases or formal advice, always consult a registered migration agent or immigration lawyer.",
               },
             ]} />
           </div>

@@ -139,17 +139,46 @@ const faqs = [
   },
   {
     q: "Do I need to create an account?",
-    a: "No. The complete visa guide works fully in your browser without an account. Your progress is saved to your device automatically.",
+    a: "No. Every tool on VisaSwitch works fully in your browser without an account. Your progress and answers are saved to your device automatically.",
   },
   {
     q: "Which countries are covered?",
-    a: "Currently Australia, United Kingdom, Canada, and Japan — covering 39 visa pathways. More countries are on the roadmap.",
+    a: "Currently Australia, United Kingdom, Canada, and Japan — covering 38 visa pathways across work, study, skilled migration, family, and permanent residency. More countries are on the roadmap.",
   },
   {
     q: "Can I use VisaSwitch if my situation is complex?",
     a: "Yes — it's designed for complexity. Prior refusals, expiring visas, multiple overlapping pathways, dependants — input your real situation and get a result that reflects it.",
   },
+  {
+    q: "What is the risk score and how is it calculated?",
+    a: "The risk score is a live indicator of how likely your application is to face complications based on your answers — things like missing documents, financial gaps, character history, or prior refusals. It's not a pass/fail, but a signal of where to focus your preparation.",
+  },
+  {
+    q: "Can I check eligibility for multiple visas at once?",
+    a: "Yes. The pathway finder shows all visas you may qualify for ranked by fit. You can then open each one individually and run a full eligibility check to compare requirements side by side.",
+  },
+  {
+    q: "What if I've been refused before?",
+    a: "VisaSwitch has a dedicated refusal recovery tool. It helps you identify the likely reason for refusal, understand whether you can reapply, and build a stronger case the second time. A prior refusal doesn't automatically disqualify you — but it does need to be addressed directly.",
+  },
+  {
+    q: "Does the checklist cover documents too?",
+    a: "Yes. Each visa checklist includes the specific documents you'll need — identity documents, financial evidence, health checks, skills assessments, English tests, and more — tailored to your situation and the visa you're applying for.",
+  },
+  {
+    q: "How long does it take to complete a visa guide?",
+    a: "Most users complete a full guide — pathway check, eligibility, risk score, and checklist — in 10 to 20 minutes. You can also save progress and return at any time without losing your answers.",
+  },
+  {
+    q: "Is my data private?",
+    a: "Yes. All tools run entirely in your browser. Your answers, risk scores, and checklist progress are stored only on your device and never sent to our servers unless you explicitly choose to export or sync.",
+  },
+  {
+    q: "Can I use VisaSwitch on my phone?",
+    a: "Yes. VisaSwitch is fully mobile-optimised and can be installed as an app on your iPhone or Android — no app store needed. Just open the site in your browser and add it to your Home Screen.",
+  },
 ];
+
 
 export default function HomePage() {
   return (
