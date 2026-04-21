@@ -20,6 +20,8 @@ import {
   ExternalLink,
   FileText,
   Lock,
+  ClipboardList,
+  XCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -393,13 +395,13 @@ function Step3Preview() {
 // ── Step 4 preview — exact match to Step4TrackSubmit ────────────────────────
 
 function Step4Preview() {
+  // Mirrors outcomeConfig in visa-guide.tsx exactly
   const outcomeOptions = [
-    { id: "pending",    label: "Lodged — awaiting decision", desc: "Application submitted", color: "text-blue-400",    bg: "bg-blue-500/10",    border: "border-blue-500/25",    icon: Clock },
-    { id: "processing", label: "Under assessment", desc: "Being actively assessed", color: "text-violet-400", bg: "bg-violet-500/10", border: "border-violet-500/25", icon: Target },
-    { id: "info",       label: "Further info requested",     desc: "Response required",   color: "text-amber-400",  bg: "bg-amber-500/10",  border: "border-amber-500/25",  icon: AlertTriangle },
-    { id: "approved",   label: "Visa Granted",               desc: "Application approved", color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/25", active: true, icon: CheckCircle },
-    { id: "refused",    label: "Refused",                    desc: "See recovery plan",   color: "text-red-400",    bg: "bg-red-500/10",    border: "border-red-500/20",    icon: AlertTriangle },
-    { id: "withdrawn",  label: "Withdrawn",                  desc: "Application withdrawn", color: "text-zinc-400",  bg: "bg-white/[0.04]",  border: "border-white/[0.10]",  icon: Circle },
+    { id: "preparing", label: "Preparing",               desc: "Gathering documents and completing forms.",           color: "text-zinc-300",    bg: "bg-white/[0.06]",       border: "border-white/[0.12]",    icon: ClipboardList },
+    { id: "applied",   label: "Application lodged",      desc: "Your application is submitted and under assessment.", color: "text-amber-400",   bg: "bg-amber-500/10",       border: "border-amber-500/25",    icon: SendHorizonal },
+    { id: "rfi",       label: "Further info requested",  desc: "The case officer has requested additional information.", color: "text-orange-400", bg: "bg-orange-500/10",     border: "border-orange-500/25",   icon: AlertTriangle },
+    { id: "approved",  label: "Approved",                desc: "Congratulations — your visa has been granted!",      color: "text-emerald-400", bg: "bg-emerald-500/10",     border: "border-emerald-500/25",  icon: CheckCircle },
+    { id: "refused",   label: "Refused",                 desc: "Your application was refused. Use the recovery plan below.", color: "text-red-400", bg: "bg-red-500/10",    border: "border-red-500/25",      icon: XCircle },
   ] as const;
 
   return (
@@ -487,7 +489,7 @@ function Step4Preview() {
         </div>
         <button className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-white text-black text-sm font-bold hover:bg-zinc-100 transition-all">
           <FileText className="w-4 h-4" />
-          Download full report (PDF)
+          Download full report
         </button>
       </div>
     </div>
