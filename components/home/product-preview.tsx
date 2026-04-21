@@ -541,7 +541,7 @@ export function ProductPreview() {
                 onClick={() => setActive(tab.id as 1 | 2 | 3 | 4)}
                 className={cn(
                   "flex-1 min-w-0 flex flex-col sm:flex-row items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap",
-                  isActive ? "dark:bg-white dark:text-black dark:shadow-sm bg-gray-900 text-white shadow-sm" : "text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.04]"
+                  isActive ? "dark:bg-white dark:text-black dark:shadow-sm bg-gray-900 text-white shadow-sm" : "text-zinc-500 dark:hover:text-zinc-300 hover:text-zinc-800 hover:bg-white/[0.04]"
                 )}
               >
                 <Icon className={cn("w-3.5 h-3.5 flex-shrink-0", isActive ? "dark:text-black text-white" : "text-zinc-500")} />
