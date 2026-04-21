@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import {
   Bell, BellOff, Zap, SlidersHorizontal, Clock, DollarSign,
   FileText, TrendingUp, ShieldAlert, Share, Plus, Home,
-  CheckCircle, Globe, ChevronDown, Info,
+  CheckCircle, Globe, ChevronDown, Info, Trash2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -114,6 +114,7 @@ export function NotificationsClient() {
   const [updatePrefs, setUpdatePrefs] = useState<Set<string>>(new Set(["processing", "policy", "points"]));
   const [saved, setSaved] = useState(false);
   const [showDisableInfo, setShowDisableInfo] = useState(false);
+  const [cacheCleared, setCacheCleared] = useState(false);
   // Which country groups are expanded in visa watchlist
   const countries = [...new Set(VISAS.map((v) => v.country))];
   const [expandedCountries, setExpandedCountries] = useState<Set<string>>(new Set());
@@ -154,6 +155,25 @@ export function NotificationsClient() {
     setSaved(true);
     setTimeout(() => setSaved(false), 2500);
   }
+  async function clearCache() {
+    // Clear all SW caches
+    if ("caches" in window) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map((k) => caches.delete(k)));
+    }
+    // Unregister service worker — stops push delivery until next page load re-registers it
+    if ("serviceWorker" in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map((r) => r.unregister()));
+    }
+    // Clear stored prefs
+    localStorage.removeItem("vs_notif_prefs");
+    setWatchedVisas(new Set());
+    setUpdatePrefs(new Set());
+    setCacheCleared(true);
+    setTimeout(() => setCacheCleared(false), 4000);
+  }
+
   function turnOffAll() {
     setUpdatePrefs(new Set());
     setWatchedVisas(new Set());
@@ -431,6 +451,34 @@ export function NotificationsClient() {
             <p className="text-xs text-center" style={{ color: "var(--muted-foreground)" }}>
               ⚠️ Notifications are blocked. Enable them in your browser settings to receive alerts.
             </p>
+          )}
+
+          {/* Divider */}
+          <div className="pt-1 border-t" style={{ borderColor: "var(--border)" }} />
+
+          {/* Clear cache */}
+          <button onClick={clearCache}
+            className="w-full py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 border transition-colors hover:opacity-80"
+            style={{ borderColor: "var(--border)", color: "var(--muted-foreground)", background: "var(--muted)" }}>
+            <Trash2 className="w-3.5 h-3.5" />
+            {cacheCleared ? "Cache cleared — reload to finish" : "Clear cache & reset"}
+          </button>
+
+          {cacheCleared && (
+            <div className="rounded-xl border px-4 py-3.5 flex gap-3" style={{ borderColor: "var(--border)", background: "var(--muted)" }}>
+              <Info className="w-4 h-4 flex-shrink-0 mt-0.5 text-emerald-600 dark:text-emerald-400" />
+              <div>
+                <p className="text-xs font-semibold mb-1" style={{ color: "var(--foreground)" }}>Cache cleared</p>
+                <p className="text-xs leading-relaxed" style={{ color: "var(--muted-foreground)" }}>
+                  All cached data and preferences have been wiped. The service worker has been unregistered — notifications are paused until you reload the page. To fully block future notifications, revoke permission in your browser or phone settings.
+                </p>
+                <button onClick={() => window.location.reload()}
+                  className="text-xs font-semibold mt-2 hover:opacity-70"
+                  style={{ color: "var(--foreground)" }}>
+                  Reload now
+                </button>
+              </div>
+            </div>
           )}
         </section>
 
