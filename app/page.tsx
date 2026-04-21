@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ProductPreview } from "@/components/home/product-preview";
 import {
   ArrowRight,
   CheckCircle,
@@ -366,6 +367,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ── PRODUCT PREVIEW ───────────────────────────────────────────── */}
+      <ProductPreview />
 
       {/* ── FEATURES ──────────────────────────────────────────────────── */}
       <section className="section-dark relative overflow-hidden py-28">
