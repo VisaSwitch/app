@@ -116,7 +116,7 @@ export function NotificationsClient() {
   const [showDisableInfo, setShowDisableInfo] = useState(false);
   // Which country groups are expanded in visa watchlist
   const countries = [...new Set(VISAS.map((v) => v.country))];
-  const [expandedCountries, setExpandedCountries] = useState<Set<string>>(new Set(countries));
+  const [expandedCountries, setExpandedCountries] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if ("Notification" in window) {
