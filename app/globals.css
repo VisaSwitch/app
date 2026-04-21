@@ -263,7 +263,28 @@ html:not(.dark) [class*="shadow-[0_0"] {
 }
 
 /* 7 ── .dark-surface opt-out: always-dark overlays (e.g. report modal)
-        All overrides above are countered here with higher specificity */
+        Re-declare all CSS vars to their dark values so glass/border/bg
+        styles all render dark regardless of the page theme. */
+.dark-surface {
+  --background:          #000000;
+  --foreground:          #ffffff;
+  --border:              rgba(255,255,255,0.08);
+  --muted:               #0a0d16;
+  --muted-foreground:    #6b7280;
+  --primary:             #ffffff;
+  --primary-foreground:  #000000;
+  --glass-bg:            rgba(255,255,255,0.03);
+  --glass-border:        rgba(255,255,255,0.07);
+  --glass-hover-bg:      rgba(255,255,255,0.055);
+  --glass-hover-border:  rgba(255,255,255,0.13);
+  --glass-hover-shadow:  0 24px 60px -12px rgba(0,0,0,0.9);
+  --text-secondary:      rgba(255,255,255,0.45);
+  --text-tertiary:       rgba(255,255,255,0.30);
+  --connector-line:      rgba(255,255,255,0.14);
+  color-scheme:          dark;
+}
+
+/* Also undo the text/border/bg overrides above for content inside .dark-surface */
 html:not(.dark) .dark-surface .text-white        { color: white   !important; }
 html:not(.dark) .dark-surface .text-zinc-300     { color: #d4d4d8 !important; }
 html:not(.dark) .dark-surface .text-zinc-400     { color: #a1a1aa !important; }
