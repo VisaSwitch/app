@@ -31,14 +31,14 @@ interface UpdatePref {
 // ── Data ──────────────────────────────────────────────────────────────────────
 
 const VISAS: VisaWatch[] = [
-  { id: "au-485", country: "Australia", countryCode: "au", name: "Temporary Graduate", subclass: "485", color: "bg-blue-500/15 text-blue-600 border-blue-500/25" },
-  { id: "au-189", country: "Australia", countryCode: "au", name: "Skilled Independent", subclass: "189", color: "bg-blue-500/15 text-blue-600 border-blue-500/25" },
-  { id: "au-190", country: "Australia", countryCode: "au", name: "Skilled Nominated", subclass: "190", color: "bg-blue-500/15 text-blue-600 border-blue-500/25" },
-  { id: "au-482", country: "Australia", countryCode: "au", name: "Temp Skill Shortage", subclass: "482", color: "bg-blue-500/15 text-blue-600 border-blue-500/25" },
-  { id: "uk-skilled", country: "United Kingdom", countryCode: "uk", name: "Skilled Worker", color: "bg-violet-500/15 text-violet-600 border-violet-500/25" },
-  { id: "uk-graduate", country: "United Kingdom", countryCode: "uk", name: "Graduate Route", color: "bg-violet-500/15 text-violet-600 border-violet-500/25" },
-  { id: "ca-express", country: "Canada", countryCode: "ca", name: "Express Entry", color: "bg-red-500/15 text-red-600 border-red-500/25" },
-  { id: "jp-engineer", country: "Japan", countryCode: "jp", name: "Engineer / Specialist", color: "bg-amber-500/15 text-amber-600 border-amber-500/25" },
+  { id: "au-485", country: "Australia", countryCode: "au", name: "Temporary Graduate", subclass: "485", color: "bg-blue-500/15 text-blue-700 dark:text-blue-400 border border-blue-500/25" },
+  { id: "au-189", country: "Australia", countryCode: "au", name: "Skilled Independent", subclass: "189", color: "bg-blue-500/15 text-blue-700 dark:text-blue-400 border border-blue-500/25" },
+  { id: "au-190", country: "Australia", countryCode: "au", name: "Skilled Nominated", subclass: "190", color: "bg-blue-500/15 text-blue-700 dark:text-blue-400 border border-blue-500/25" },
+  { id: "au-482", country: "Australia", countryCode: "au", name: "Temp Skill Shortage", subclass: "482", color: "bg-blue-500/15 text-blue-700 dark:text-blue-400 border border-blue-500/25" },
+  { id: "uk-skilled", country: "United Kingdom", countryCode: "uk", name: "Skilled Worker", color: "bg-violet-500/15 text-violet-700 dark:text-violet-400 border border-violet-500/25" },
+  { id: "uk-graduate", country: "United Kingdom", countryCode: "uk", name: "Graduate Route", color: "bg-violet-500/15 text-violet-700 dark:text-violet-400 border border-violet-500/25" },
+  { id: "ca-express", country: "Canada", countryCode: "ca", name: "Express Entry", color: "bg-red-500/15 text-red-700 dark:text-red-400 border border-red-500/25" },
+  { id: "jp-engineer", country: "Japan", countryCode: "jp", name: "Engineer / Specialist", color: "bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/25" },
 ];
 
 const UPDATE_PREFS: UpdatePref[] = [
@@ -53,25 +53,25 @@ const UPDATE_PREFS: UpdatePref[] = [
 const BENEFITS = [
   {
     icon: Zap,
-    color: "bg-emerald-500/15 text-emerald-600",
+    color: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400",
     title: "Be first to know",
     desc: "Visa rules change without warning. Get notified the moment processing times, fees, or eligibility criteria shift for the visas you're watching.",
   },
   {
     icon: SlidersHorizontal,
-    color: "bg-blue-500/15 text-blue-600",
+    color: "bg-blue-500/15 text-blue-700 dark:text-blue-400",
     title: "Only what you care about",
     desc: "You choose which visas and which types of updates matter to you. No spam, no noise — just relevant changes.",
   },
   {
     icon: Clock,
-    color: "bg-amber-500/15 text-amber-600",
+    color: "bg-amber-500/15 text-amber-700 dark:text-amber-400",
     title: "Never miss a deadline",
     desc: "Points cut-offs, occupation list reviews, and fee increases happen on specific dates. Advance notice lets you act in time.",
   },
   {
     icon: ShieldAlert,
-    color: "bg-violet-500/15 text-violet-600",
+    color: "bg-violet-500/15 text-violet-700 dark:text-violet-400",
     title: "Turn off any time",
     desc: "Full control, always. Change your preferences or disable notifications completely from this page — no account needed.",
   },
@@ -188,17 +188,17 @@ export function NotificationsClient() {
             <div className="px-5 py-4 border-b" style={{ borderColor: "var(--border)", background: "var(--muted)" }}>
               <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--muted-foreground)" }}>3 quick steps to get started</p>
             </div>
-            <div className="divide-y">
+            <div className="divide-y" style={{ borderColor: "var(--border)" }}>
               {STEPS.map((step, i) => {
                 const Icon = step.icon;
                 return (
-                  <div key={i} className="flex items-start gap-4 px-5 py-4">
-                    <span className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 text-teal-700 bg-teal-500/15 border border-teal-500/25">
+                  <div key={i} className="flex items-start gap-4 px-5 py-4" style={{ borderColor: "var(--border)" }}>
+                    <span className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 bg-teal-500/15 text-teal-700 dark:text-teal-400 border border-teal-500/25">
                       {i + 1}
                     </span>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold mb-0.5" style={{ color: "var(--foreground)" }}>{step.label}</p>
-                      <p className="text-xs text-zinc-500 leading-relaxed">{step.desc}</p>
+                      <p className="text-xs leading-relaxed" style={{ color: "var(--muted-foreground)" }}>{step.desc}</p>
                     </div>
                   </div>
                 );
@@ -212,17 +212,17 @@ export function NotificationsClient() {
           <div className="px-5 py-4 border-b" style={{ borderColor: "var(--border)", background: "var(--muted)" }}>
             <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--muted-foreground)" }}>Why turn on notifications?</p>
           </div>
-          <div className="divide-y">
+          <div className="divide-y" style={{ borderColor: "var(--border)" }}>
             {BENEFITS.map((b) => {
               const Icon = b.icon;
               return (
-                <div key={b.title} className="flex items-start gap-4 px-5 py-4">
+                <div key={b.title} className="flex items-start gap-4 px-5 py-4" style={{ borderColor: "var(--border)" }}>
                   <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0", b.color)}>
                     <Icon className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-bold mb-0.5" style={{ color: "var(--foreground)" }}>{b.title}</p>
-                    <p className="text-xs text-zinc-500 leading-relaxed">{b.desc}</p>
+                    <p className="text-xs leading-relaxed" style={{ color: "var(--muted-foreground)" }}>{b.desc}</p>
                   </div>
                 </div>
               );
@@ -239,7 +239,7 @@ export function NotificationsClient() {
           >
             <div className="text-left">
               <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--muted-foreground)" }}>Visas you&apos;re watching</p>
-              <p className="text-xs text-zinc-500 mt-0.5">{watchedVisas.size} selected</p>
+              <p className="text-xs mt-0.5" style={{ color: "var(--muted-foreground)" }}>{watchedVisas.size} selected</p>
             </div>
             <ChevronDown className={cn("w-4 h-4 transition-transform", showVisaSelector && "rotate-180")} style={{ color: "var(--muted-foreground)" }} />
           </button>
@@ -248,7 +248,7 @@ export function NotificationsClient() {
           {!showVisaSelector && watchedVisas.size > 0 && (
             <div className="px-5 py-4 flex flex-wrap gap-2">
               {VISAS.filter((v) => watchedVisas.has(v.id)).map((v) => (
-                <span key={v.id} className={cn("text-xs font-semibold px-2.5 py-1 rounded-full border", v.color)}>
+                <span key={v.id} className={cn("text-xs font-semibold px-2.5 py-1 rounded-full", v.color)}>
                   {v.subclass ? `${v.country.split(" ")[0]} ${v.subclass}` : v.country.split(" ")[0]} — {v.name}
                 </span>
               ))}
@@ -256,16 +256,16 @@ export function NotificationsClient() {
           )}
 
           {showVisaSelector && (
-            <div className="divide-y">
+            <div className="divide-y" style={{ borderColor: "var(--border)" }}>
               {Object.entries(groupedVisas).map(([country, visas]) => (
                 <div key={country}>
                   <div className="px-5 py-2.5" style={{ background: "var(--muted)" }}>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">{country}</p>
+                    <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "var(--muted-foreground)" }}>{country}</p>
                   </div>
                   {visas.map((v) => {
                     const checked = watchedVisas.has(v.id);
                     return (
-                      <label key={v.id} className="flex items-center gap-3 px-5 py-3.5 cursor-pointer hover:opacity-80 transition-opacity">
+                      <label key={v.id} className="flex items-center gap-3 px-5 py-3.5 cursor-pointer hover:opacity-80 transition-opacity" style={{ borderColor: "var(--border)" }}>
                         <input
                           type="checkbox"
                           checked={checked}
@@ -274,11 +274,11 @@ export function NotificationsClient() {
                         />
                         <div className="flex-1 min-w-0">
                           <span className="text-sm font-semibold" style={{ color: "var(--foreground)" }}>
-                            {v.subclass && <span className="text-zinc-500 font-normal">Subclass {v.subclass} — </span>}
+                            {v.subclass && <span className="font-normal" style={{ color: "var(--muted-foreground)" }}>Subclass {v.subclass} — </span>}
                             {v.name}
                           </span>
                         </div>
-                        {checked && <Globe className="w-3.5 h-3.5 text-teal-600 flex-shrink-0" />}
+                        {checked && <Globe className="w-3.5 h-3.5 flex-shrink-0 text-teal-600 dark:text-teal-400" />}
                       </label>
                     );
                   })}
@@ -293,15 +293,19 @@ export function NotificationsClient() {
           <div className="px-5 py-4 border-b" style={{ borderColor: "var(--border)", background: "var(--muted)" }}>
             <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--muted-foreground)" }}>Notify me about</p>
           </div>
-          <div className="divide-y">
+          <div className="divide-y" style={{ borderColor: "var(--border)" }}>
             {UPDATE_PREFS.map((pref) => {
               const Icon = pref.icon;
               const active = updatePrefs.has(pref.id);
               return (
-                <label key={pref.id} className="flex items-center gap-4 px-5 py-4 cursor-pointer hover:opacity-80 transition-opacity">
-                  <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors",
-                    active ? "bg-teal-500/15 text-teal-600" : "text-zinc-400")}
-                    style={{ background: active ? undefined : "var(--muted)", border: "1px solid var(--border)" }}>
+                <label key={pref.id} className="flex items-center gap-4 px-5 py-4 cursor-pointer hover:opacity-80 transition-opacity" style={{ borderColor: "var(--border)" }}>
+                  <div className={cn(
+                    "w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors",
+                    active
+                      ? "bg-teal-500/15 text-teal-700 dark:text-teal-400"
+                      : ""
+                  )}
+                    style={active ? undefined : { background: "var(--muted)", border: "1px solid var(--border)", color: "var(--muted-foreground)" }}>
                     <Icon className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -309,7 +313,7 @@ export function NotificationsClient() {
                       style={active ? undefined : { color: "var(--foreground)" }}>
                       {pref.label}
                     </p>
-                    <p className="text-xs text-zinc-500 leading-snug mt-0.5">{pref.desc}</p>
+                    <p className="text-xs leading-snug mt-0.5" style={{ color: "var(--muted-foreground)" }}>{pref.desc}</p>
                   </div>
                   {/* Toggle switch */}
                   <div className={cn("relative w-11 h-6 rounded-full transition-colors flex-shrink-0", active ? "bg-teal-600" : "bg-zinc-300 dark:bg-zinc-600")}>
@@ -325,7 +329,7 @@ export function NotificationsClient() {
         {/* ── Save button ───────────────────────────────────────────────── */}
         <div className="pb-8">
           {permission !== "granted" && !isIOS && (
-            <p className="text-xs text-zinc-500 text-center mb-4">
+            <p className="text-xs text-center mb-4" style={{ color: "var(--muted-foreground)" }}>
               {permission === "denied"
                 ? "⚠️ Notifications are blocked. Enable them in your browser settings, then save."
                 : "Enable notifications above to receive alerts."}
@@ -348,7 +352,8 @@ export function NotificationsClient() {
           {(permission === "granted" || isIOS) && (
             <button
               onClick={() => { setUpdatePrefs(new Set()); setWatchedVisas(new Set()); }}
-              className="w-full mt-3 py-2.5 rounded-xl text-xs text-zinc-500 hover:text-zinc-700 transition-colors flex items-center justify-center gap-1.5"
+              className="w-full mt-3 py-2.5 rounded-xl text-xs transition-colors flex items-center justify-center gap-1.5 hover:opacity-80"
+              style={{ color: "var(--muted-foreground)" }}
             >
               <BellOff className="w-3.5 h-3.5" /> Turn off all notifications
             </button>
