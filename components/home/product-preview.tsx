@@ -613,10 +613,10 @@ export function ProductPreview() {
         </div>
 
         {/* CTA */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-8">
+        <div className="flex flex-col items-center gap-2 mt-8">
           <a href="/au/guide"
-            className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-semibold bg-white text-black rounded-xl hover:bg-zinc-100 transition-all group">
-            Try it yourself — it&apos;s free
+            className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold bg-white text-black rounded-xl hover:bg-zinc-100 transition-all group">
+            Try it free
             <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
           </a>
           <p className="text-xs text-zinc-600">No account needed · Progress saved automatically</p>
