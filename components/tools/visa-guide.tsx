@@ -1186,8 +1186,8 @@ function Step2CheckReadiness({
           )}
         >
           {/* Score circle */}
-          <div className="flex-shrink-0 w-16 h-16 rounded-full border-4 border-current flex items-center justify-center">
-            <span className={cn("text-xl font-black", rlConfig.color)}>{riskScore}</span>
+          <div className={cn("flex-shrink-0 w-16 h-16 rounded-full border-4 border-current flex items-center justify-center", rlConfig.color)}>
+            <span className="text-xl font-black">{riskScore}</span>
           </div>
           <div>
             <div className={cn("text-base font-bold mb-1", rlConfig.color)}>
