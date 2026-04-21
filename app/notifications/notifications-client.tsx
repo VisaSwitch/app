@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import {
   Bell, BellOff, Zap, SlidersHorizontal, Clock, DollarSign,
   FileText, TrendingUp, ShieldAlert, Share, Plus, Home,
-  CheckCircle, ChevronDown, Globe,
+  CheckCircle, Globe, ChevronRight, Info,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -18,7 +18,6 @@ interface VisaWatch {
   countryCode: string;
   name: string;
   subclass?: string;
-  color: string;
 }
 
 interface UpdatePref {
@@ -30,57 +29,72 @@ interface UpdatePref {
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
+const COUNTRY_COLOR: Record<string, string> = {
+  au: "bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/25",
+  uk: "bg-violet-500/15 text-violet-700 dark:text-violet-400 border-violet-500/25",
+  ca: "bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/25",
+  jp: "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/25",
+};
+
 const VISAS: VisaWatch[] = [
-  { id: "au-485", country: "Australia", countryCode: "au", name: "Temporary Graduate", subclass: "485", color: "bg-blue-500/15 text-blue-700 dark:text-blue-400 border border-blue-500/25" },
-  { id: "au-189", country: "Australia", countryCode: "au", name: "Skilled Independent", subclass: "189", color: "bg-blue-500/15 text-blue-700 dark:text-blue-400 border border-blue-500/25" },
-  { id: "au-190", country: "Australia", countryCode: "au", name: "Skilled Nominated", subclass: "190", color: "bg-blue-500/15 text-blue-700 dark:text-blue-400 border border-blue-500/25" },
-  { id: "au-482", country: "Australia", countryCode: "au", name: "Temp Skill Shortage", subclass: "482", color: "bg-blue-500/15 text-blue-700 dark:text-blue-400 border border-blue-500/25" },
-  { id: "uk-skilled", country: "United Kingdom", countryCode: "uk", name: "Skilled Worker", color: "bg-violet-500/15 text-violet-700 dark:text-violet-400 border border-violet-500/25" },
-  { id: "uk-graduate", country: "United Kingdom", countryCode: "uk", name: "Graduate Route", color: "bg-violet-500/15 text-violet-700 dark:text-violet-400 border border-violet-500/25" },
-  { id: "ca-express", country: "Canada", countryCode: "ca", name: "Express Entry", color: "bg-red-500/15 text-red-700 dark:text-red-400 border border-red-500/25" },
-  { id: "jp-engineer", country: "Japan", countryCode: "jp", name: "Engineer / Specialist", color: "bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/25" },
+  // Australia
+  { id: "au-417",  country: "Australia",      countryCode: "au", name: "Working Holiday",              subclass: "417" },
+  { id: "au-462",  country: "Australia",      countryCode: "au", name: "Work and Holiday",             subclass: "462" },
+  { id: "au-500",  country: "Australia",      countryCode: "au", name: "Student Visa",                 subclass: "500" },
+  { id: "au-485",  country: "Australia",      countryCode: "au", name: "Temporary Graduate",           subclass: "485" },
+  { id: "au-482",  country: "Australia",      countryCode: "au", name: "Temp Skill Shortage",          subclass: "482" },
+  { id: "au-494",  country: "Australia",      countryCode: "au", name: "Skilled Employer Sponsored",   subclass: "494" },
+  { id: "au-186",  country: "Australia",      countryCode: "au", name: "Employer Nomination Scheme",   subclass: "186" },
+  { id: "au-189",  country: "Australia",      countryCode: "au", name: "Skilled Independent",          subclass: "189" },
+  { id: "au-190",  country: "Australia",      countryCode: "au", name: "Skilled Nominated",            subclass: "190" },
+  { id: "au-491",  country: "Australia",      countryCode: "au", name: "Skilled Work Regional",        subclass: "491" },
+  { id: "au-191",  country: "Australia",      countryCode: "au", name: "Permanent Residence Regional", subclass: "191" },
+  { id: "au-820",  country: "Australia",      countryCode: "au", name: "Partner Visa",                 subclass: "820/801" },
+  { id: "au-188",  country: "Australia",      countryCode: "au", name: "Business Innovation",          subclass: "188" },
+  { id: "au-600",  country: "Australia",      countryCode: "au", name: "Visitor Visa",                 subclass: "600" },
+  // United Kingdom
+  { id: "uk-student",     country: "United Kingdom", countryCode: "uk", name: "Student Visa" },
+  { id: "uk-graduate",    country: "United Kingdom", countryCode: "uk", name: "Graduate Visa" },
+  { id: "uk-skilled",     country: "United Kingdom", countryCode: "uk", name: "Skilled Worker Visa" },
+  { id: "uk-ilr",         country: "United Kingdom", countryCode: "uk", name: "Indefinite Leave to Remain (ILR)" },
+  { id: "uk-talent",      country: "United Kingdom", countryCode: "uk", name: "Global Talent Visa" },
+  { id: "uk-family",      country: "United Kingdom", countryCode: "uk", name: "Family Visa (Spouse / Partner)" },
+  { id: "uk-innovator",   country: "United Kingdom", countryCode: "uk", name: "Innovator Founder Visa" },
+  { id: "uk-visitor",     country: "United Kingdom", countryCode: "uk", name: "Standard Visitor Visa" },
+  // Canada
+  { id: "ca-fsw",      country: "Canada", countryCode: "ca", name: "Federal Skilled Worker (Express Entry)" },
+  { id: "ca-cec",      country: "Canada", countryCode: "ca", name: "Canadian Experience Class (Express Entry)" },
+  { id: "ca-pnp",      country: "Canada", countryCode: "ca", name: "Provincial Nominee Program (PNP)" },
+  { id: "ca-study",    country: "Canada", countryCode: "ca", name: "Study Permit" },
+  { id: "ca-pgwp",     country: "Canada", countryCode: "ca", name: "Post-Graduation Work Permit (PGWP)" },
+  { id: "ca-lmia",     country: "Canada", countryCode: "ca", name: "Employer Work Permit (LMIA)" },
+  { id: "ca-spousal",  country: "Canada", countryCode: "ca", name: "Spousal / Partner Sponsorship" },
+  { id: "ca-startup",  country: "Canada", countryCode: "ca", name: "Start-Up Visa Program" },
+  { id: "ca-visitor",  country: "Canada", countryCode: "ca", name: "Visitor Visa / eTA" },
+  // Japan
+  { id: "jp-whv",       country: "Japan", countryCode: "jp", name: "Working Holiday Visa" },
+  { id: "jp-student",   country: "Japan", countryCode: "jp", name: "Student Visa" },
+  { id: "jp-engineer",  country: "Japan", countryCode: "jp", name: "Engineer / Specialist in Humanities" },
+  { id: "jp-hsp",       country: "Japan", countryCode: "jp", name: "Highly Skilled Professional (HSP)" },
+  { id: "jp-pr",        country: "Japan", countryCode: "jp", name: "Permanent Resident" },
+  { id: "jp-biz",       country: "Japan", countryCode: "jp", name: "Business Manager Visa" },
+  { id: "jp-dependent", country: "Japan", countryCode: "jp", name: "Dependent Visa (Spouse / Family)" },
+  { id: "jp-visitor",   country: "Japan", countryCode: "jp", name: "Short-Stay / Visa Exemption" },
 ];
 
 const UPDATE_PREFS: UpdatePref[] = [
-  { id: "processing",  icon: Clock,        label: "Processing time changes",       desc: "When median wait times increase or decrease significantly" },
-  { id: "fees",        icon: DollarSign,   label: "Fee updates",                   desc: "When government application fees are revised" },
-  { id: "policy",      icon: FileText,     label: "Policy & rule changes",         desc: "When eligibility criteria or conditions are updated" },
-  { id: "points",      icon: TrendingUp,   label: "Points cut-off movements",      desc: "When invitation round cut-offs move up or down (AU/CA)" },
-  { id: "occupation",  icon: SlidersHorizontal, label: "Occupation list updates",  desc: "When your occupation is added or removed from skills lists" },
-  { id: "refusal",     icon: ShieldAlert,  label: "Refusal recovery tips",         desc: "Periodic guidance if you've marked your status as refused" },
-];
-
-const BENEFITS = [
-  {
-    icon: Zap,
-    color: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400",
-    title: "Be first to know",
-    desc: "Visa rules change without warning. Get notified the moment processing times, fees, or eligibility criteria shift for the visas you're watching.",
-  },
-  {
-    icon: SlidersHorizontal,
-    color: "bg-blue-500/15 text-blue-700 dark:text-blue-400",
-    title: "Only what you care about",
-    desc: "You choose which visas and which types of updates matter to you. No spam, no noise — just relevant changes.",
-  },
-  {
-    icon: Clock,
-    color: "bg-amber-500/15 text-amber-700 dark:text-amber-400",
-    title: "Never miss a deadline",
-    desc: "Points cut-offs, occupation list reviews, and fee increases happen on specific dates. Advance notice lets you act in time.",
-  },
-  {
-    icon: ShieldAlert,
-    color: "bg-violet-500/15 text-violet-700 dark:text-violet-400",
-    title: "Turn off any time",
-    desc: "Full control, always. Change your preferences or disable notifications completely from this page — no account needed.",
-  },
+  { id: "processing",  icon: Clock,             label: "Processing time changes",  desc: "When median wait times shift significantly" },
+  { id: "fees",        icon: DollarSign,        label: "Fee updates",              desc: "When government application fees are revised" },
+  { id: "policy",      icon: FileText,          label: "Policy & rule changes",    desc: "When eligibility criteria or conditions update" },
+  { id: "points",      icon: TrendingUp,        label: "Points cut-off movements", desc: "When invitation round cut-offs move (AU/CA)" },
+  { id: "occupation",  icon: SlidersHorizontal, label: "Occupation list updates",  desc: "When your occupation is added or removed" },
+  { id: "refusal",     icon: ShieldAlert,       label: "Refusal recovery tips",    desc: "Guidance if your status is marked as refused" },
 ];
 
 const STEPS = [
-  { icon: Share,  label: "Tap the Share button",   desc: 'Tap ↑ at the bottom of your Safari browser.' },
-  { icon: Plus,   label: 'Tap "Add to Home Screen"', desc: 'Scroll down and tap ⊕ "Add to Home Screen".' },
-  { icon: Home,   label: "Open from your Home Screen", desc: "Launch VisaSwitch from the icon on your home screen to enable notifications." },
+  { icon: Share, label: "Tap the Share button",      desc: "Tap ↑ at the bottom of Safari." },
+  { icon: Plus,  label: 'Tap "Add to Home Screen"',  desc: 'Scroll down and tap ⊕ Add to Home Screen.' },
+  { icon: Home,  label: "Open from Home Screen",     desc: "Launch VisaSwitch from your home screen icon." },
 ];
 
 // ── Main component ────────────────────────────────────────────────────────────
@@ -89,10 +103,10 @@ export function NotificationsClient() {
   const [permission, setPermission] = useState<NotifPerm>("default");
   const [isStandalone, setIsStandalone] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
-  const [watchedVisas, setWatchedVisas] = useState<Set<string>>(new Set(["au-485"]));
+  const [watchedVisas, setWatchedVisas] = useState<Set<string>>(new Set());
   const [updatePrefs, setUpdatePrefs] = useState<Set<string>>(new Set(["processing", "policy", "points"]));
-  const [showVisaSelector, setShowVisaSelector] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [showDisableInfo, setShowDisableInfo] = useState(false);
 
   useEffect(() => {
     if ("Notification" in window) {
@@ -102,6 +116,13 @@ export function NotificationsClient() {
       || (navigator as { standalone?: boolean }).standalone === true;
     setIsStandalone(standalone);
     setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent));
+
+    // Restore saved prefs
+    try {
+      const saved = JSON.parse(localStorage.getItem("vs_notif_prefs") ?? "{}");
+      if (saved.visas) setWatchedVisas(new Set(saved.visas));
+      if (saved.updates) setUpdatePrefs(new Set(saved.updates));
+    } catch { /* ignore */ }
   }, []);
 
   async function requestPermission() {
@@ -127,12 +148,23 @@ export function NotificationsClient() {
   }
 
   function savePrefs() {
-    // In production: persist to localStorage / backend
     const prefs = { visas: [...watchedVisas], updates: [...updatePrefs] };
     localStorage.setItem("vs_notif_prefs", JSON.stringify(prefs));
     setSaved(true);
     setTimeout(() => setSaved(false), 2500);
   }
+
+  function turnOffAll() {
+    setUpdatePrefs(new Set());
+    setWatchedVisas(new Set());
+    localStorage.removeItem("vs_notif_prefs");
+    setShowDisableInfo(true);
+  }
+
+  const allVisaIds = VISAS.map((v) => v.id);
+  const allPrefIds = UPDATE_PREFS.map((p) => p.id);
+  const allVisasSelected = allVisaIds.every((id) => watchedVisas.has(id));
+  const allPrefsSelected = allPrefIds.every((id) => updatePrefs.has(id));
 
   const groupedVisas = VISAS.reduce<Record<string, VisaWatch[]>>((acc, v) => {
     (acc[v.country] ??= []).push(v);
@@ -140,135 +172,185 @@ export function NotificationsClient() {
   }, {});
 
   return (
-    <div className="flex flex-col min-h-screen" style={{ background: "var(--background)" }}>
+    <div className="min-h-screen" style={{ background: "var(--background)" }}>
 
-      {/* ── Hero banner ─────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden hero-gradient border-b" style={{ borderColor: "var(--border)" }}>
-        <div className="absolute inset-0 opacity-[0.04] pointer-events-none"
-          style={{ backgroundImage: "radial-gradient(circle, var(--foreground) 1px, transparent 1px)", backgroundSize: "28px 28px" }} />
-        <div className="relative max-w-lg mx-auto px-4 sm:px-6 py-12 text-center">
-          <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5 border" style={{ background: "var(--muted)", borderColor: "var(--border)" }}>
-            <Bell className="w-8 h-8" style={{ color: "var(--foreground)" }} />
+      {/* ── Hero ──────────────────────────────────────────────────────── */}
+      <section className="hero-gradient border-b" style={{ borderColor: "var(--border)" }}>
+        <div className="max-w-lg mx-auto px-4 sm:px-6 py-10 text-center">
+          <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 border"
+            style={{ background: "var(--muted)", borderColor: "var(--border)" }}>
+            <Bell className="w-6 h-6" style={{ color: "var(--foreground)" }} />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold mb-3 tracking-tight" style={{ color: "var(--foreground)" }}>
-            Stay ahead of visa changes
+          <h1 className="text-2xl font-bold mb-2 tracking-tight" style={{ color: "var(--foreground)" }}>
+            Visa change alerts
           </h1>
-          <p className="text-sm leading-relaxed max-w-sm mx-auto" style={{ color: "var(--muted-foreground)" }}>
-            Get instant alerts when processing times, fees, or requirements change for the visas you&apos;re watching — before it affects your application.
+          <p className="text-sm leading-relaxed max-w-xs mx-auto" style={{ color: "var(--muted-foreground)" }}>
+            Get notified when processing times, fees, or requirements change for the visas you&apos;re watching.
           </p>
+
+          {/* Permission CTA */}
           {permission !== "granted" && (
-            <div className="mt-7">
+            <div className="mt-6">
               {isIOS && !isStandalone ? (
-                <p className="text-xs rounded-xl px-4 py-2.5 inline-block border" style={{ color: "var(--muted-foreground)", background: "var(--muted)", borderColor: "var(--border)" }}>
+                <p className="text-xs rounded-xl px-4 py-2.5 inline-block border"
+                  style={{ color: "var(--muted-foreground)", background: "var(--muted)", borderColor: "var(--border)" }}>
                   📲 Add VisaSwitch to your Home Screen first to enable notifications on iPhone
                 </p>
               ) : (
                 <button
                   onClick={requestPermission}
                   disabled={permission === "denied"}
-                  className="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
                   style={{ background: "var(--primary)", color: "var(--primary-foreground)" }}
                 >
                   <Bell className="w-4 h-4" />
-                  {permission === "denied" ? "Notifications blocked in browser" : "Enable notifications"}
+                  {permission === "denied" ? "Blocked in browser settings" : "Enable notifications"}
                 </button>
               )}
             </div>
           )}
           {permission === "granted" && (
-            <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 border rounded-full text-xs font-semibold" style={{ background: "var(--muted)", borderColor: "var(--border)", color: "var(--foreground)" }}>
-              <CheckCircle className="w-4 h-4" /> Notifications enabled
+            <div className="mt-5 inline-flex items-center gap-2 px-3.5 py-1.5 border rounded-full text-xs font-semibold"
+              style={{ background: "var(--muted)", borderColor: "var(--border)", color: "var(--foreground)" }}>
+              <CheckCircle className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> Notifications enabled
             </div>
           )}
         </div>
       </section>
 
-      <div className="max-w-lg mx-auto w-full px-4 sm:px-6 py-8 space-y-6">
+      <div className="max-w-lg mx-auto px-4 sm:px-6 py-6 space-y-8">
 
-        {/* ── iOS install steps (shown if on iOS and not standalone) ───── */}
+        {/* ── iOS install steps ──────────────────────────────────────── */}
         {isIOS && !isStandalone && (
-          <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--border)" }}>
-            <div className="px-5 py-4 border-b" style={{ borderColor: "var(--border)", background: "var(--muted)" }}>
-              <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--muted-foreground)" }}>3 quick steps to get started</p>
-            </div>
-            <div className="divide-y" style={{ borderColor: "var(--border)" }}>
+          <section>
+            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "var(--muted-foreground)" }}>
+              3 steps to get started
+            </p>
+            <div className="rounded-xl overflow-hidden border" style={{ borderColor: "var(--border)" }}>
               {STEPS.map((step, i) => {
                 const Icon = step.icon;
                 return (
-                  <div key={i} className="flex items-start gap-4 px-5 py-4" style={{ borderColor: "var(--border)" }}>
-                    <span className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 bg-teal-500/15 text-teal-700 dark:text-teal-400 border border-teal-500/25">
+                  <div key={i} className={cn("flex items-start gap-3.5 px-4 py-3.5", i < STEPS.length - 1 && "border-b")}
+                    style={{ borderColor: "var(--border)" }}>
+                    <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 bg-teal-500/15 text-teal-700 dark:text-teal-400 border border-teal-500/25">
                       {i + 1}
                     </span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold mb-0.5" style={{ color: "var(--foreground)" }}>{step.label}</p>
-                      <p className="text-xs leading-relaxed" style={{ color: "var(--muted-foreground)" }}>{step.desc}</p>
+                    <div>
+                      <p className="text-sm font-semibold" style={{ color: "var(--foreground)" }}>{step.label}</p>
+                      <p className="text-xs mt-0.5" style={{ color: "var(--muted-foreground)" }}>{step.desc}</p>
                     </div>
                   </div>
                 );
               })}
             </div>
-          </div>
+          </section>
         )}
 
-        {/* ── Why notifications ─────────────────────────────────────────── */}
-        <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--border)" }}>
-          <div className="px-5 py-4 border-b" style={{ borderColor: "var(--border)", background: "var(--muted)" }}>
-            <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--muted-foreground)" }}>Why turn on notifications?</p>
+        {/* ── Notify me about ────────────────────────────────────────── */}
+        <section>
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--muted-foreground)" }}>
+              Notify me about
+            </p>
+            <button
+              onClick={() => setUpdatePrefs(allPrefsSelected ? new Set() : new Set(allPrefIds))}
+              className="text-xs font-semibold hover:opacity-70 transition-opacity"
+              style={{ color: "var(--foreground)" }}
+            >
+              {allPrefsSelected ? "Deselect all" : "Select all"}
+            </button>
           </div>
-          <div className="divide-y" style={{ borderColor: "var(--border)" }}>
-            {BENEFITS.map((b) => {
-              const Icon = b.icon;
+          <div className="rounded-xl overflow-hidden border" style={{ borderColor: "var(--border)" }}>
+            {UPDATE_PREFS.map((pref, i) => {
+              const Icon = pref.icon;
+              const active = updatePrefs.has(pref.id);
               return (
-                <div key={b.title} className="flex items-start gap-4 px-5 py-4" style={{ borderColor: "var(--border)" }}>
-                  <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0", b.color)}>
+                <label key={pref.id}
+                  className={cn("flex items-center gap-3.5 px-4 py-3.5 cursor-pointer transition-opacity hover:opacity-80", i < UPDATE_PREFS.length - 1 && "border-b")}
+                  style={{ borderColor: "var(--border)" }}>
+                  <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors",
+                    active ? "bg-teal-500/15 text-teal-700 dark:text-teal-400" : "")}
+                    style={active ? undefined : { background: "var(--muted)", color: "var(--muted-foreground)" }}>
                     <Icon className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold mb-0.5" style={{ color: "var(--foreground)" }}>{b.title}</p>
-                    <p className="text-xs leading-relaxed" style={{ color: "var(--muted-foreground)" }}>{b.desc}</p>
+                    <p className={cn("text-sm font-semibold", active ? "text-teal-700 dark:text-teal-400" : "")}
+                      style={active ? undefined : { color: "var(--foreground)" }}>
+                      {pref.label}
+                    </p>
+                    <p className="text-xs mt-0.5" style={{ color: "var(--muted-foreground)" }}>{pref.desc}</p>
                   </div>
-                </div>
+                  <div className={cn("relative w-10 h-[22px] rounded-full transition-colors flex-shrink-0",
+                    active ? "bg-teal-600" : "bg-zinc-300 dark:bg-zinc-600")}>
+                    <div className={cn("absolute top-[2px] w-[18px] h-[18px] rounded-full bg-white shadow transition-transform",
+                      active ? "translate-x-[20px]" : "translate-x-[2px]")} />
+                    <input type="checkbox" checked={active} onChange={() => togglePref(pref.id)} className="sr-only" />
+                  </div>
+                </label>
               );
             })}
           </div>
-        </div>
+        </section>
 
-        {/* ── Visa watchlist ────────────────────────────────────────────── */}
-        <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--border)" }}>
-          <button
-            onClick={() => setShowVisaSelector((v) => !v)}
-            className="w-full flex items-center justify-between px-5 py-4 border-b"
-            style={{ borderColor: "var(--border)", background: "var(--muted)" }}
-          >
-            <div className="text-left">
-              <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--muted-foreground)" }}>Visas you&apos;re watching</p>
-              <p className="text-xs mt-0.5" style={{ color: "var(--muted-foreground)" }}>{watchedVisas.size} selected</p>
+        {/* ── Visas you're watching ──────────────────────────────────── */}
+        <section>
+          <div className="flex items-center justify-between mb-3">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--muted-foreground)" }}>
+                Visas you&apos;re watching
+              </p>
+              <p className="text-xs mt-0.5" style={{ color: "var(--muted-foreground)" }}>
+                {watchedVisas.size} of {VISAS.length} selected
+              </p>
             </div>
-            <ChevronDown className={cn("w-4 h-4 transition-transform", showVisaSelector && "rotate-180")} style={{ color: "var(--muted-foreground)" }} />
-          </button>
+            <button
+              onClick={() => setWatchedVisas(allVisasSelected ? new Set() : new Set(allVisaIds))}
+              className="text-xs font-semibold hover:opacity-70 transition-opacity"
+              style={{ color: "var(--foreground)" }}
+            >
+              {allVisasSelected ? "Deselect all" : "Select all"}
+            </button>
+          </div>
 
-          {/* Selected visas summary */}
-          {!showVisaSelector && watchedVisas.size > 0 && (
-            <div className="px-5 py-4 flex flex-wrap gap-2">
-              {VISAS.filter((v) => watchedVisas.has(v.id)).map((v) => (
-                <span key={v.id} className={cn("text-xs font-semibold px-2.5 py-1 rounded-full", v.color)}>
-                  {v.subclass ? `${v.country.split(" ")[0]} ${v.subclass}` : v.country.split(" ")[0]} — {v.name}
-                </span>
-              ))}
-            </div>
-          )}
-
-          {showVisaSelector && (
-            <div className="divide-y" style={{ borderColor: "var(--border)" }}>
-              {Object.entries(groupedVisas).map(([country, visas]) => (
-                <div key={country}>
-                  <div className="px-5 py-2.5" style={{ background: "var(--muted)" }}>
-                    <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "var(--muted-foreground)" }}>{country}</p>
+          <div className="space-y-3">
+            {Object.entries(groupedVisas).map(([country, visas]) => {
+              const code = visas[0].countryCode;
+              const countryAllSelected = visas.every((v) => watchedVisas.has(v.id));
+              return (
+                <div key={country} className="rounded-xl overflow-hidden border" style={{ borderColor: "var(--border)" }}>
+                  {/* Country header */}
+                  <div className="flex items-center justify-between px-4 py-2.5 border-b"
+                    style={{ background: "var(--muted)", borderColor: "var(--border)" }}>
+                    <div className="flex items-center gap-2">
+                      <span className={cn("text-[10px] font-bold px-1.5 py-0.5 rounded border", COUNTRY_COLOR[code])}>
+                        {code.toUpperCase()}
+                      </span>
+                      <p className="text-xs font-bold" style={{ color: "var(--foreground)" }}>{country}</p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        const ids = visas.map((v) => v.id);
+                        setWatchedVisas((prev) => {
+                          const next = new Set(prev);
+                          if (countryAllSelected) ids.forEach((id) => next.delete(id));
+                          else ids.forEach((id) => next.add(id));
+                          return next;
+                        });
+                      }}
+                      className="text-[11px] font-semibold hover:opacity-70 transition-opacity"
+                      style={{ color: "var(--muted-foreground)" }}
+                    >
+                      {countryAllSelected ? "None" : "All"}
+                    </button>
                   </div>
-                  {visas.map((v) => {
+
+                  {/* Visa rows */}
+                  {visas.map((v, i) => {
                     const checked = watchedVisas.has(v.id);
                     return (
-                      <label key={v.id} className="flex items-center gap-3 px-5 py-3.5 cursor-pointer hover:opacity-80 transition-opacity" style={{ borderColor: "var(--border)" }}>
+                      <label key={v.id}
+                        className={cn("flex items-center gap-3 px-4 py-3 cursor-pointer transition-opacity hover:opacity-80", i < visas.length - 1 && "border-b")}
+                        style={{ borderColor: "var(--border)" }}>
                         <input
                           type="checkbox"
                           checked={checked}
@@ -276,9 +358,13 @@ export function NotificationsClient() {
                           className="w-4 h-4 rounded accent-teal-600 flex-shrink-0"
                         />
                         <div className="flex-1 min-w-0">
-                          <span className="text-sm font-semibold" style={{ color: "var(--foreground)" }}>
-                            {v.subclass && <span className="font-normal" style={{ color: "var(--muted-foreground)" }}>Subclass {v.subclass} — </span>}
-                            {v.name}
+                          <span className="text-sm" style={{ color: "var(--foreground)" }}>
+                            {v.subclass && (
+                              <span className="font-normal text-xs mr-1.5" style={{ color: "var(--muted-foreground)" }}>
+                                SC {v.subclass}
+                              </span>
+                            )}
+                            <span className={checked ? "font-semibold" : ""}>{v.name}</span>
                           </span>
                         </div>
                         {checked && <Globe className="w-3.5 h-3.5 flex-shrink-0 text-teal-600 dark:text-teal-400" />}
@@ -286,83 +372,65 @@ export function NotificationsClient() {
                     );
                   })}
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* ── Update type toggles ───────────────────────────────────────── */}
-        <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--border)" }}>
-          <div className="px-5 py-4 border-b" style={{ borderColor: "var(--border)", background: "var(--muted)" }}>
-            <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--muted-foreground)" }}>Notify me about</p>
-          </div>
-          <div className="divide-y" style={{ borderColor: "var(--border)" }}>
-            {UPDATE_PREFS.map((pref) => {
-              const Icon = pref.icon;
-              const active = updatePrefs.has(pref.id);
-              return (
-                <label key={pref.id} className="flex items-center gap-4 px-5 py-4 cursor-pointer hover:opacity-80 transition-opacity" style={{ borderColor: "var(--border)" }}>
-                  <div className={cn(
-                    "w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors",
-                    active
-                      ? "bg-teal-500/15 text-teal-700 dark:text-teal-400"
-                      : ""
-                  )}
-                    style={active ? undefined : { background: "var(--muted)", border: "1px solid var(--border)", color: "var(--muted-foreground)" }}>
-                    <Icon className="w-4 h-4" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className={cn("text-sm font-semibold transition-colors", active ? "text-teal-700 dark:text-teal-400" : "")}
-                      style={active ? undefined : { color: "var(--foreground)" }}>
-                      {pref.label}
-                    </p>
-                    <p className="text-xs leading-snug mt-0.5" style={{ color: "var(--muted-foreground)" }}>{pref.desc}</p>
-                  </div>
-                  {/* Toggle switch */}
-                  <div className={cn("relative w-11 h-6 rounded-full transition-colors flex-shrink-0", active ? "bg-teal-600" : "bg-zinc-300 dark:bg-zinc-600")}>
-                    <div className={cn("absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform", active ? "translate-x-5" : "translate-x-0.5")} />
-                    <input type="checkbox" checked={active} onChange={() => togglePref(pref.id)} className="sr-only" />
-                  </div>
-                </label>
               );
             })}
           </div>
-        </div>
+        </section>
 
-        {/* ── Save button ───────────────────────────────────────────────── */}
-        <div className="pb-8">
-          {permission !== "granted" && !isIOS && (
-            <p className="text-xs text-center mb-4" style={{ color: "var(--muted-foreground)" }}>
-              {permission === "denied"
-                ? "⚠️ Notifications are blocked. Enable them in your browser settings, then save."
-                : "Enable notifications above to receive alerts."}
-            </p>
-          )}
+        {/* ── Save / Turn off ────────────────────────────────────────── */}
+        <section className="pb-8 space-y-3">
           <button
             onClick={savePrefs}
             disabled={watchedVisas.size === 0 || updatePrefs.size === 0}
             className={cn(
-              "w-full py-3.5 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90",
+              "w-full py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90",
               saved ? "bg-emerald-600 text-white" : ""
             )}
             style={saved ? undefined : { background: "var(--primary)", color: "var(--primary-foreground)" }}
           >
             {saved ? (
-              <><CheckCircle className="w-4 h-4" /> Preferences saved</>
+              <><CheckCircle className="w-4 h-4" /> Saved</>
             ) : (
               <><Bell className="w-4 h-4" /> Save preferences</>
             )}
           </button>
-          {(permission === "granted" || isIOS) && (
-            <button
-              onClick={() => { setUpdatePrefs(new Set()); setWatchedVisas(new Set()); }}
-              className="w-full mt-3 py-2.5 rounded-xl text-xs transition-colors flex items-center justify-center gap-1.5 hover:opacity-80"
-              style={{ color: "var(--muted-foreground)" }}
-            >
-              <BellOff className="w-3.5 h-3.5" /> Turn off all notifications
-            </button>
+
+          <button
+            onClick={turnOffAll}
+            className="w-full py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 border transition-colors hover:opacity-80"
+            style={{ borderColor: "var(--border)", color: "var(--muted-foreground)", background: "var(--muted)" }}
+          >
+            <BellOff className="w-3.5 h-3.5" /> Turn off all notifications
+          </button>
+
+          {/* Disable info */}
+          {showDisableInfo && (
+            <div className="rounded-xl border px-4 py-3.5 flex gap-3" style={{ borderColor: "var(--border)", background: "var(--muted)" }}>
+              <Info className="w-4 h-4 flex-shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" />
+              <div>
+                <p className="text-xs font-semibold mb-1" style={{ color: "var(--foreground)" }}>
+                  Preferences cleared
+                </p>
+                <p className="text-xs leading-relaxed" style={{ color: "var(--muted-foreground)" }}>
+                  To fully block notifications, go to your browser or phone settings and revoke permission for this site. Browsers don&apos;t allow websites to revoke their own permission.
+                </p>
+                <button
+                  onClick={() => setShowDisableInfo(false)}
+                  className="text-xs font-semibold mt-2 hover:opacity-70"
+                  style={{ color: "var(--foreground)" }}
+                >
+                  Got it
+                </button>
+              </div>
+            </div>
           )}
-        </div>
+
+          {permission === "denied" && (
+            <p className="text-xs text-center" style={{ color: "var(--muted-foreground)" }}>
+              ⚠️ Notifications are blocked. Enable them in your browser settings to receive alerts.
+            </p>
+          )}
+        </section>
 
       </div>
     </div>
