@@ -14,8 +14,6 @@ export async function POST(req: Request) {
     return new Response("Chat is not configured yet. Please try again later.", { status: 503 });
   }
 
-  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-
   try {
     const { messages, countryCode } = await req.json() as {
       messages: Message[];
@@ -26,7 +24,6 @@ export async function POST(req: Request) {
       return new Response("Missing messages", { status: 400 });
     }
 
-    // ── Abuse guards ────────────────────────────────────────────────
     if (messages.length > 20) {
       return new Response("Session limit reached. Please start a new chat.", { status: 400 });
     }
@@ -40,31 +37,39 @@ export async function POST(req: Request) {
     if (totalChars > 8000) {
       return new Response("Conversation too long. Please start a new chat.", { status: 400 });
     }
-    // ────────────────────────────────────────────────────────────────
 
+    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
     const systemPrompt = buildSystemPrompt(countryCode);
 
-    const stream = await client.messages.stream({
-      model: "claude-haiku-4-5",
-      max_tokens: 1024,
-      system: systemPrompt,
-      messages: messages.slice(-12),
-    });
-
+    // Use non-streaming for reliability, then stream the text back
+    const encoder = new TextEncoder();
     const readable = new ReadableStream({
       async start(controller) {
         try {
+          const stream = await client.messages.stream({
+            model: "claude-3-5-haiku-20241022",
+            max_tokens: 1024,
+            system: systemPrompt,
+            messages: messages.slice(-12).map((m) => ({
+              role: m.role,
+              content: m.content,
+            })),
+          });
+
           for await (const chunk of stream) {
             if (
               chunk.type === "content_block_delta" &&
-              chunk.delta.type === "text_delta"
+              chunk.delta.type === "text_delta" &&
+              chunk.delta.text
             ) {
-              controller.enqueue(new TextEncoder().encode(chunk.delta.text));
+              controller.enqueue(encoder.encode(chunk.delta.text));
             }
           }
           controller.close();
-        } catch (e) {
-          controller.error(e);
+        } catch (e: unknown) {
+          const msg = e instanceof Error ? e.message : "Unknown error";
+          controller.enqueue(encoder.encode(`Error: ${msg}`));
+          controller.close();
         }
       },
     });
@@ -78,14 +83,13 @@ export async function POST(req: Request) {
     });
   } catch (err: unknown) {
     console.error("Chat API error:", err);
-    // Anthropic rate limit
-    if (err instanceof Error && err.message.includes("rate_limit")) {
-      return new Response("Too many requests right now — please wait a moment and try again.", { status: 429 });
+    const msg = err instanceof Error ? err.message : "Unknown";
+    if (msg.includes("rate_limit")) {
+      return new Response("Too many requests — please wait a moment and try again.", { status: 429 });
     }
-    // Anthropic spend cap hit
-    if (err instanceof Error && err.message.includes("credit")) {
+    if (msg.includes("credit") || msg.includes("billing")) {
       return new Response("Chat is temporarily unavailable. Please try again later.", { status: 503 });
     }
-    return new Response("Something went wrong. Please try again.", { status: 500 });
+    return new Response(`Something went wrong: ${msg}`, { status: 500 });
   }
 }
