@@ -146,6 +146,7 @@ export function ChatWidget() {
       { id: assistantId, role: "assistant", content: "" },
     ]);
     setInput("");
+    if (inputRef.current) inputRef.current.style.height = "auto";
     setStreaming(true);
 
     abortRef.current = new AbortController();
@@ -381,17 +382,18 @@ export function ChatWidget() {
               <textarea
                 ref={inputRef}
                 value={input}
-                onChange={(e) => setInput(e.target.value.slice(0, 1000))}
+                onChange={(e) => {
+                  setInput(e.target.value.slice(0, 1000));
+                  // Auto-resize: reset then grow to content
+                  e.target.style.height = "auto";
+                  e.target.style.height = Math.min(e.target.scrollHeight, 96) + "px";
+                }}
                 onKeyDown={handleKey}
                 placeholder="Ask about visas…"
                 maxLength={1000}
                 rows={1}
                 className="flex-1 bg-transparent text-sm resize-none outline-none leading-relaxed"
-                style={{
-                  color: "var(--foreground)",
-                  maxHeight: 96,
-                  overflow: input.split("\n").length > 3 ? "auto" : "hidden",
-                }}
+                style={{ color: "var(--foreground)", maxHeight: 96, overflowY: "auto" }}
               />
               {input.length > 800 && (
                 <span className="absolute bottom-2 right-12 text-[10px]" style={{ color: "var(--muted-foreground)" }}>
