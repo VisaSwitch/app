@@ -28,6 +28,7 @@ export function Footer() {
 
         {/* Page links */}
         <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm mb-6" style={{ color: "var(--muted-foreground)", opacity: 0.7 }}>
+          <Link href="/blog" className="transition-colors hover:opacity-100">Guides</Link>
           <Link href="/about" className="transition-colors hover:opacity-100">About</Link>
           <Link href="/pricing" className="transition-colors hover:opacity-100">Pricing</Link>
           <Link href="/privacy" className="transition-colors hover:opacity-100">Privacy</Link>

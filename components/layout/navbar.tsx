@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Globe, Sun, Moon, ChevronDown, Bell } from "lucide-react";
+import { Globe, Sun, Moon, ChevronDown } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -110,14 +110,13 @@ export function Navbar() {
               </div>
             )}
 
-            {/* Notifications */}
+            {/* Guides link */}
             <Link
-              href="/notifications"
-              className="w-9 h-9 rounded-lg flex items-center justify-center border transition-all hover:scale-105"
+              href="/blog"
+              className="hidden sm:inline-flex items-center text-sm font-medium px-3 py-1.5 rounded-lg border transition-all hover:opacity-80"
               style={{ background: "var(--muted)", borderColor: "var(--border)", color: "var(--muted-foreground)" }}
-              aria-label="Notifications"
             >
-              <Bell className="w-4 h-4" />
+              Guides
             </Link>
 
             {/* Theme toggle */}
