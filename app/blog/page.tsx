@@ -14,13 +14,6 @@ export const metadata: Metadata = {
   },
 };
 
-const COUNTRY_FLAGS: Record<string, string> = {
-  au: "🇦🇺",
-  uk: "🇬🇧",
-  ca: "🇨🇦",
-  jp: "🇯🇵",
-};
-
 const COUNTRY_NAMES: Record<string, string> = {
   au: "Australia",
   uk: "United Kingdom",
@@ -84,9 +77,6 @@ export default function BlogIndexPage() {
             style={{ borderColor: "var(--border)", background: "var(--card)" }}
           >
             <div className="flex flex-wrap items-center gap-3 mb-4">
-              {allPosts[0].country && (
-                <span className="text-2xl">{COUNTRY_FLAGS[allPosts[0].country]}</span>
-              )}
               <span
                 className={`text-xs font-semibold px-2.5 py-1 rounded-full ${CATEGORY_COLORS[allPosts[0].category] ?? "bg-gray-100 text-gray-700"}`}
               >
@@ -116,7 +106,6 @@ export default function BlogIndexPage() {
         return (
           <section key={code} className="mb-14">
             <div className="flex items-center gap-3 mb-5">
-              <span className="text-2xl">{COUNTRY_FLAGS[code]}</span>
               <h2 className="text-xl font-bold" style={{ color: "var(--foreground)" }}>
                 {COUNTRY_NAMES[code]}
               </h2>

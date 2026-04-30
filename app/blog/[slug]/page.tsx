@@ -34,13 +34,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-const COUNTRY_FLAGS: Record<string, string> = {
-  au: "🇦🇺",
-  uk: "🇬🇧",
-  ca: "🇨🇦",
-  jp: "🇯🇵",
-};
-
 const COUNTRY_NAMES: Record<string, string> = {
   au: "Australia",
   uk: "United Kingdom",
@@ -93,9 +86,6 @@ export default async function BlogPostPage({ params }: Props) {
       {/* Header */}
       <header className="mb-10">
         <div className="flex flex-wrap items-center gap-3 mb-4">
-          {post.country && (
-            <span className="text-xl">{COUNTRY_FLAGS[post.country]}</span>
-          )}
           {post.country && (
             <span className="text-sm font-medium" style={{ color: "var(--muted-foreground)" }}>
               {COUNTRY_NAMES[post.country]}
@@ -170,18 +160,11 @@ export default async function BlogPostPage({ params }: Props) {
           </p>
           <div className="flex flex-wrap gap-3">
             <Link
-              href={`/${countryCode}/pathways`}
+              href={`/${countryCode}/guide`}
               className="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-xl transition-all hover:opacity-80"
               style={{ background: "var(--primary)", color: "var(--primary-foreground)" }}
             >
-              {COUNTRY_FLAGS[countryCode]} Check pathways
-            </Link>
-            <Link
-              href={`/${countryCode}/guide`}
-              className="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-xl border transition-all hover:opacity-80"
-              style={{ borderColor: "var(--border)", color: "var(--foreground)" }}
-            >
-              Visa guide →
+              Start your visa guide →
             </Link>
           </div>
         </div>
