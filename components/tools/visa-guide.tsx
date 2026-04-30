@@ -396,7 +396,7 @@ function Step1FindPathway({
             </option>
             {countryData.currentVisaOptions.map((opt) => (
               <option key={opt.value} value={opt.value} className="bg-zinc-900">
-                {opt.label} — {opt.sublabel}
+                {opt.label}
               </option>
             ))}
           </select>
@@ -420,7 +420,7 @@ function Step1FindPathway({
           >
             {countryData.goalOptions.map((opt) => (
               <option key={opt.value} value={opt.value} className="bg-zinc-900">
-                {opt.label} — {opt.sublabel}
+                {opt.label}
               </option>
             ))}
           </select>

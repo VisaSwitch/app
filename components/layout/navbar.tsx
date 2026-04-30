@@ -110,15 +110,6 @@ export function Navbar() {
               </div>
             )}
 
-            {/* Guides link */}
-            <Link
-              href="/blog"
-              className="hidden sm:inline-flex items-center text-sm font-medium px-3 py-1.5 rounded-lg border transition-all hover:opacity-80"
-              style={{ background: "var(--muted)", borderColor: "var(--border)", color: "var(--muted-foreground)" }}
-            >
-              Guides
-            </Link>
-
             {/* Theme toggle */}
             {mounted && (
               <button
